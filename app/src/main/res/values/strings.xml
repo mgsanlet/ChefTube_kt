@@ -1,0 +1,143 @@
+<resources>
+    <!-- VALIDATION ERRORS-->
+    <string name="required">Required</string>
+    <string name="invalid_email">Invalid email</string>
+    <string name="email_already">Email already exists</string>
+    <string name="username_already">Username already exists</string>
+    <string name="short_pwd">Password too short</string>
+    <string name="pwd_d_match">Passwords don\'t match</string>
+    <string name="no_email_app">No email app found</string>
+    <string name="wrong_pwd">Wrong password</string>
+    <string name="invalid_login">Invalid Login</string>
+
+    <!-- EDIT TEXTS -->
+    <string name="username">Username</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="repeat_new_password">Repeat new password</string>
+    <string name="new_password">New password</string>
+    <string name="actual_password">Actual password</string>
+    <string name="choose_a_ingredient">Ingredient</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="email_or_username">Email or Username</string>
+
+    <!-- BUTTON TEXTS -->
+    <string name="results">Results: </string>
+    <string name="data_saved">Data saved</string>
+    <string name="ok">OK</string>
+    <string name="save">Save</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="don_t_have_an_account_sign_up">Don\'t have an account? <u>Sign up</u></string>
+    <string name="create_account">Create Account</string>
+    <string name="contact_us">Contact us</string>
+    <string name="language">Language</string>
+    <string name="logout">Logout</string>
+    <string name="start">Start</string>
+    <string name="cancel">Cancel</string>
+    <string name="set">Set</string>
+    <string name="pause">Pause</string>
+    <string name="more_info">More info</string>
+    <string-array name="languages">
+        <item>English</item>
+        <item>Spanish</item>
+        <item>Italian</item>
+    </string-array>
+
+    <!-- PLAIN TEXTS -->
+    <string name="dialog_title">Select Language</string>
+    <string name="no_results">No results</string>
+    <string name="search_recipe">Search recipe:</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="steps">Recipe steps</string>
+    <string name="scan_prompt">Scan barcode</string>
+    <string name="product_name">Product name:</string>
+    <string name="nutriscore" translatable="false">NutriScore:</string>
+    <string name="ecoscore" translatable="false">EcoScore:</string>
+    <string name="product_not_found">Product not found</string>
+    <string name="set_timer">Set Timer</string>
+    <string name="minutes">Minutes</string>
+    <string name="seconds">Seconds</string>
+    <string name="powered_by_open_food_facts_api">Powered by Open Food Facts API</string>
+
+
+    <!-- IMAGE ALTS -->
+    <string name="app_name" translatable="false">ChefTube</string>
+    <string name="search_icon">Search</string>
+    <string name="profile">Profile</string>
+    <string name="logo">Logo</string>
+    <string name="home">Home</string>
+    <string name="healthy_advice">Health</string>
+    <string name="recipe_image">Recipe image</string>
+
+    <!-- RECIPES -->
+    <string name="recipe_01">Lentils with ham</string>
+    <string name="recipe_02">Potatoes with pork ribs</string>
+    <string name="recipe_03">Sauted chanterelles</string>
+    <string name="recipe_04">Katsudon</string>
+    <string name="recipe_05">Colombian beans</string>
+    <string name="recipe_06">Rice with chicken</string>
+    <string name="recipe_07">Rioja-style squid</string>
+
+    <!-- RECIPE INGREDIENTS -->
+    <string name="ingredient_01_01">120g of Lentice</string>
+    <string name="ingredient_01_02">50g of Ham</string>
+    <string name="ingredient_01_03">70g of green Pepper</string>
+    <string name="ingredient_01_04">50g of Onion</string>
+
+    <string name="ingredient_02_01">500g of Potatoes</string>
+    <string name="ingredient_02_02">400g of Pork Ribs</string>
+    <string name="ingredient_02_03">1 tablespoon of Olive Oil</string>
+    <string name="ingredient_02_04">2 cloves of Garlic</string>
+
+    <string name="ingredient_03_01">200g of Chanterelle Mushrooms</string>
+    <string name="ingredient_03_02">1 tablespoon of Butter</string>
+    <string name="ingredient_03_03">1 clove of Garlic</string>
+
+    <string name="ingredient_04_01">1 pork cutlet (tonkatsu)</string>
+    <string name="ingredient_04_02">1 cup of cooked rice</string>
+    <string name="ingredient_04_03">2 eggs</string>
+
+    <string name="ingredient_05_01">1 cup of red beans</string>
+    <string name="ingredient_05_02">1 small plantain, diced</string>
+    <string name="ingredient_05_03">1 tablespoon of hogao (Colombian creole sauce)</string>
+
+    <string name="ingredient_06_01">1 cup of rice</string>
+    <string name="ingredient_06_02">2 chicken thighs</string>
+    <string name="ingredient_06_03">1 cup of mixed vegetables (peas, carrots, and bell peppers)</string>
+
+    <string name="ingredient_07_01">500g of squid, cleaned and sliced</string>
+    <string name="ingredient_07_02">1 cup of tomato sauce</string>
+    <string name="ingredient_07_03">1 red bell pepper, diced</string>
+
+    <!-- RECIPE STEPS -->
+    <string name="step_01_01">1. Cook the Lentils: Rinse the lentils and place them in a pot with water. Bring to a boil and then simmer for about 20-30 minutes, or until tender. Drain any excess water.</string>
+    <string name="step_01_02">2. Prepare the Ham: Dice the ham into small cubes. In a separate pan, heat a little oil over medium heat and sauté the ham until it becomes crispy and golden.</string>
+    <string name="step_01_03">3. Combine and Season: Add the cooked lentils to the pan with the ham. Stir well and cook for a few more minutes, adding salt, pepper, and any other desired spices (such as garlic or paprika) to taste. Serve hot.</string>
+
+    <string name="step_02_01">1. Prepare the Pork Ribs: Season the pork ribs with salt, pepper, and your favorite spices. Heat a little oil in a pan and sear the ribs on all sides until browned. Set aside.</string>
+    <string name="step_02_02">2. Cook the Potatoes: Peel and chop the potatoes into cubes. In the same pan, add more oil if needed and sauté the potatoes until golden and crispy on the outside, about 10-15 minutes.</string>
+    <string name="step_02_03">3. Combine and Simmer: Add the seared pork ribs back into the pan with the potatoes. Add a bit of water or broth, cover, and let it cook for about 40 minutes, or until the pork is tender and the potatoes are fully cooked.</string>
+
+    <string name="step_03_01">1. Clean the Chanterelles: Gently clean the chanterelles with a damp cloth or soft brush to remove any dirt. Trim the tough ends of the stems if necessary.</string>
+    <string name="step_03_02">2. Sauté the Mushrooms: Heat a pan over medium heat and add a little butter or oil. Once hot, add the chanterelles and sauté them for about 5-7 minutes, stirring occasionally, until they release their moisture and become golden brown.</string>
+    <string name="step_03_03">3. Season and Serve: Add salt, pepper, and any desired herbs (like thyme or parsley) to taste. Continue cooking for another 2 minutes, then serve the chanterelles as a side dish or as a topping for meats or pasta.</string>
+
+    <string name="step_04_01">1. Prepare the Pork Cutlet: Bread the pork cutlet (tonkatsu) by coating it with flour, dipping it in beaten egg, and covering it with breadcrumbs. Fry it in oil until golden and crispy. Set aside.</string>
+    <string name="step_04_02">2. Make the Broth: In a pan, combine dashi stock, soy sauce, mirin, and sugar. Bring to a simmer.</string>
+    <string name="step_04_03">3. Cook the Egg: Slice the pork cutlet and place it in the pan with the simmering broth. Pour beaten eggs over the cutlet and cover the pan. Cook until the eggs are set. Serve over a bowl of cooked rice.</string>
+
+    <string name="step_05_01">1. Cook the Beans: Soak the red beans overnight, then cook them in a pot with water until tender (about 1.5–2 hours), or use canned beans for convenience.</string>
+    <string name="step_05_02">2. Sauté the Plantain: In a pan, fry the diced plantain in oil until golden and slightly caramelized.</string>
+    <string name="step_05_03">3. Combine and Season: Add the cooked beans and plantain to a pot. Stir in the hogao (Colombian creole sauce) and cook for 10–15 minutes to let the flavors combine. Serve hot.</string>
+
+    <string name="step_06_01">1. Sauté the Chicken: Season the chicken thighs with salt and pepper. In a large pot, brown them on both sides in oil. Remove and set aside.</string>
+    <string name="step_06_02">2. Cook the Rice: In the same pot, sauté the mixed vegetables until softened. Add the rice and stir for a minute. Pour in chicken stock and bring to a boil.</string>
+    <string name="step_06_03">3. Combine and Simmer: Place the chicken back into the pot with the rice. Lower the heat, cover, and cook until the rice is tender and the chicken is fully cooked. Serve warm.</string>
+
+    <string name="step_07_01">1. Sauté the Vegetables: In a pan, heat oil and sauté the diced red bell pepper and onion until softened.</string>
+    <string name="step_07_02">2. Cook the Squid: Add the sliced squid to the pan and cook for 3–5 minutes until slightly tender.</string>
+    <string name="step_07_03">3. Simmer in Sauce: Pour in the tomato sauce and season with paprika, salt, and pepper. Simmer for 15–20 minutes until the squid is tender and the flavors meld. Serve hot.</string>
+    <string name="_00_00" translatable="false">00:00</string>
+
+
+</resources>

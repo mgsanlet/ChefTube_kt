@@ -1,0 +1,28 @@
+<resources>
+    <!-- Estilo para EditTexts -->
+    <style name="AuthFields">
+        <item name="android:background">@drawable/auth_field_shapes</item>
+        <item name="android:textColorHint">#AAFFFFFF</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AuthBtns">
+        <item name="android:background">@drawable/auth_btn_shapes</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="actionOverflowButtonStyle">@style/CustomOverflowMenu</item>
+    </style>
+
+    <style name="CustomOverflowMenu" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_overflow_custom</item>
+    </style>
+</resources>

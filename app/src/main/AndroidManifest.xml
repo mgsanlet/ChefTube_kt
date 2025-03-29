@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+
+            <data android:scheme="mailto" />
+        </intent>
+    </queries>
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@drawable/ic_app2"
+        android:label="ChefTube"
+        android:roundIcon="@drawable/ic_app2"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.RecipeBook"
+        tools:targetApi="31">
+
+        <activity
+            android:name=".auth.SplashActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".auth.AuthActivity"
+            android:exported="false" />
+        <activity
+            android:name=".home.MainActivity"
+            android:exported="true"/>
+    </application>
+
+</manifest>

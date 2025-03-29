@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:paddingLeft="@dimen/fragment_horizontal_margin"
+    android:paddingTop="@dimen/fragment_vertical_margin"
+    android:paddingRight="@dimen/fragment_horizontal_margin"
+    android:paddingBottom="@dimen/fragment_vertical_margin"
+
+    tools:context=".auth.LoginFragment">
+
+    <EditText
+        android:id="@+id/loginIdentityField"
+        style="@style/AuthFields"
+
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="280dp"
+        android:layout_marginEnd="24dp"
+        android:autofillHints="email"
+        android:hint="@string/email_or_username"
+        android:inputType="textEmailAddress"
+        android:minHeight="48dp"
+
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
+
+    <EditText
+        android:id="@+id/loginPwdField"
+        style="@style/AuthFields"
+
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:autofillHints="password"
+        android:hint="@string/prompt_password"
+        android:inputType="textPassword"
+        android:minHeight="48dp"
+
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginIdentityField"
+
+        tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
+
+    <Button
+        android:id="@+id/signInBtn"
+        style="@style/AuthBtns"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="48dp"
+
+        android:text="@string/action_sign_in"
+
+        app:backgroundTint="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginPwdField"
+        app:layout_constraintVertical_bias="0.031"
+
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/loginSignUpLink"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+
+        android:text="@string/don_t_have_an_account_sign_up"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signInBtn"
+
+        tools:ignore="TextContrastCheck" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

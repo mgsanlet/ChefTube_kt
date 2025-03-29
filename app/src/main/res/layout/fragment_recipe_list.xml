@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_splash">
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recipeFeedRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:scrollbars="vertical"
+        android:background="@android:color/transparent"/>
+    <TextView
+        android:id="@+id/noResultsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_results"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:visibility="gone"
+        android:gravity="center"
+        android:background="@android:color/black"
+        android:padding="16dp"
+        />
+
+    <ImageButton
+        android:id="@+id/search_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="start|top"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/black_bg_box_shape"
+        android:src="@drawable/ic_search_wh"
+        android:scaleType="fitXY"
+        android:contentDescription="@string/search_icon"
+        tools:ignore="TouchTargetSizeCheck" />
+
+</FrameLayout>

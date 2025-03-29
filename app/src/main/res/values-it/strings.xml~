@@ -1,0 +1,139 @@
+<resources>
+    <!-- ERRORI DI VALIDAZIONE -->
+    <string name="required">Obbligatorio</string>
+    <string name="invalid_email">Email non valida</string>
+    <string name="email_already">Email già esistente</string>
+    <string name="username_already">Username già esistente</string>
+    <string name="short_pwd">Password troppo corta</string>
+    <string name="pwd_d_match">Le password non corrispondono</string>
+    <string name="no_email_app">Nessuna app per email trovata</string>
+    <string name="wrong_pwd">Password errata</string>
+    <string name="invalid_login">Login errata</string>
+
+    <!-- EDIT TESTI -->
+    <string name="username">Nome utente</string>
+    <string name="repeat_password">Ripeti la password</string>
+    <string name="repeat_new_password">Ripeti la nuova password</string>
+    <string name="new_password">Nuova password</string>
+    <string name="actual_password">Password attuale</string>
+    <string name="choose_a_ingredient">Ingrediente</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="email_or_username">Email o Nome utente</string>
+    <string name="set_timer">Impostare il timer</string>
+    <string name="minutes">Minuti</string>
+    <string name="seconds">secondi</string>
+
+    <!-- TESTI DEI PULSANTI -->
+    <string name="feature_in_progress">Funzione in corso</string>
+    <string name="results">Risultati: </string>
+    <string name="data_saved">Dati salvati</string>
+    <string name="ok">OK</string>
+    <string name="save">Salva</string>
+    <string name="action_sign_in">Accedi</string>
+    <string name="don_t_have_an_account_sign_up">Non hai un account? <u>Registrati</u></string>
+    <string name="create_account">Crea account</string>
+    <string name="contact_us">Contattaci</string>
+    <string name="language">Lingua</string>
+    <string name="logout">Esci</string>
+    <string name="start">Inizio</string>
+    <string name="cancel">Annullare</string>
+    <string name="set">Acettar</string>
+    <string name="pause">Pausa</string>
+    <string name="more_info">Ulteriori informazioni</string>
+    <string-array name="languages">
+        <item>Inglese</item>
+        <item>Spagnolo</item>
+        <item>Italiano</item>
+    </string-array>
+
+    <!-- TESTI SEMPLICI -->
+    <string name="dialog_title">Seleziona la lingua</string>
+    <string name="no_results">Nessun risultato</string>
+    <string name="search_recipe">Cerca ricetta:</string>
+    <string name="ingredients">Ingredienti</string>
+    <string name="steps">Fasi della ricetta</string>
+    <string name="scan_prompt">Scansiona il codice a barre</string>
+    <string name="product_name">Nome del prodotto:</string>
+    <string name="product_not_found">Prodotto non trovato</string>
+    <string name="powered_by_open_food_facts_api">Risorse di Open Food Facts API</string>
+
+    <!-- ALTERNATIVE IMMAGINI -->
+    <string name="search_icon">Cerca</string>
+    <string name="profile">Profilo</string>
+    <string name="logo">Logo</string>
+    <string name="home">Home</string>
+    <string name="healthy_advice">Salute</string>
+    <string name="recipe_image">Immagine della ricetta</string>
+
+    <!-- RICETTE -->
+    <string name="recipe_01">Lenticchie con prosciutto</string>
+    <string name="recipe_02">Patate con costine di maiale</string>
+    <string name="recipe_03">Finferli saltati</string>
+    <string name="recipe_04">Katsudon</string>
+    <string name="recipe_05">Fagioli colombiani</string>
+    <string name="recipe_06">Riso con pollo</string>
+    <string name="recipe_07">Calamari alla Rioja</string>
+
+    <!-- INGREDIENTI RICETTE -->
+    <string name="ingredient_01_01">120g di lenticchie</string>
+    <string name="ingredient_01_02">50g di prosciutto</string>
+    <string name="ingredient_01_03">70g di peperone verde</string>
+    <string name="ingredient_01_04">50g di cipolla</string>
+
+    <string name="ingredient_02_01">500g di patate</string>
+    <string name="ingredient_02_02">400g di costine di maiale</string>
+    <string name="ingredient_02_03">1 cucchiaio di olio d\'oliva</string>
+    <string name="ingredient_02_04">2 spicchi d\'aglio</string>
+
+    <string name="ingredient_03_01">200g di finferli</string>
+    <string name="ingredient_03_02">1 cucchiaio di burro</string>
+    <string name="ingredient_03_03">1 spicchio d\'aglio</string>
+
+    <string name="ingredient_04_01">1 cotoletta di maiale (tonkatsu)</string>
+    <string name="ingredient_04_02">1 tazza di riso cotto</string>
+    <string name="ingredient_04_03">2 uova</string>
+
+    <string name="ingredient_05_01">1 tazza di fagioli rossi</string>
+    <string name="ingredient_05_02">1 piccolo platano, a cubetti</string>
+    <string name="ingredient_05_03">1 cucchiaio di hogao (salsa creola colombiana)</string>
+
+    <string name="ingredient_06_01">1 tazza di riso</string>
+    <string name="ingredient_06_02">2 cosce di pollo</string>
+    <string name="ingredient_06_03">1 tazza di verdure miste (piselli, carote e peperoni)</string>
+
+    <string name="ingredient_07_01">500g di calamari, puliti e affettati</string>
+    <string name="ingredient_07_02">1 tazza di salsa di pomodoro</string>
+    <string name="ingredient_07_03">1 peperone rosso, a cubetti</string>
+
+
+    <!-- RECIPE STEPS -->
+    <string name="step_01_01">1. Cuoci le lenticchie: Sciacqua le lenticchie e mettile in una pentola con acqua. Porta a ebollizione e poi fai sobbollire per circa 20-30 minuti, o fino a quando sono tenere. Scola l\'acqua in eccesso.</string>
+    <string name="step_01_02">2. Prepara il prosciutto: Taglia il prosciutto a cubetti piccoli. In una padella separata, scalda un po\' di olio a fuoco medio e soffriggi il prosciutto finché non diventa croccante e dorato.</string>
+    <string name="step_01_03">3. Unisci e condisci: Aggiungi le lenticchie cotte nella padella con il prosciutto. Mescola bene e cuoci per qualche altro minuto, aggiungendo sale, pepe e qualsiasi altra spezia desiderata (come aglio o paprika) a piacere. Servi caldo.</string>
+
+    <string name="step_02_01">1. Prepara le costine di maiale: Condisci le costine di maiale con sale, pepe e le tue spezie preferite. Scalda un po\' di olio in una padella e rosola le costine su tutti i lati fino a dorarle. Metti da parte.</string>
+    <string name="step_02_02">2. Cuoci le patate: Sbuccia e taglia le patate a cubetti. Nella stessa padella, aggiungi altro olio se necessario e soffriggi le patate fino a renderle dorate e croccanti all\'esterno, per circa 10-15 minuti.</string>
+    <string name="step_02_03">3. Unisci e fai sobbollire: Rimetti le costine di maiale nella padella con le patate. Aggiungi un po\' di acqua o brodo, copri e lascia cuocere per circa 40 minuti, o finché le costine non sono tenere e le patate cotte.</string>
+
+    <string name="step_03_01">1. Pulisci i finferli: Pulisci delicatamente i finferli con un panno umido o una spazzola morbida per rimuovere lo sporco. Rimuovi la parte dura dei gambi se necessario.</string>
+    <string name="step_03_02">2. Soffriggi i funghi: Scalda una padella a fuoco medio e aggiungi un po\' di burro o olio. Una volta caldo, aggiungi i finferli e soffriggili per circa 5-7 minuti, mescolando di tanto in tanto, finché non rilasciano la loro umidità e diventano dorati.</string>
+    <string name="step_03_03">3. Condisci e servi: Aggiungi sale, pepe e qualsiasi erba desiderata (come timo o prezzemolo) a piacere. Continua a cuocere per altri 2 minuti, quindi servi i finferli come contorno o come condimento per carne o pasta.</string>
+
+    <string name="step_04_01">1. Prepara la cotoletta di maiale: Impana la cotoletta di maiale (tonkatsu) ricoprendola di farina, immergendola nell\'uovo sbattuto e coprendola con pangrattato. Friggila nell\'olio fino a renderla dorata e croccante. Metti da parte.</string>
+    <string name="step_04_02">2. Prepara il brodo: In una padella, unisci il brodo dashi, la salsa di soia, il mirin e lo zucchero. Porta a sobbollire.</string>
+    <string name="step_04_03">3. Cuoci l\'uovo: Taglia la cotoletta di maiale e mettila nella padella con il brodo che sobbolle. Versa le uova sbattute sopra la cotoletta e copri la padella. Cuoci finché le uova non sono cotte. Servi sopra una ciotola di riso cotto.</string>
+
+    <string name="step_05_01">1. Cuoci i fagioli: Metti i fagioli rossi in ammollo per tutta la notte, quindi cuocili in una pentola con acqua fino a renderli teneri (circa 1,5–2 ore), oppure usa fagioli in scatola per comodità.</string>
+    <string name="step_05_02">2. Soffriggi il platano: In una padella, friggi il platano a cubetti nell\'olio fino a dorarlo e leggermente caramellarlo.</string>
+    <string name="step_05_03">3. Unisci e condisci: Aggiungi i fagioli cotti e il platano in una pentola. Mescola con l\'hogao (salsa creola colombiana) e cuoci per 10-15 minuti per far amalgamare i sapori. Servi caldo.</string>
+
+    <string name="step_06_01">1. Soffriggi il pollo: Condisci le cosce di pollo con sale e pepe. In una pentola grande, dorale su entrambi i lati nell\'olio. Rimuovi e metti da parte.</string>
+    <string name="step_06_02">2. Cuoci il riso: Nella stessa pentola, soffriggi le verdure miste finché non si ammorbidiscono. Aggiungi il riso e mescola per un minuto. Versa il brodo di pollo e porta a ebollizione.</string>
+    <string name="step_06_03">3. Unisci e fai sobbollire: Rimetti il pollo nella pentola con il riso. Abbassa la fiamma, copri e cuoci finché il riso non è tenero e il pollo è completamente cotto. Servi caldo.</string>
+
+    <string name="step_07_01">1. Soffriggi le verdure: In una padella, scalda l\'olio e soffriggi il peperone rosso e la cipolla a dadini finché non si ammorbidiscono.</string>
+    <string name="step_07_02">2. Cuoci i calamari: Aggiungi i calamari affettati nella padella e cuoci per 3–5 minuti finché non sono leggermente teneri.</string>
+    <string name="step_07_03">3. Fai sobbollire nella salsa: Versa la salsa di pomodoro e condisci con paprika, sale e pepe. Fai sobbollire per 15-20 minuti finché i calamari non sono teneri e i sapori non si amalgamano. Servi caldo.</string>
+
+</resources>
