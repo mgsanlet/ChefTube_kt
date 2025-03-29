@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.home;
+package com.mgsanlet.cheftube.ui.home;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,12 +17,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mgsanlet.cheftube.R;
-import com.mgsanlet.cheftube.home.recycler.RecipeFeedAdapter;
+import com.mgsanlet.cheftube.ui.home.recycler.RecipeFeedAdapter;
 
 import java.util.List;
 
-import model.Recipe;
-import model.RecipeRepository;
+import com.mgsanlet.cheftube.data.model.Recipe;
+import com.mgsanlet.cheftube.data.repository.RecipeRepository;
 
 /**
  * A fragment that displays a list of recipes. Each recipe is shown with its title and an image.
@@ -32,7 +32,7 @@ import model.RecipeRepository;
  *
  * @author MarioG
  */
-public class RecipeListFragment extends Fragment {
+public class RecipeFeedFragment extends Fragment {
     // -Declaring data members-
     private List<Recipe> recipeList;
     // -Declaring UI elements-

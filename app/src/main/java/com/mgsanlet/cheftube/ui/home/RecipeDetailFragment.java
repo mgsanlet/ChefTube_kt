@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.home;
+package com.mgsanlet.cheftube.ui.home;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment;
 
 import com.mgsanlet.cheftube.R;
 
-import model.Recipe;
+import com.mgsanlet.cheftube.data.model.Recipe;
 
 /**
  * A fragment that displays the details of a recipe, including its title, ingredients,

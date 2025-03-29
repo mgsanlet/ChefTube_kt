@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/fragment_horizontal_margin"
     android:paddingBottom="@dimen/fragment_vertical_margin"
 
-    tools:context=".auth.LoginFragment">
+    tools:context=".ui.auth.LoginFragment">
 
     <EditText
         android:id="@+id/loginIdentityField"

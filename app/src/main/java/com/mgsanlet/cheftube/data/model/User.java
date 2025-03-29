@@ -1,4 +1,4 @@
-package model;
+package com.mgsanlet.cheftube.data.model;
 
 import java.io.Serializable;
 import java.util.UUID;

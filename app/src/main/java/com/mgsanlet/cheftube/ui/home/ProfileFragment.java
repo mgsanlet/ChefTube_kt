@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.home;
+package com.mgsanlet.cheftube.ui.home;
 
 import android.os.Bundle;
 import android.util.Patterns;
@@ -13,8 +13,8 @@ import androidx.fragment.app.Fragment;
 
 import com.mgsanlet.cheftube.R;
 
-import model.User;
-import model.UserDAO;
+import com.mgsanlet.cheftube.data.model.User;
+import com.mgsanlet.cheftube.data.local.UserDAO;
 
 /**
  * ProfileFragment allows the user to view and update their profile details,

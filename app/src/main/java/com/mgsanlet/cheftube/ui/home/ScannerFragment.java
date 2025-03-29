@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.home;
+package com.mgsanlet.cheftube.ui.home;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -35,7 +35,7 @@ import java.util.Locale;
  * to retrieve and display product name, Nutri-Score, and Eco-Score information.
  * @author MarioG
  */
-public class HealthyFragment extends Fragment {
+public class ScannerFragment extends Fragment {
     // -Declaring constants-
     private static final String BASE_URL = "https://world.openfoodfacts.org/api/v3/product/";
     // -Declaring UI elements-

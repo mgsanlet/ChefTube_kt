@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.home;
+package com.mgsanlet.cheftube.ui.home;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,20 +20,20 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.mgsanlet.cheftube.FragmentNavigator;
+import com.mgsanlet.cheftube.utils.FragmentNavigator;
 import com.mgsanlet.cheftube.R;
-import com.mgsanlet.cheftube.auth.AuthActivity;
+import com.mgsanlet.cheftube.ui.auth.AuthActivity;
 
 import java.util.Locale;
 
-import model.User;
+import com.mgsanlet.cheftube.data.model.User;
 /**
- * MainActivity serves as the primary activity for the application's home screen.
+ * HomeActivity serves as the primary activity for the application's home screen.
  * It manages the top MaterialToolbar, BottomNavigationView, and fragments
  * for various sections of the app.
  * @author MarioG
  */
-public class MainActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity {
     // -Declaring UI elements-
     MaterialToolbar topToolbar;
     BottomNavigationView bottomNavView;
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
      * Logs out the user and redirects to the authentication activity.
      */
     private void onLogout() {
-        authActIntent = new Intent(MainActivity.this, AuthActivity.class);
+        authActIntent = new Intent(HomeActivity.this, AuthActivity.class);
         startActivity(authActIntent);
     }
 
@@ -199,12 +199,12 @@ public class MainActivity extends AppCompatActivity {
                return true;
            }  else if (item.getItemId() == R.id.home_item) {
                FragmentNavigator.loadFragment(
-                       this, null, new RecipeListFragment(), R.id.mainFrContainer
+                       this, null, new RecipeFeedFragment(), R.id.mainFrContainer
                );
                return true;
            }  else if (item.getItemId() == R.id.health_item){
                FragmentNavigator.loadFragment(
-                       this, null, new HealthyFragment(), R.id.mainFrContainer
+                       this, null, new ScannerFragment(), R.id.mainFrContainer
                );
                return true;
            } else {

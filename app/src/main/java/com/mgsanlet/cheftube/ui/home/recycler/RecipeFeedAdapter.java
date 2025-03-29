@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.home.recycler;
+package com.mgsanlet.cheftube.ui.home.recycler;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,14 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
-import com.mgsanlet.cheftube.FragmentNavigator;
+import com.mgsanlet.cheftube.utils.FragmentNavigator;
 import com.mgsanlet.cheftube.R;
-import com.mgsanlet.cheftube.home.RecipeDetailFragment;
-import com.mgsanlet.cheftube.home.RecipeListFragment;
+import com.mgsanlet.cheftube.ui.home.RecipeDetailFragment;
+import com.mgsanlet.cheftube.ui.home.RecipeFeedFragment;
 
 import java.util.List;
 
-import model.Recipe;
+import com.mgsanlet.cheftube.data.model.Recipe;
 /**
  * Adapter for displaying a list of recipes in a RecyclerView.
  * This adapter binds recipe data to the views in the RecyclerView.
@@ -60,7 +60,7 @@ public class RecipeFeedAdapter extends RecyclerView.Adapter<RecipeFeedAdapter.Re
      */
     private void navToRecipeDetail(Recipe recipe) {
         // -Getting the current visible fragment-
-        RecipeListFragment currentFragment = (RecipeListFragment) fragmentManager
+        RecipeFeedFragment currentFragment = (RecipeFeedFragment) fragmentManager
                 .findFragmentById(R.id.mainFrContainer);
 
         if (currentFragment != null && currentFragment.isVisible()) {

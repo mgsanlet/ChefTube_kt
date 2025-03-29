@@ -1,4 +1,4 @@
-package model;
+package com.mgsanlet.cheftube.data.local;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -7,7 +7,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.mgsanlet.cheftube.db.DataBaseHelper;
+import com.mgsanlet.cheftube.data.model.User;
 
 /**
  * Data Access Object (DAO) class for managing user-related database operations.

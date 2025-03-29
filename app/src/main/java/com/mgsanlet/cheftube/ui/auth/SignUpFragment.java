@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.auth;
+package com.mgsanlet.cheftube.ui.auth;
 
 import android.os.Bundle;
 import android.util.Patterns;
@@ -10,10 +10,10 @@ import android.widget.EditText;
 
 import androidx.fragment.app.Fragment;
 
-import model.User;
-import model.UserDAO;
+import com.mgsanlet.cheftube.data.model.User;
+import com.mgsanlet.cheftube.data.local.UserDAO;
 
-import com.mgsanlet.cheftube.FragmentNavigator;
+import com.mgsanlet.cheftube.utils.FragmentNavigator;
 import com.mgsanlet.cheftube.R;
 
 /**

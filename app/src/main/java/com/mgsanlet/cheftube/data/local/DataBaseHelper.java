@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.db;
+package com.mgsanlet.cheftube.data.local;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

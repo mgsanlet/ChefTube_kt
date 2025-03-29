@@ -1,4 +1,4 @@
-package model;
+package com.mgsanlet.cheftube.data.model;
 
 import android.content.Context;
 

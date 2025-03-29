@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.auth;
+package com.mgsanlet.cheftube.ui.auth;
 
 import android.content.Intent;
 import android.content.SharedPreferences;

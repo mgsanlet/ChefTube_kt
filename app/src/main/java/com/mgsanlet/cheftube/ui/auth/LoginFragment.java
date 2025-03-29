@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.auth;
+package com.mgsanlet.cheftube.ui.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,11 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import model.User;
-import model.UserDAO;
+import com.mgsanlet.cheftube.data.model.User;
+import com.mgsanlet.cheftube.data.local.UserDAO;
 
-import com.mgsanlet.cheftube.FragmentNavigator;
-import com.mgsanlet.cheftube.home.MainActivity;
+import com.mgsanlet.cheftube.utils.FragmentNavigator;
+import com.mgsanlet.cheftube.ui.home.HomeActivity;
 import com.mgsanlet.cheftube.R;
 
 /**
@@ -81,7 +81,7 @@ public class LoginFragment extends Fragment {
         loginBtn = view.findViewById(R.id.signInBtn);
         signUpLink = view.findViewById(R.id.loginSignUpLink);
         // -Initializing intent-
-        mainActIntent = new Intent(getActivity(), MainActivity.class);
+        mainActIntent = new Intent(getActivity(), HomeActivity.class);
         // -Initializing string resources-
         requiredStr = getString(R.string.required);
         invalidLoginStr = getString(R.string.invalid_login);
@@ -153,7 +153,7 @@ public class LoginFragment extends Fragment {
     }
 
     /**
-     * Navigates to the home page (MainActivity) with the valid user's data.
+     * Navigates to the home page (HomeActivity) with the valid user's data.
      *
      * @param validUser  The {@link User} object representing the user that successfully logged in.
      */

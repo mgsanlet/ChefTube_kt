@@ -1,8 +1,10 @@
-package model;
+package com.mgsanlet.cheftube.data.repository;
 
 import android.content.Context;
 
 import com.mgsanlet.cheftube.R;
+import com.mgsanlet.cheftube.data.model.Recipe;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
