@@ -27,9 +27,6 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Cargar el idioma guardado y aplicar la configuración regional
-        //LocaleUtils.applyLocale(this)
-
         this.enableEdgeToEdge()
         setContentView(R.layout.activity_splash)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v: View, insets: WindowInsetsCompat ->
