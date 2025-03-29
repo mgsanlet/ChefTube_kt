@@ -147,7 +147,7 @@ public class HomeActivity extends AppCompatActivity {
             String selectedLanguage = languageCodes[which]; // -'which' is the item index-
             Lingver.getInstance().setLocale(this, new Locale(selectedLanguage));
             recreate();
-            saveLanguage(languageCode);  
+            saveLanguage(selectedLanguage);  
         });
         builder.show();
     }
