@@ -27,8 +27,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
     }
     buildFeatures {
         viewBinding = true
@@ -47,14 +50,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    implementation("com.android.volley:volley:1.2.1")
-    implementation("com.google.code.gson:gson:2.12.1")
-    implementation ("com.journeyapps:zxing-android-embedded:4.3.0")
-    //implementation("com.google.mlkit:barcode-scanning:17.0.0")
-    //implementation("androidx.camera:camera-core:1.0.0")
-    //implementation("androidx.camera:camera-camera2:1.0.0")
-    //implementation("androidx.camera:camera-lifecycle:1.0.0")
-    //implementation("androidx.camera:camera-view:1.0.0")
-
+    implementation(libs.glide)
+    implementation(libs.volley)
+    implementation(libs.gson)
+    implementation (libs.zxing.android.embedded)
+    implementation("com.github.YarikSOffice:lingver:1.3.0")
 }

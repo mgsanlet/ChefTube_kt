@@ -27,6 +27,8 @@ import com.mgsanlet.cheftube.ui.auth.AuthActivity;
 import java.util.Locale;
 
 import com.mgsanlet.cheftube.data.model.User;
+import com.yariksoffice.lingver.Lingver;
+
 /**
  * HomeActivity serves as the primary activity for the application's home screen.
  * It manages the top MaterialToolbar, BottomNavigationView, and fragments
@@ -143,29 +145,11 @@ public class HomeActivity extends AppCompatActivity {
         builder.setItems(languages, (dialog, which) -> {
             // -This code is executed when a language is selected-
             String selectedLanguage = languageCodes[which]; // -'which' is the item index-
-            setLocale(selectedLanguage, true); // -Setting the language of the app-
+            Lingver.getInstance().setLocale(this, new Locale(selectedLanguage));
+            recreate();
+            saveLanguage(languageCode);  
         });
         builder.show();
-    }
-
-    /**
-     * Updates the app's locale to the specified language code (ISO 639-1) and optionally restarts
-     * the activity to apply changes. Saves the language preference in SharedPreferences.
-     *
-     * @param languageCode    The language code to set (e.g., "en" for English, "es" for Spanish).
-     * @param restartActivity If true, the activity will be restarted to apply the new locale.
-     */
-    private void setLocale(String languageCode, boolean restartActivity) {
-        Resources res = getResources();
-        Configuration config = res.getConfiguration();
-        config.setLocale(new Locale(languageCode));
-        res.updateConfiguration(config, res.getDisplayMetrics());
-
-        saveLanguage(languageCode); // -Saving the chosen language to SharedPreferences-
-
-        if (restartActivity) {
-            recreate(); // -Restarting activity only if requested-
-        }
     }
 
     /**

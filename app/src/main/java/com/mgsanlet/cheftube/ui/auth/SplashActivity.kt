@@ -3,11 +3,13 @@ package com.mgsanlet.cheftube.ui.auth
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.utils.LocaleUtils
 import java.util.Locale
 
 /**
@@ -19,14 +21,14 @@ import java.util.Locale
  */
 class SplashActivity : AppCompatActivity() {
     // Elementos UI
-    lateinit var logoImg: ImageView
-    lateinit var titleImg: ImageView
+    lateinit var mLogoImageView: ImageView
+    lateinit var mTitleImageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Cargar el idioma guardado y aplicar la configuración regional
-        LocaleUtils.applyLocale(this)
+        //LocaleUtils.applyLocale(this)
 
         this.enableEdgeToEdge()
         setContentView(R.layout.activity_splash)
@@ -36,17 +38,17 @@ class SplashActivity : AppCompatActivity() {
             insets
         }
 
-        logoImg = findViewById(R.id.splash_logo)
-        titleImg = findViewById(R.id.splash_title)
+        mLogoImageView = findViewById(R.id.splash_logo)
+        mTitleImageView = findViewById(R.id.splash_title)
 
-        logoImg.alpha = 0f
-        titleImg.alpha = 0f
+        mLogoImageView.alpha = 0f
+        mTitleImageView.alpha = 0f
 
-        logoImg.animate()
+        mLogoImageView.animate()
             .alpha(1f)
             .setDuration(ANIMATION_DURATION)
 
-        titleImg.animate()
+        mTitleImageView.animate()
             .alpha(1f)
             .setDuration(ANIMATION_DURATION)
             .withEndAction {
@@ -59,8 +61,8 @@ class SplashActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         // Cancela las animaciones en curso para prevenir fugas de memoria
-        logoImg.animate().cancel()
-        titleImg.animate().cancel()
+        mLogoImageView.animate().cancel()
+        mTitleImageView.animate().cancel()
     }
 
     companion object {
