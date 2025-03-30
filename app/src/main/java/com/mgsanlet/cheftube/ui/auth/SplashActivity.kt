@@ -34,10 +34,11 @@ class SplashActivity : AppCompatActivity() {
         this.enableEdgeToEdge()
         setContentView(R.layout.activity_splash)
         SystemUiHelper.hideSystemBars(window.decorView)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v: View, insets: WindowInsetsCompat ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) {
+            v: View, insets: WindowInsetsCompat ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+                insets
         }
 
         mLogoImageView = findViewById(R.id.splash_logo)

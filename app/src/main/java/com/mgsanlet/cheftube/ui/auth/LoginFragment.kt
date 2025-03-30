@@ -63,7 +63,7 @@ class LoginFragment : Fragment() {
         mSignUpLink = view.findViewById(R.id.loginSignUpLink)
 
         // Se colocan el usuario y contraseña si han sido pasados desde el fragmento de SignUp
-        if (mRegisteredUser != null) {
+        mRegisteredUser?.let {
             mIdentityEditText.setText(mRegisteredUser!!.username)
             mPasswordEditText.setText(mRegisteredUser!!.password)
         }
@@ -142,7 +142,7 @@ class LoginFragment : Fragment() {
         val mainActIntent = Intent(activity, HomeActivity::class.java)
         mainActIntent.putExtra("user", validUser)
         startActivity(mainActIntent)
-        if (activity != null) requireActivity().finish()
+        activity?.finish()
     }
 
     companion object {
