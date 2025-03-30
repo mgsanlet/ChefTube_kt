@@ -1,29 +1,29 @@
-package com.mgsanlet.cheftube.ui.auth;
+package com.mgsanlet.cheftube.ui.auth
 
-import android.os.Bundle;
+import android.os.Bundle
+import android.view.View
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.utils.SystemUiHelper
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
-import com.mgsanlet.cheftube.R;
 /**
- * AuthActivity contains a background image, app logo and title images  and a fragment container
- * in which login fragment and register fragment are loaded.
- * @author MarioG
+ * AuthActivity contiene una imagen de fondo, el logo de la aplicación y las imágenes del título,
+ * así como un contenedor de fragmentos en el que se cargan el fragmento de inicio de sesión y el fragmento de registro.
+ * @autor MarioG
  */
-public class AuthActivity extends AppCompatActivity {
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_auth);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+class AuthActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        this.enableEdgeToEdge()
+        setContentView(R.layout.activity_auth)
+        SystemUiHelper.hideSystemBars(window.decorView)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v: View, insets: WindowInsetsCompat ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
     }
 }

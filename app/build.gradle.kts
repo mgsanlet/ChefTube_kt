@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.mgsanlet.cheftube"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -54,5 +54,5 @@ dependencies {
     implementation(libs.volley)
     implementation(libs.gson)
     implementation (libs.zxing.android.embedded)
-    implementation("com.github.YarikSOffice:lingver:1.3.0")
+    implementation(libs.lingver)
 }

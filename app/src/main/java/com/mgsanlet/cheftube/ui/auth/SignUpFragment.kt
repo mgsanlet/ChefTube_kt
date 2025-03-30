@@ -1,226 +1,225 @@
-package com.mgsanlet.cheftube.ui.auth;
+package com.mgsanlet.cheftube.ui.auth
 
-import android.os.Bundle;
-import android.util.Patterns;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-
-import androidx.fragment.app.Fragment;
-
-import com.mgsanlet.cheftube.data.model.User;
-import com.mgsanlet.cheftube.data.local.UserDAO;
-
-import com.mgsanlet.cheftube.utils.FragmentNavigator;
-import com.mgsanlet.cheftube.R;
+import android.os.Bundle
+import android.util.Patterns
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import androidx.fragment.app.Fragment
+import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.data.local.UserDAO
+import com.mgsanlet.cheftube.data.model.User
+import com.mgsanlet.cheftube.ui.auth.LoginFragment.Companion.newInstance
+import com.mgsanlet.cheftube.utils.FragmentNavigator
 
 /**
- * A fragment responsible for handling the user sign-up process.
- * This fragment allows the user to register by providing a name, email, and password.
- * It validates the input data and ensures that the email is not already in use.
- * After successful registration, the user is redirected to the login
- * fragment with credentials prefilled.
+ * Un fragmento responsable de manejar el proceso de registro de usuario.
+ * Este fragmento permite al usuario registrarse proporcionando un nombre, correo electrónico y contraseña.
+ * Valida los datos de entrada y asegura que el correo electrónico no esté ya en uso.
+ * Después de un registro exitoso, el usuario es redirigido al fragmento de inicio de sesión
+ * con credenciales prellenadas.
  *
  * @author MarioG
  */
-public class SignUpFragment extends Fragment {
-    // -Declaring UI elements-
-    EditText nameField;
-    EditText emailField;
-    EditText pwdField;
-    EditText pwd2Field;
-    Button saveBtn;
-    // -Declaring string resources-
-    String requiredStr;
-    String invalidEmailStr;
-    String emailAlreadyStr;
-    String usernameAlreadyStr;
-    String shortPwdStr;
-    String pwdDMatchStr;
+class SignUpFragment : Fragment() {
+    // Miembros UI
+    private lateinit var mNameEditText:  EditText
+    private lateinit var mEmailEditText: EditText
+    private lateinit var mPassword1EditText:   EditText
+    private lateinit var mPassword2EditText:  EditText
+    private lateinit var mSaveButton:    Button
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_sign_up, container, false);
-        // -Initializing UI elements-
-        nameField = view.findViewById(R.id.signUpNameField);
-        emailField = view.findViewById(R.id.signUpEmailField);
-        pwdField = view.findViewById(R.id.signUpPwdField);
-        pwd2Field = view.findViewById(R.id.signUpPwd2Field);
-        saveBtn = view.findViewById(R.id.saveBtn);
-        // -Initializing string resources-
-        requiredStr = getString(R.string.required);
-        invalidEmailStr = getString(R.string.invalid_email);
-        emailAlreadyStr = getString(R.string.email_already);
-        usernameAlreadyStr = getString(R.string.username_already);
-        shortPwdStr = getString(R.string.short_pwd);
-        pwdDMatchStr = getString(R.string.pwd_d_match);
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_sign_up, container, false)
 
-        // -Setting up listeners-
-        saveBtn.setOnClickListener(view1 -> {
-            if (isValidRegister()) {
-                loadLoginFr();
+        mNameEditText = view.findViewById(R.id.signUpNameField)
+        mEmailEditText = view.findViewById(R.id.signUpEmailField)
+        mPassword1EditText = view.findViewById(R.id.signUpPwdField)
+        mPassword2EditText = view.findViewById(R.id.signUpPwd2Field)
+        mSaveButton = view.findViewById(R.id.saveBtn)
+
+        // Listeners
+        mSaveButton.setOnClickListener {
+            if (isValidRegister) {
+                loadLoginFr()
             }
-        });
+        }
 
-        return view;
+        return view
     }
 
     /**
-     * Validates the user input for registration. It ensures all fields are filled,
-     * the email format is correct, the email is not already in use, the password is valid,
-     * and the password fields match.
+     * Valida la entrada del usuario para el registro. Asegura que todos los campos estén llenos,
+     * el formato del correo electrónico sea correcto, que el correo electrónico no esté ya en uso,
+     * que la contraseña sea válida y que los campos de contraseña coincidan.
      *
-     * @return True if all validation checks pass, false otherwise.
+     * @return True si todas las validaciones pasan, False de lo contrario.
      */
-    private boolean isValidRegister() {
-        return (!fieldsAreEmpty() &&
-                isValidEmail() &&
-                !isExistentEmail() &&
-                !isExistentUsername() &&
-                isValidPwd() &&
-                pwdsMatch()
-        );
-    }
+    private val isValidRegister: Boolean
+        get() = (!fieldsAreEmpty() &&
+                isValidEmail &&
+                !isExistentEmail &&
+                !isExistentUsername &&
+                isValidPwd &&
+                passwordsMatch()
+                )
 
     /**
-     * Checks if any of the required fields (name, email, password) are empty.
-     * Sets an error message on the corresponding field if it is empty.
+     * Verifica si alguno de los campos requeridos (nombre, correo electrónico, contraseña) está vacío.
+     * Establece un mensaje de error en el campo correspondiente si está vacío.
      *
-     * @return True if any field is empty, false otherwise.
+     * @return True si algún campo está vacío, False de lo contrario.
      */
-    private boolean fieldsAreEmpty() {
-        boolean empty = false;
-        if (nameField.getText().toString().trim().isEmpty()) {
-            nameField.setError(requiredStr);
-            empty = true;
+    private fun fieldsAreEmpty(): Boolean {
+        return when {
+            mNameEditText.text.toString().trim { it <= ' ' }.isEmpty() ||
+            mEmailEditText.text.toString().trim { it <= ' ' }.isEmpty() ||
+            mPassword1EditText.text.toString().trim { it <= ' ' }.isEmpty() ||
+            mPassword2EditText.text.toString().trim { it <= ' ' }.isEmpty() -> {
+                val requiredMessage = getString(R.string.required)
+                if (mNameEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+                    mNameEditText.error = requiredMessage
+                }
+                if (mEmailEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+                    mEmailEditText.error = requiredMessage
+                }
+                if (mPassword1EditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+                    mPassword1EditText.error = requiredMessage
+                }
+                if (mPassword2EditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+                    mPassword2EditText.error = requiredMessage
+                }
+                true
+            }
+            else -> false
         }
-        if (emailField.getText().toString().trim().isEmpty()) {
-            emailField.setError(requiredStr);
-            empty = true;
-        }
-        if (pwdField.getText().toString().trim().isEmpty()) {
-            pwdField.setError(requiredStr);
-            empty = true;
-        }
-        if (pwd2Field.getText().toString().trim().isEmpty()) {
-            pwd2Field.setError(requiredStr);
-            empty = true;
-        }
-        return empty;
     }
 
     /**
-     * Validates that the email entered is in a valid email format using regular expressions.
+     * Valida que el correo electrónico ingresado esté en un formato válido utilizando expresiones regulares.
      *
-     * @return True if the email is valid, false otherwise.
+     * @return True si el correo electrónico es válido, False de lo contrario.
      */
-    private boolean isValidEmail() {
-        String email = emailField.getText().toString();
-        boolean isValid = Patterns.EMAIL_ADDRESS.matcher(email).matches();
-        if (!isValid) {
-            emailField.setError(invalidEmailStr);
+    private val isValidEmail: Boolean
+        get() {
+            val email = mEmailEditText.text.toString()
+            return when {
+                Patterns.EMAIL_ADDRESS.matcher(email).matches() -> true
+                else -> {
+                    mEmailEditText.error = getString(R.string.invalid_email)
+                    false
+                }
+            }
         }
-        return isValid;
-    }
 
     /**
-     * Checks if the entered email already exists in the system by comparing it with
-     * the emails of all registered users.
+     * Verifica si el correo electrónico ingresado ya existe en el sistema comparándolo con
+     * los correos electrónicos de todos los usuarios registrados.
      *
-     * @return True if the email already exists, false otherwise.
+     * @return True si el correo electrónico ya existe, False de lo contrario.
      */
-    private boolean isExistentEmail() {
-        String inputEmail = emailField.getText().toString();
+    private val isExistentEmail: Boolean
+        get() {
+            val inputEmail = mEmailEditText.text.toString()
 
-        boolean isExistent = UserDAO.isExistentEmail(inputEmail, getContext());
-
-        if (isExistent) {
-            emailField.setError(emailAlreadyStr);
+            return when {
+                UserDAO.isExistentEmail(inputEmail, context) -> {
+                    mEmailEditText.error = getString(R.string.email_already)
+                    true
+                }
+                else -> false
+            }
         }
-        return isExistent;
-    }
 
     /**
-     * Checks if the entered username already exists in the system by comparing it with
-     * the usernames of all registered users.
+     * Verifica si el nombre de usuario ingresado ya existe en el sistema comparándolo con
+     * los nombres de usuario de todos los usuarios registrados.
      *
-     * @return True if the username already exists, false otherwise.
+     * @return True si el nombre de usuario ya existe, False de lo contrario.
      */
-    private boolean isExistentUsername() {
+    private val isExistentUsername: Boolean
+        get() {
+            val inputUsername = mNameEditText.text.toString()
 
-        String inputUsername = nameField.getText().toString();
-
-        boolean isExistent = UserDAO.isExistentUsername(inputUsername, getContext());
-
-        if (isExistent) {
-            nameField.setError(usernameAlreadyStr);
+            return when {
+                UserDAO.isExistentUsername(inputUsername, context) -> {
+                    mNameEditText.error = getString(R.string.username_already)
+                    true
+                }
+                else -> false
+            }
         }
-        return isExistent;
-    }
 
     /**
-     * Validates the password to ensure it is at least 5 characters long.
+     * Valida la contraseña para asegurar que tenga al menos 5 caracteres de longitud.
      *
-     * @return True if the password is valid, false otherwise.
+     * @return True si la contraseña es válida, False de lo contrario.
      */
-    private boolean isValidPwd() {
-        boolean isValid = true;
-        if (pwdField.getText().toString().length() < 5) {
-            pwdField.setError(shortPwdStr);
-            isValid = false;
+    private val isValidPwd: Boolean
+        get() {
+            return when {
+                mPassword1EditText.text.toString().length < 5 -> {
+                    mPassword1EditText.error = getString(R.string.short_pwd)
+                    false
+                }
+                else -> true
+            }
         }
-        return isValid;
-    }
 
     /**
-     * Checks if the two password fields match.
+     * Verifica si los dos campos de contraseña coinciden.
      *
-     * @return True if the passwords match, false otherwise.
+     * @return True si las contraseñas coinciden, False de lo contrario.
      */
-    private boolean pwdsMatch() {
-        boolean areMatching = false;
-        if (pwdField.getText().toString().equals(pwd2Field.getText().toString())) {
-            areMatching = true;
-        } else {
-            pwd2Field.setError(pwdDMatchStr);
+    private fun passwordsMatch(): Boolean {
+        return when {
+            mPassword1EditText.text.toString() == mPassword2EditText.text.toString() -> {
+                true
+            }
+            else -> {
+                mPassword2EditText.error = getString(R.string.pwd_d_match)
+                false
+            }
         }
-        return areMatching;
     }
 
     /**
-     * Loads the LoginFragment after successful registration.
-     * The new user is registered in the UserDAO and the user is redirected to the login page
-     * with prefilled credentials.
+     * Carga el LoginFragment después de un registro exitoso.
+     * El nuevo usuario se registra en el UserDAO y el usuario es redirigido a la página de inicio de sesión
+     * con credenciales prellenadas.
      */
-    private void loadLoginFr() {
-        cleanErrors();
-        User newUser = getNewUser();
-        UserDAO.register(newUser, getContext());
-        LoginFragment loginFr = LoginFragment.newInstance(newUser);
-        FragmentNavigator.loadFragmentInstance(null, this, loginFr, R.id.authFrContainer);
+    private fun loadLoginFr() {
+        cleanErrors()
+        val newUser = newUser
+        UserDAO.register(newUser, context)
+        val loginFr = newInstance(newUser)
+        FragmentNavigator.loadFragmentInstance(null, this, loginFr, R.id.authFrContainer)
     }
 
     /**
-     * Clears all error messages from the input fields (name, email, password).
+     * Limpia todos los mensajes de error de los campos de entrada (nombre, correo electrónico, contraseña).
      */
-    private void cleanErrors() {
-        nameField.setError(null);
-        emailField.setError(null);
-        pwdField.setError(null);
-        pwd2Field.setError(null);
+    private fun cleanErrors() {
+        mNameEditText.error = null
+        mEmailEditText.error = null
+        mPassword1EditText.error = null
+        mPassword2EditText.error = null
     }
 
     /**
-     * Creates a new user object with the provided name, email, and password fields.
+     * Crea un nuevo objeto de usuario con los campos de nombre, correo electrónico y contraseña proporcionados.
      *
-     * @return A new User object containing the registration details.
+     * @return Un nuevo objeto de usuario que contiene los detalles de registro.
      */
-    private User getNewUser() {
-        return new User(nameField.getText().toString(),
-                emailField.getText().toString(),
-                pwdField.getText().toString());
-    }
+    private val newUser: User
+        get() = User(
+            mNameEditText.text.toString(),
+            mEmailEditText.text.toString(),
+            mPassword1EditText.text.toString()
+        )
 }
