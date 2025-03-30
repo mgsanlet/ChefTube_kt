@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.ui.home;
+package com.mgsanlet.cheftube.view.ui.home;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mgsanlet.cheftube.R;
-import com.mgsanlet.cheftube.ui.home.recycler.RecipeFeedAdapter;
+import com.mgsanlet.cheftube.view.adapter.RecipeFeedAdapter;
 
 import java.util.List;
 

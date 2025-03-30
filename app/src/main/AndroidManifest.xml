@@ -30,7 +30,7 @@
         tools:targetApi="34">
 
         <activity
-            android:name=".ui.auth.SplashActivity"
+            android:name=".view.ui.auth.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,10 +39,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.auth.AuthActivity"
+            android:name=".view.ui.auth.AuthActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.home.HomeActivity"
+            android:name=".view.ui.home.HomeActivity"
             android:exported="true"/>
     </application>
 

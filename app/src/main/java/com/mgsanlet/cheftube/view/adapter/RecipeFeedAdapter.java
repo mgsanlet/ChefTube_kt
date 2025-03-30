@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.ui.home.recycler;
+package com.mgsanlet.cheftube.view.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +15,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.mgsanlet.cheftube.utils.FragmentNavigator;
 import com.mgsanlet.cheftube.R;
-import com.mgsanlet.cheftube.ui.home.RecipeDetailFragment;
-import com.mgsanlet.cheftube.ui.home.RecipeFeedFragment;
+import com.mgsanlet.cheftube.view.ui.home.RecipeDetailFragment;
+import com.mgsanlet.cheftube.view.ui.home.RecipeFeedFragment;
 
 import java.util.List;
 

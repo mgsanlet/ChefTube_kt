@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.ui.home;
+package com.mgsanlet.cheftube.view.ui.home;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.ui.auth
+package com.mgsanlet.cheftube.view.ui.auth
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -24,7 +24,7 @@ import com.mgsanlet.cheftube.utils.SystemUiHelper
 la compatibilidad con versiones desde la API 26 y se prefiere centralizar la logica de la
 pantalla de presentación en esta clase para que sea más mantenible*/
 class SplashActivity : AppCompatActivity() {
-    // Elementos UI
+
     private lateinit var mLogoImageView: ImageView
     private lateinit var mTitleImageView: ImageView
 

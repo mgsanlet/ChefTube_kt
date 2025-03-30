@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context=".ui.home.HomeActivity">
+    tools:context=".view.ui.home.HomeActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/materialToolbar"
@@ -51,7 +51,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/mainFrContainer"
-        android:name="com.mgsanlet.cheftube.ui.home.RecipeFeedFragment"
+        android:name="com.mgsanlet.cheftube.view.ui.home.RecipeFeedFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
 

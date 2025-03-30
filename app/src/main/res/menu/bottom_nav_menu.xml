@@ -9,7 +9,7 @@
         android:title="@string/home"
         android:icon="@drawable/ic_home_small" />
     <item
-        android:id="@+id/health_item"
-        android:title="@string/healthy_advice"
+        android:id="@+id/scanner_item"
+        android:title="@string/scanner"
         android:icon="@drawable/ic_health_small" />
 </menu>

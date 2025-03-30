@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.ui.auth
+package com.mgsanlet.cheftube.view.ui.auth
 
 import android.os.Bundle
 import android.util.Patterns
@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.local.UserDAO
 import com.mgsanlet.cheftube.data.model.User
-import com.mgsanlet.cheftube.ui.auth.LoginFragment.Companion.newInstance
+import com.mgsanlet.cheftube.view.ui.auth.LoginFragment.Companion.newInstance
 import com.mgsanlet.cheftube.utils.FragmentNavigator
 
 /**
@@ -24,7 +24,7 @@ import com.mgsanlet.cheftube.utils.FragmentNavigator
  * @author MarioG
  */
 class SignUpFragment : Fragment() {
-    // Miembros UI
+
     private lateinit var mNameEditText:  EditText
     private lateinit var mEmailEditText: EditText
     private lateinit var mPassword1EditText:   EditText
