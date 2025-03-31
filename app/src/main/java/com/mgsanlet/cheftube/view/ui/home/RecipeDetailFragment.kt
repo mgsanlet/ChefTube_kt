@@ -1,224 +1,229 @@
-package com.mgsanlet.cheftube.view.ui.home;
+package com.mgsanlet.cheftube.view.ui.home
 
-import android.media.MediaPlayer;
-import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-
-import com.mgsanlet.cheftube.R;
-
-import com.mgsanlet.cheftube.data.model.Recipe;
+import android.annotation.SuppressLint
+import android.content.DialogInterface
+import android.media.MediaPlayer
+import android.os.Build
+import android.os.Bundle
+import android.os.CountDownTimer
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.webkit.WebView
+import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.data.model.Recipe
 
 /**
- * A fragment that displays the details of a recipe, including its title, ingredients,
- * preparation steps, and an embedded video (if available). It also includes a countdown timer
- * for cooking or preparation time.
+ * Un fragmento que muestra los detalles de una receta, incluyendo su título, ingredientes,
+ * pasos de preparación y un video incrustado (si está disponible). También incluye un temporizador de cuenta regresiva
+ * para el tiempo de cocción o preparación.
  */
-public class RecipeDetailFragment extends Fragment {
+class RecipeDetailFragment : Fragment() {
 
-    // -Declaring constant for argument key-
-    private static final String ARG_RECIPE = "recipe";
+    private lateinit var mTimerTextView   : TextView
+    private lateinit var mStartPauseButton: Button
 
-    // -Declaring UI elements-
-    private TextView timerTextView;
-    private Button startPauseButton;
+    // -Variables del cronómetro-
+    private var mCountDownTimer: CountDownTimer? = null
+    private var mTimeLeftInMillis: Long = 0
+    private var mIsTimerRunning = false
+    private lateinit var mMediaPlayer: MediaPlayer
 
-    // -Countdown timer variables-
-    private CountDownTimer countDownTimer;
-    private long timeLeftInMillis = 0; // Set this to your desired countdown time in milliseconds
-    private boolean timerRunning = false;
+    @SuppressLint("SetJavaScriptEnabled")
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_recipe_detail, container, false)
+        var recipe: Recipe? = null
 
-    // -MediaPlayer for alarm sound-
-    private MediaPlayer mediaPlayer;
-
-    /**
-     * Factory method to create a new instance of this fragment with the specified recipe.
-     *
-     * @param recipe The recipe whose details will be shown.
-     * @return A new instance of the RecipeDetailFragment.
-     */
-    public static RecipeDetailFragment newInstance(Recipe recipe) {
-        RecipeDetailFragment fragment = new RecipeDetailFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(ARG_RECIPE, recipe); // -Passing recipe object as argument-
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
-        Recipe recipe = null;
-
-        // -Getting the recipe object passed as an argument to the fragment-
-        if (getArguments() != null) {
-            recipe = (Recipe) getArguments().getSerializable(ARG_RECIPE);
+        arguments?.let {
+            recipe = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                requireArguments().getSerializable(ARG_RECIPE, Recipe::class.java) //TODO cambiar a parcelable
+            }else{
+                @Suppress("DEPRECATION") // Solo se usará para versiones antiguas
+                requireArguments().getSerializable(ARG_RECIPE) as Recipe?
+            }
         }
 
-        // -Initializing UI elements-
-        TextView title = view.findViewById(R.id.recipeDetailTitle);
-        WebView webView = view.findViewById(R.id.recipeDetailVideo);
-        LinearLayout ingredientsContainer = view.findViewById(R.id.ingredientsLinearLayout);
-        LinearLayout stepsContainer = view.findViewById(R.id.stepsLinearLayout);
+        val title = view.findViewById<TextView>(R.id.recipeDetailTitle)
+        val webView = view.findViewById<WebView>(R.id.recipeDetailVideo)
+        val ingredientsContainer = view.findViewById<LinearLayout>(R.id.ingredientsLinearLayout)
+        val stepsContainer = view.findViewById<LinearLayout>(R.id.stepsLinearLayout)
 
-        // -Setting title and video-
+        // Configurar el título y video
         if (recipe != null) {
-            title.setText(getString(recipe.getTtlRId()));
-            webView.getSettings().setJavaScriptEnabled(true);
-            String videoUrl = recipe.getVideoUrl();
-            webView.loadUrl(videoUrl);
+            title.text = getString(recipe!!.ttlRId)
+            webView.settings.javaScriptEnabled = true
+            val videoUrl = recipe!!.videoUrl
+            webView.loadUrl(videoUrl)
 
-            // -Dynamically adding ingredients to the ingredients container-
-            for (Integer ingredientId : recipe.getIngrRIds()) {
-                TextView ingredientTextView = new TextView(getContext());
-                ingredientTextView.setText(ingredientId);
-                if (getContext() != null) {
-                    ingredientTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
+            // Agregando ingredientes dinámicamente al contenedor de ingredientes
+            for (ingredientId in recipe!!.ingrRIds) {
+                val ingredientTextView = TextView(context)
+                ingredientTextView.setText(ingredientId!!)
+                if (context != null) {
+                    ingredientTextView.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
+                    )
                 }
-                ingredientTextView.setTextSize(16);
-                ingredientsContainer.addView(ingredientTextView);
+                ingredientTextView.textSize = 16f
+                ingredientsContainer.addView(ingredientTextView)
             }
 
-            // -Dynamically adding steps to the steps container-
-            for (Integer stepId : recipe.getStepsRIds()) {
-                TextView stepTextView = new TextView(getContext());
-                stepTextView.setText(stepId);
-                stepTextView.setPadding(0, 4, 0, 2);
-                if (getContext() != null) {
-                    stepTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
+            // Agregando pasos dinámicamente al contenedor de pasos
+            for (stepId in recipe!!.stepsRIds) {
+                val stepTextView = TextView(context)
+                stepTextView.setText(stepId!!)
+                stepTextView.setPadding(0, 4, 0, 2)
+                if (context != null) {
+                    stepTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
                 }
-                stepTextView.setTextSize(12);
-                stepsContainer.addView(stepTextView);
+                stepTextView.textSize = 12f
+                stepsContainer.addView(stepTextView)
             }
         }
 
-        // -Initializing timer UI elements-
-        timerTextView = view.findViewById(R.id.timerTextView);
-        startPauseButton = view.findViewById(R.id.startPauseButton);
+        // Inicializar elementos de la interfaz del temporizador
+        mTimerTextView = view.findViewById(R.id.timerTextView)
+        mStartPauseButton = view.findViewById(R.id.startPauseButton)
 
-        // -Setting up button listeners-
-        startPauseButton.setOnClickListener(v -> startPauseTimer());
-        // -Setting up the timer TextView click listener to show the dialog-
-        timerTextView.setOnClickListener(v -> showSetTimerDialog());
+        // Listeners
+        mStartPauseButton.setOnClickListener { startPauseTimer() }
+        mTimerTextView.setOnClickListener { showSetTimerDialog() }
 
-        return view;
+        return view
     }
 
     /**
-     * Toggles the timer state between started and paused. If the timer is running, it will be paused.
-     * If the timer is paused or stopped, it will be started.
+     * Alterna el estado del temporizador entre iniciado y pausado. Si el temporizador está en
+     * ejecución, se pausará. Si el temporizador está pausado, se iniciará.
      */
-    private void startPauseTimer() {
-        if (timerRunning) {
-            pauseTimer();
+    private fun startPauseTimer() {
+        if (mIsTimerRunning) {
+            pauseTimer()
         } else {
-            startTimer();
+            startTimer()
         }
     }
 
     /**
-     * Starts the countdown timer. Creates a new CountDownTimer instance and initializes it
-     * with the remaining time. Updates the timer display every second and handles the timer completion.
+     * Inicia el temporizador de cuenta regresiva. Crea una nueva instancia de CountDownTimer y
+     * la inicializa con el tiempo restante. Actualiza la visualización del temporizador cada
+     * segundo y maneja la finalización del temporizador.
      */
-    private void startTimer() {
-        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                timeLeftInMillis = millisUntilFinished;
-                updateTimer();
+    private fun startTimer() {
+        mCountDownTimer = object : CountDownTimer(mTimeLeftInMillis, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                mTimeLeftInMillis = millisUntilFinished
+                updateTimer()
             }
 
-            @Override
-            public void onFinish() {
-                timerRunning = false;
-                startPauseButton.setText(R.string.start);
-                playAlarmSound();
+            override fun onFinish() {
+                mIsTimerRunning = false
+                mStartPauseButton.setText(R.string.start)
+                playAlarmSound()
             }
-        }.start();
+        }.start()
 
-        timerRunning = true;
-        startPauseButton.setText(R.string.pause);
+        mIsTimerRunning = true
+        mStartPauseButton.setText(R.string.pause)
     }
 
     /**
-     * Pauses the currently running timer. Cancels the countdown and updates the UI
-     * to reflect the paused state.
+     * Pausa el temporizador que se está ejecutando actualmente. Cancela la cuenta regresiva y
+     * actualiza la interfaz de usuario para reflejar el estado de pausa.
      */
-    private void pauseTimer() {
-        countDownTimer.cancel();
-        timerRunning = false;
-        startPauseButton.setText(R.string.start);
+    private fun pauseTimer() {
+        mCountDownTimer!!.cancel()
+        mIsTimerRunning = false
+        mStartPauseButton.setText(R.string.start)
     }
 
     /**
-     * Updates the timer display with the current remaining time. Converts milliseconds
-     * to minutes and seconds format (MM:SS) and displays it in the timer TextView.
+     * Actualiza la visualización del temporizador con el tiempo restante actual.
+     * Convierte milisegundos a formato de minutos y segundos (MM:SS) y lo muestra en el
+     * TextView del temporizador.
      */
-    private void updateTimer() {
-        int minutes = (int) (timeLeftInMillis / 1000) / 60;
-        int seconds = (int) (timeLeftInMillis / 1000) % 60;
+    @SuppressLint("DefaultLocale") // El string no depende de Locale
+    private fun updateTimer() {
+        val minutes = (mTimeLeftInMillis / 1000).toInt() / 60
+        val seconds = (mTimeLeftInMillis / 1000).toInt() % 60
 
-        String timeLeftFormatted = String.format("%02d:%02d", minutes, seconds);
-        timerTextView.setText(timeLeftFormatted);
+        val timeLeftFormatted = String.format("%02d:%02d", minutes, seconds)
+        mTimerTextView.text = timeLeftFormatted
     }
 
     /**
-     * Shows a dialog allowing the user to set the timer duration. The dialog contains
-     * input fields for minutes and seconds. When the user confirms, the timer is updated
-     * with the new duration and the display is refreshed.
+     * Muestra un diálogo que permite al usuario establecer la duración del temporizador.
+     * El diálogo contiene campos de entrada para minutos y segundos. Cuando el usuario confirma,
+     * el temporizador se actualiza con la nueva duración y la visualización se refresca.
      */
-    private void showSetTimerDialog() {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
-        LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_set_timer, null);
-        dialogBuilder.setView(dialogView);
+    private fun showSetTimerDialog() {
+        val dialogBuilder = AlertDialog.Builder(
+            requireContext()
+        )
+        val inflater = requireActivity().layoutInflater
+        val dialogView = inflater.inflate(R.layout.dialog_set_timer, null)
+        dialogBuilder.setView(dialogView)
 
-        EditText minutesInput = dialogView.findViewById(R.id.minutesInput);
-        EditText secondsInput = dialogView.findViewById(R.id.secondsInput);
+        val minutesInput = dialogView.findViewById<EditText>(R.id.minutesInput)
+        val secondsInput = dialogView.findViewById<EditText>(R.id.secondsInput)
 
-        dialogBuilder.setPositiveButton(R.string.set, (dialog, which) -> {
-            String minutesString = minutesInput.getText().toString();
-            String secondsString = secondsInput.getText().toString();
+        dialogBuilder.setPositiveButton(R.string.set) { _: DialogInterface?, _: Int ->
+            val minutesString = minutesInput.text.toString()
+            val secondsString = secondsInput.text.toString()
 
-            int minutes = minutesString.isEmpty() ? 0 : Integer.parseInt(minutesString);
-            int seconds = secondsString.isEmpty() ? 0 : Integer.parseInt(secondsString);
+            val minutes = if (minutesString.isEmpty()) 0 else minutesString.toInt()
+            val seconds = if (secondsString.isEmpty()) 0 else secondsString.toInt()
 
-            // Convert to milliseconds and set the timer
-            timeLeftInMillis = (minutes * 60L + seconds) * 1000;
-            updateTimer(); // Update the displayed timer
-        });
+            // Convertir a milisegundos y establecer el temporizador
+            mTimeLeftInMillis = (minutes * 60L + seconds) * 1000
+            updateTimer() // Actualizar el temporizador mostrado
+        }
 
-        dialogBuilder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
+        dialogBuilder.setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
 
-        AlertDialog timerDialog = dialogBuilder.create();
-        timerDialog.show();
+        val timerDialog = dialogBuilder.create()
+        timerDialog.show()
     }
 
     /**
-     * Plays the alarm sound when the timer completes. Uses MediaPlayer to play the sound
-     * resource located in res/raw/alarm_clock.mp3. Automatically releases MediaPlayer resources
-     * after the sound finishes playing.
+     * Reproduce el sonido de alarma cuando el temporizador se completa. Utiliza MediaPlayer para
+     * reproducir el recurso de sonido. Libera automáticamente los recursos de MediaPlayer después
+     * de que la reproducción termine.
      */
-    private void playAlarmSound() {
-        // Initialize MediaPlayer to play the alarm sound
-        mediaPlayer = MediaPlayer.create(getContext(), R.raw.alarm_clock);
-        mediaPlayer.start();
+    private fun playAlarmSound() {
+        // Inicializar MediaPlayer para reproducir el sonido de alarma
+        mMediaPlayer = MediaPlayer.create(context, R.raw.alarm_clock)
+        mMediaPlayer.start()
 
-        // Release the MediaPlayer resources after playback is complete
-        mediaPlayer.setOnCompletionListener(mp -> {
-            mp.release();
-            mediaPlayer = null;
-        });
+        // Liberar los recursos de MediaPlayer después de que la reproducción termine
+        mMediaPlayer.setOnCompletionListener { mp: MediaPlayer ->
+            mp.release()
+        }
+    }
+
+    companion object {
+        private const val ARG_RECIPE = "recipe"
+
+        fun newInstance(recipe: Recipe?): RecipeDetailFragment {
+            val fragment = RecipeDetailFragment()
+            val args = Bundle()
+            args.putSerializable(ARG_RECIPE, recipe)
+            fragment.arguments = args
+            return fragment
+        }
     }
 }

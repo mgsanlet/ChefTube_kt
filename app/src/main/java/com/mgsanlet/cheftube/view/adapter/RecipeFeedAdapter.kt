@@ -1,96 +1,77 @@
-package com.mgsanlet.cheftube.view.adapter;
+package com.mgsanlet.cheftube.view.adapter
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
+import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.data.model.Recipe
+import com.mgsanlet.cheftube.utils.FragmentNavigator
+import com.mgsanlet.cheftube.view.adapter.RecipeFeedAdapter.RecipeViewHolder
+import com.mgsanlet.cheftube.view.ui.home.RecipeDetailFragment
+import com.mgsanlet.cheftube.view.ui.home.RecipeFeedFragment
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
-import com.mgsanlet.cheftube.utils.FragmentNavigator;
-import com.mgsanlet.cheftube.R;
-import com.mgsanlet.cheftube.view.ui.home.RecipeDetailFragment;
-import com.mgsanlet.cheftube.view.ui.home.RecipeFeedFragment;
-
-import java.util.List;
-
-import com.mgsanlet.cheftube.data.model.Recipe;
 /**
- * Adapter for displaying a list of recipes in a RecyclerView.
- * This adapter binds recipe data to the views in the RecyclerView.
+ * Adaptador para mostrar una lista de recetas en un RecyclerView.
+ * Este adaptador vincula los datos de las recetas con las vistas en el RecyclerView.
  * @author MarioG
  */
-public class RecipeFeedAdapter extends RecyclerView.Adapter<RecipeFeedAdapter.RecipeViewHolder> {
-    private final List<Recipe> recipeList;
-    private final FragmentManager fragmentManager;
-
-    public RecipeFeedAdapter(List<Recipe> recipeList, FragmentManager fragmentManager) {
-        this.recipeList = recipeList;
-        this.fragmentManager = fragmentManager;
+class RecipeFeedAdapter(
+    private val recipeList: List<Recipe>,
+    private val fragmentManager: FragmentManager
+) : RecyclerView.Adapter<RecipeViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_recipe, parent, false)
+        return RecipeViewHolder(view)
     }
 
-    @NonNull
-    @Override
-    public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_recipe, parent, false);
-        return new RecipeViewHolder(view);
+    override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
+        holder.bind(recipeList[position])
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
-        holder.bind(recipeList.get(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return recipeList.size();
+    override fun getItemCount(): Int {
+        return recipeList.size
     }
 
     /**
-     * Handles navigation to the detailed view of the selected recipe.
+     * Gestiona la navegación a la vista detallada de la receta seleccionada.
      *
-     * @param recipe The recipe whose details are to be displayed.
+     * @param recipe La receta cuyos detalles se mostrarán.
      */
-    private void navToRecipeDetail(Recipe recipe) {
-        // -Getting the current visible fragment-
-        RecipeFeedFragment currentFragment = (RecipeFeedFragment) fragmentManager
-                .findFragmentById(R.id.mainFrContainer);
+    private fun navToRecipeDetail(recipe: Recipe) {
+        // Obtener el fragmento visible actual
+        val currentFragment = fragmentManager
+            .findFragmentById(R.id.mainFrContainer) as RecipeFeedFragment?
 
-        if (currentFragment != null && currentFragment.isVisible()) {
-            RecipeDetailFragment detailFragment = RecipeDetailFragment.newInstance(recipe);
+        if (currentFragment != null && currentFragment.isVisible) {
+            val detailFragment = RecipeDetailFragment.newInstance(recipe)
 
             FragmentNavigator.loadFragmentInstance(
-                    null, currentFragment, detailFragment, R.id.mainFrContainer
-            );
+                null, currentFragment, detailFragment, R.id.mainFrContainer
+            )
         }
     }
 
-    public class RecipeViewHolder extends RecyclerView.ViewHolder {
-        TextView title;
-        ImageView image;
+    inner class RecipeViewHolder(recipeView: View) : RecyclerView.ViewHolder(recipeView) {
+        private var title: TextView = recipeView.findViewById(R.id.recipeTitle)
+        private var image: ImageView = recipeView.findViewById(R.id.recipeImage)
 
-        public RecipeViewHolder(@NonNull View recipeView) {
-            super(recipeView);
-            title = recipeView.findViewById(R.id.recipeTitle);
-            image = recipeView.findViewById(R.id.recipeImage);
-        }
+        fun bind(recipe: Recipe) {
+            title.setText(recipe.ttlRId)
+            // Cargar imágenes de recetas con esquinas redondeadas usando Glide
+            Glide.with(itemView.context)
+                .load(recipe.imgRId)
+                .apply(RequestOptions.bitmapTransform(RoundedCorners(40)))
+                .into(image)
 
-        public void bind(Recipe recipe) {
-            title.setText(recipe.getTtlRId());
-            // -Loading recipe images with rounded corners using Glide-
-            Glide.with(itemView.getContext())
-                    .load(recipe.getImgRId())
-                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(40)))
-                    .into(image);
-
-            image.setOnClickListener(v -> navToRecipeDetail(recipe));
+            image.setOnClickListener { navToRecipeDetail(recipe) }
         }
     }
 }

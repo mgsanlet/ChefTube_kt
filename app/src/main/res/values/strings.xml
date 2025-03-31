@@ -138,6 +138,7 @@
     <string name="step_07_02">2. Cook the Squid: Add the sliced squid to the pan and cook for 3–5 minutes until slightly tender.</string>
     <string name="step_07_03">3. Simmer in Sauce: Pour in the tomato sauce and season with paprika, salt, and pepper. Simmer for 15–20 minutes until the squid is tender and the flavors meld. Serve hot.</string>
     <string name="_00_00" translatable="false">00:00</string>
-
+    <string name="api_error" translatable="false">API: Error %1$d</string>
+    <string name="network_error">Network error</string>
 
 </resources>

@@ -1,127 +1,112 @@
-package com.mgsanlet.cheftube.view.ui.home;
+package com.mgsanlet.cheftube.view.ui.home
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.mgsanlet.cheftube.R;
-import com.mgsanlet.cheftube.view.adapter.RecipeFeedAdapter;
-
-import java.util.List;
-
-import com.mgsanlet.cheftube.data.model.Recipe;
-import com.mgsanlet.cheftube.data.repository.RecipeRepository;
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.data.model.Recipe
+import com.mgsanlet.cheftube.data.repository.RecipeRepository
+import com.mgsanlet.cheftube.view.adapter.RecipeFeedAdapter
 
 /**
- * A fragment that displays a list of recipes. Each recipe is shown with its title and an image.
- * When a recipe is clicked, the fragment navigates to a detailed view of the selected recipe,
- * displaying additional information such as ingredients, preparation steps, and video content.
- * If there are no recipes to display, a message indicating that no results were found is shown.
+ * Un fragmento que muestra una lista de recetas. Cada receta se muestra con su título y una imagen.
+ * Cuando se hace clic en una receta, el fragmento navega a una vista detallada de la receta.
  *
  * @author MarioG
  */
-public class RecipeFeedFragment extends Fragment {
-    // -Declaring data members-
-    private List<Recipe> recipeList;
-    // -Declaring UI elements-
-    private RecyclerView recipesRecycler;
-    private TextView noResultsTextView;
-    private ImageButton searchButton;
-    // -Declaring string resources-
-    private String resultsStr;
+class RecipeFeedFragment : Fragment() {
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    private var mRecipeList: List<Recipe>? = null
+    private lateinit var mRecipesRecyclerView: RecyclerView
+    private lateinit var mNoResultsTextView: TextView
+    private lateinit var mSearchImageButton: ImageButton
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recipe_list, container, false);
-        // -Initializing UI elements-
-        recipesRecycler = view.findViewById(R.id.recipeFeedRecyclerView);
-        noResultsTextView = view.findViewById(R.id.noResultsTextView);
-        recipesRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        searchButton = view.findViewById(R.id.search_button);
-        // -Initializing string resources-
-        resultsStr = getString(R.string.results);
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_recipe_list, container, false)
 
-        // -Setting up the search button listener-
-        searchButton.setOnClickListener(v -> setUpSearchBtn());
+        mRecipesRecyclerView = view.findViewById(R.id.recipeFeedRecyclerView)
+        mNoResultsTextView = view.findViewById(R.id.noResultsTextView)
+        mRecipesRecyclerView.setLayoutManager(LinearLayoutManager(context))
+        mSearchImageButton = view.findViewById(R.id.search_button)
 
-        // -Checking if recipeList is null and retrieving default recipes from RecipeRepository-
-        verifyRecipeList();
+        // Listeners
+        mSearchImageButton.setOnClickListener { setUpSearchBtn() }
 
-        RecipeFeedAdapter adapter = new RecipeFeedAdapter(recipeList, getParentFragmentManager());
-        recipesRecycler.setAdapter(adapter);
-        noResultsTextView.setVisibility(View.GONE); // -Hiding no results message-
-        recipesRecycler.setVisibility(View.VISIBLE); // -Showing RecyclerView-
+        // Verificar si recipeList es nulo y recuperando recetas predeterminadas de RecipeRepository
+        verifyRecipeList()
 
-        return view;
+        val adapter = RecipeFeedAdapter(mRecipeList!!, parentFragmentManager)
+        mRecipesRecyclerView.setAdapter(adapter)
+        mNoResultsTextView.visibility = View.GONE // Oculta mensaje de sin resultados-
+        mRecipesRecyclerView.visibility = View.VISIBLE // Mostrar RecyclerView
+
+        return view
     }
 
     /**
-     * Verifies the availability of the recipe list, falling back to RecipeRepository if necessary.
+     * Verifica la disponibilidad de la lista de recetas, recurriendo a RecipeRepository si es necesario.
      */
-    private void verifyRecipeList() {
-        if (this.recipeList == null) {
-            this.recipeList = RecipeRepository.getInstance();
+    private fun verifyRecipeList() {
+        if (this.mRecipeList == null) {
+            this.mRecipeList = RecipeRepository.getInstance()
         }
     }
 
     /**
-     * Displays a message indicating no results were found.
+     * Muestra un mensaje indicando que no se encontraron resultados.
      */
-    private void displayNoResults() {
-        noResultsTextView.setVisibility(View.VISIBLE); // -Showing the no results message-
-        recipesRecycler.setVisibility(View.GONE); // -Hiding the RecyclerView-
+    private fun displayNoResults() {
+        mNoResultsTextView.visibility = View.VISIBLE // Mostra el mensaje de sin resultados
+        mRecipesRecyclerView.visibility = View.GONE // Ocultar el RecyclerView
     }
 
-    private void setUpSearchBtn() {
-        AlertDialog.Builder searchDialogBuilder = new AlertDialog.Builder(getContext());
+    private fun setUpSearchBtn() {
+        val searchDialogBuilder = AlertDialog.Builder(requireContext())
 
-        // -Inflating a custom layout for the search dialog-
-        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_search, null);
-        searchDialogBuilder.setView(dialogView);
+        // Inflar un diseño personalizado para el diálogo de búsqueda
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_search, null)
+        searchDialogBuilder.setView(dialogView)
 
-        // -Getting a reference to the UI elements in the custom layout-
-        EditText input = dialogView.findViewById(R.id.editTextSearch);
-        Button okBtn = dialogView.findViewById(R.id.okBtn);
+        // Obtener una referencia a los elementos de la interfaz de usuario en el diseño personalizado
+        val input = dialogView.findViewById<EditText>(R.id.editTextSearch)
+        val okBtn = dialogView.findViewById<Button>(R.id.okBtn)
 
-        AlertDialog searchDialog = searchDialogBuilder.create();
-        searchDialog.show();
+        val searchDialog = searchDialogBuilder.create()
+        searchDialog.show()
 
-        okBtn.setOnClickListener(v -> {
-            String query = input.getText().toString().trim();
-            // -Filtering the recipes based on the input query-
-            List<Recipe> filteredRecipes = RecipeRepository.getFilteredRecipes(getContext(), query);
+        okBtn.setOnClickListener {
+            val query = input.text.toString().trim { it <= ' ' }
+            // Filtrar las recetas según la consulta de entrada
+            val filteredRecipes = RecipeRepository.getFilteredRecipes(context, query)
 
-            Toast.makeText(getContext(), resultsStr + filteredRecipes.size(),
-                    Toast.LENGTH_SHORT
-            ).show();
+            Toast.makeText(
+                context, getString(R.string.results) + filteredRecipes.size,
+                Toast.LENGTH_SHORT
+            ).show()
             if (filteredRecipes.isEmpty()) {
-                displayNoResults(); // Show no results message
+                displayNoResults() // Mostrar mensaje de sin resultados
             } else {
-
-                RecipeFeedAdapter adapter = new RecipeFeedAdapter(filteredRecipes, getParentFragmentManager());
-                recipesRecycler.setAdapter(adapter);
-                noResultsTextView.setVisibility(View.GONE); // Hide no results message
-                recipesRecycler.setVisibility(View.VISIBLE); // Show RecyclerView
+                val adapter = RecipeFeedAdapter(filteredRecipes, parentFragmentManager)
+                mRecipesRecyclerView.adapter = adapter
+                mNoResultsTextView.visibility = View.GONE // Ocultar mensaje de sin resultados
+                mRecipesRecyclerView.visibility = View.VISIBLE // Mostrar RecyclerView
             }
 
-            searchDialog.dismiss(); // Dismiss the dialog after search
-        });
+            searchDialog.dismiss() // Descartar el diálogo después de la búsqueda
+        }
     }
 }

@@ -164,7 +164,7 @@ class SignUpFragment : Fragment() {
     private val isValidPwd: Boolean
         get() {
             return when {
-                mPassword1EditText.text.toString().length < 5 -> {
+                mPassword1EditText.text.toString().length < PASSWORD_MIN_LENGTH -> {
                     mPassword1EditText.error = getString(R.string.short_pwd)
                     false
                 }
@@ -223,4 +223,8 @@ class SignUpFragment : Fragment() {
             mEmailEditText.text.toString(),
             mPassword1EditText.text.toString()
         )
+
+    companion object {
+        private const val PASSWORD_MIN_LENGTH = 5
+    }
 }

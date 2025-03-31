@@ -1,247 +1,235 @@
-package com.mgsanlet.cheftube.view.ui.home;
+package com.mgsanlet.cheftube.view.ui.home
 
-import android.os.Bundle;
-import android.util.Patterns;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-
-import androidx.fragment.app.Fragment;
-
-import com.mgsanlet.cheftube.R;
-
-import com.mgsanlet.cheftube.data.model.User;
-import com.mgsanlet.cheftube.data.local.UserDAO;
+import android.os.Build
+import android.os.Bundle
+import android.util.Patterns
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.data.local.UserDAO
+import com.mgsanlet.cheftube.data.model.User
 
 /**
- * ProfileFragment allows the user to view and update their profile details,
- * including their username, email, and password. It is loaded in the main activity
- * when the profile option of BottomNavigationView is clicked.
+ * ProfileFragment permite al usuario ver y modificar los detalles de su perfil,
+ * incluyendo nombre de usuario, email y contraseña.
+ * Se carga desde el BottomNavigationView de HomeActivity
  *
  * @author MarioG
  */
-public class ProfileFragment extends Fragment {
-    // -Declaring constants for argument keys-
-    private static final String ARG_USER = "user";
+class ProfileFragment : Fragment() {
 
-    // -Declaring data members-
-    private User mUser;
-    // -Declaring UI elements-
-    EditText nameField;
-    EditText emailField;
-    EditText pwdField;
-    EditText newPwdField;
-    EditText newPwd2Field;
-    Button saveBtn;
-    // -Declaring string resources-
-    String dataSavedStr;
-    String requiredStr;
-    String invalidEmailStr;
-    String emailAlreadyStr;
-    String usernameAlreadyStr;
-    String shortPwdStr;
-    String pwdDMatchStr;
-    String wrongPwdStr;
+    private var mLoggedUser: User? = null
 
-    /**
-     * Creates a new instance of ProfileFragment with the given user.
-     *
-     * @param user The {@link User} whose profile is to be displayed and edited.
-     * @return A new instance of ProfileFragment with the user data.
-     */
-    public static ProfileFragment newInstance(User user) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(ARG_USER, user); // -Passing the user object to the fragment arguments-
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private lateinit var mUsernameEditText    : EditText
+    private lateinit var mEmailEditText       : EditText
+    private lateinit var mOldPasswordEditText : EditText
+    private lateinit var mNewPassword1EditText: EditText
+    private lateinit var mNewPassword2EditText: EditText
+    private lateinit var mSaveButton          : Button
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // -Retrieving the user object from the arguments-
-        if (getArguments() != null) {
-            mUser = (User) getArguments().getSerializable(ARG_USER);
-        }
-    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
-        // -Initializing UI elements-
-        nameField = view.findViewById(R.id.profileNameField);
-        emailField = view.findViewById(R.id.profileEmailField);
-        pwdField = view.findViewById(R.id.profilePwdField);
-        newPwdField = view.findViewById(R.id.profileNewPwdField);
-        newPwd2Field = view.findViewById(R.id.profileNewPwd2Field);
-        saveBtn = view.findViewById(R.id.profileSaveBtn);
-
-        // -Initializing string resources-
-        dataSavedStr = getString(R.string.data_saved);
-        requiredStr = getString(R.string.required);
-        invalidEmailStr = getString(R.string.invalid_email);
-        emailAlreadyStr = getString(R.string.email_already);
-        usernameAlreadyStr = getString(R.string.username_already);
-        shortPwdStr = getString(R.string.short_pwd);
-        pwdDMatchStr = getString(R.string.pwd_d_match);
-        wrongPwdStr = getString(R.string.wrong_pwd);
-
-        // -Setting up listeners-
-        saveBtn.setOnClickListener(v -> {
-            if (isValidData()) {
-                // -Saving updated user data-
-                mUser.saveNewIdentity(
-                        nameField.getText().toString(),
-                        emailField.getText().toString()
-                );
-                if (!newPwdField.getText().toString().trim().isEmpty()) {
-                    mUser.saveNewPassword(newPwdField.getText().toString());
-                }
-                UserDAO.updateUser(mUser, getContext()); // -Updating the user database-
-                Toast.makeText(getContext(), dataSavedStr, Toast.LENGTH_SHORT).show();
+        arguments?.let {
+            mLoggedUser = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                requireArguments().getSerializable(ARG_USER, User::class.java) //TODO cambiar a parcelable
+            }else{
+                @Suppress("DEPRECATION") // Solo se usará para versiones antiguas
+                requireArguments().getSerializable(ARG_USER) as User?
             }
-        });
-        loadData(); // -Loading the user's current data into the fields-
-        return view;
+        }
     }
 
-    /**
-     * Loads the user's data into the respective fields.
-     */
-    private void loadData() {
-        nameField.setText(mUser.getUsername());
-        emailField.setText(mUser.getEmail());
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_profile, container, false)
+
+        mUsernameEditText = view.findViewById(R.id.profileNameField)
+        mEmailEditText = view.findViewById(R.id.profileEmailField)
+        mOldPasswordEditText = view.findViewById(R.id.profilePwdField)
+        mNewPassword1EditText = view.findViewById(R.id.profileNewPwdField)
+        mNewPassword2EditText = view.findViewById(R.id.profileNewPwd2Field)
+        mSaveButton = view.findViewById(R.id.profileSaveBtn)
+
+        // Listeners
+        mSaveButton.setOnClickListener {
+            if (isValidData) {
+                // Guardando datos de usuario actualizados
+                mLoggedUser!!.saveNewIdentity(
+                    mUsernameEditText.getText().toString(),
+                    mEmailEditText.getText().toString()
+                )
+                if (mNewPassword1EditText.getText().toString().trim { it <= ' ' }.isNotEmpty()) {
+                    mLoggedUser!!.saveNewPassword(mNewPassword1EditText.getText().toString())
+                }
+                UserDAO.updateUser(mLoggedUser, context) // -Updating the user database-
+                Toast.makeText(context, getString(R.string.data_saved), Toast.LENGTH_SHORT).show()
+            }
+        }
+        loadUserCurrentData()
+        return view
     }
 
+    private fun loadUserCurrentData() {
+        mUsernameEditText.setText(mLoggedUser!!.username)
+        mEmailEditText.setText(mLoggedUser!!.email)
+    }
+
+    private val isValidData: Boolean
+        /**
+         * Valida los datos introducidos por el usuario
+         *
+         * @return True si todos los datos son válidos, false si no.
+         */
+        get() = (!fieldsAreEmpty() &&
+                isValidEmail &&
+                !isExistentUsername &&
+                !isExistentEmail &&
+                isValidPwd &&
+                passwordsMatch()
+                )
+
     /**
-     * Validates the data entered by the user.
+     * Comprueba si los campos están vacíos y si no es así los marca con error
      *
-     * @return True if all data is valid, false otherwise.
+     * @return True si algún campo estaá vacío, false si no.
      */
-    private boolean isValidData() {
-        return (!fieldsAreEmpty() &&
-                isValidEmail() &&
-                !isExistentUsername() &&
-                !isExistentEmail() &&
-                isValidPwd() &&
-                pwdsMatch()
-        );
+    private fun fieldsAreEmpty(): Boolean {
+        var empty = false
+        val requiredMessage = getString(R.string.required)
+        if (mUsernameEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+            mUsernameEditText.error = requiredMessage
+            empty = true
+        }
+        if (mEmailEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+            mEmailEditText.error = requiredMessage
+            empty = true
+        }
+        if (mOldPasswordEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+            mOldPasswordEditText.error = requiredMessage
+            empty = true
+        }
+        if (mNewPassword1EditText.text.toString().trim { it <= ' ' }.isNotEmpty() &&
+            mNewPassword2EditText.text.toString().trim { it <= ' ' }.isEmpty()
+        ) {
+            mNewPassword2EditText.error = requiredMessage
+            empty = true
+        }
+        if (mNewPassword2EditText.text.toString().trim { it <= ' ' }.isNotEmpty() &&
+            mNewPassword1EditText.text.toString().trim { it <= ' ' }.isEmpty()
+        ) {
+            mNewPassword1EditText.error = requiredMessage
+            empty = true
+        }
+        return empty
     }
 
-    /**
-     * Checks if any required fields are empty and sets appropriate errors.
-     *
-     * @return True if any field is empty, false otherwise.
-     */
-    private boolean fieldsAreEmpty() {
-        boolean empty = false;
-        if (nameField.getText().toString().trim().isEmpty()) {
-            nameField.setError(requiredStr);
-            empty = true;
+    private val isValidEmail: Boolean
+        /**
+         * Valida el formato del email usando un patrón.
+         *
+         * @return True si el formato del email es válido, false si no.
+         */
+        get() {
+            val email = mEmailEditText.text.toString()
+            val isValid = Patterns.EMAIL_ADDRESS.matcher(email).matches()
+            if (!isValid) {
+                mEmailEditText.error = getString(R.string.invalid_email)
+            }
+            return isValid
         }
-        if (emailField.getText().toString().trim().isEmpty()) {
-            emailField.setError(requiredStr);
-            empty = true;
+
+    private val isExistentEmail: Boolean
+        /**
+         * Comprueba si el email introducido ya existe en el sistema
+         * comparando con los emails de todos los usuarios registrados.
+         *
+         * @return True si el email ya existe, false si no.
+         */
+        get() {
+            val inputEmail = mEmailEditText.text.toString()
+            val isExistent = UserDAO.isExistentEmail(inputEmail, context)
+            if (isExistent && inputEmail != mLoggedUser!!.email) {
+                mEmailEditText.error = getString(R.string.email_already)
+            }
+            return isExistent && inputEmail != mLoggedUser!!.email
         }
-        if (pwdField.getText().toString().trim().isEmpty()) {
-            pwdField.setError(requiredStr);
-            empty = true;
+
+    private val isExistentUsername: Boolean
+        /**
+         * Comprueba si el nombre de usuario introducido ya existe en el sistema
+         * comparando con los nombres de usuario de todos los usuarios registrados.
+         *
+         * @return True si el nombre de usuario ya existe, false si no.
+         */
+        get() {
+            val inputUsername = mUsernameEditText.text.toString()
+            val isExistent = UserDAO.isExistentUsername(inputUsername, context)
+            if (isExistent && inputUsername != mLoggedUser!!.username) {
+                mUsernameEditText.error = getString(R.string.username_already)
+            }
+            return isExistent && inputUsername != mLoggedUser!!.username
         }
-        if (!newPwdField.getText().toString().trim().isEmpty() &&
-                newPwd2Field.getText().toString().trim().isEmpty()) {
-            newPwd2Field.setError(requiredStr);
-            empty = true;
+
+    private val isValidPwd: Boolean
+        /**
+         * Comprueba la longitud de la nueva contraseña.
+         *
+         * @return True si la nueva contraseña supera la longitud mínima o es vacía
+         * (no se desea cambiar la contraseña), false si no.
+         */
+        get() {
+            var isValid = true
+            if (mNewPassword1EditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+                return true // -If the field is empty, password will remain unchanged-
+            }
+            if (mNewPassword1EditText.text.toString().length < PASSWORD_MIN_LENGTH) {
+                mNewPassword1EditText.error = getString(R.string.short_pwd)
+                isValid = false
+            }
+            return isValid
         }
-        if (!newPwd2Field.getText().toString().trim().isEmpty() &&
-                newPwdField.getText().toString().trim().isEmpty()) {
-            newPwdField.setError(requiredStr);
-            empty = true;
-        }
-        return empty;
-    }
 
     /**
-     * Validates the email format using a pattern.
+     * Verifica si los dos campos de contraseña coinciden.
      *
-     * @return True if the email format is valid, false otherwise.
+     * @return True si las contraseñas coinciden, False de lo contrario.
      */
-    private boolean isValidEmail() {
-        String email = emailField.getText().toString();
-        boolean isValid = Patterns.EMAIL_ADDRESS.matcher(email).matches();
-        if (!isValid) {
-            emailField.setError(invalidEmailStr);
+    private fun passwordsMatch(): Boolean {
+        var areMatching = true
+        if (mOldPasswordEditText.text.toString() != mLoggedUser!!.password) {
+            mOldPasswordEditText.error = getString(R.string.wrong_pwd)
+            return false
         }
-        return isValid;
+        if (mNewPassword1EditText.text.toString() != mNewPassword2EditText.text.toString()) {
+            areMatching = false
+            mNewPassword2EditText.error = getString(R.string.pwd_d_match)
+        }
+        return areMatching
     }
 
-    /**
-     * Checks if the entered email already exists in the system by comparing it with
-     * the emails of all registered users.
-     *
-     * @return True if the email already exists, false otherwise.
-     */
-    private boolean isExistentEmail() {
-        String inputEmail = emailField.getText().toString();
-        boolean isExistent = UserDAO.isExistentEmail(inputEmail, getContext());
-        if (isExistent && !inputEmail.equals(mUser .getEmail())) {
-            emailField.setError(emailAlreadyStr);
+    companion object {
+        private const val ARG_USER = "user"
+        private const val PASSWORD_MIN_LENGTH = 5
+
+        fun newInstance(user: User?): ProfileFragment {
+            val fragment = ProfileFragment()
+            val args = Bundle()
+            args.putSerializable(
+                ARG_USER,
+                user
+            )
+            fragment.arguments = args
+            return fragment
         }
-        return isExistent && !inputEmail.equals(mUser .getEmail());
     }
 
-    /**
-     * Checks if the entered username already exists in the system by comparing it with
-     * the usernames of all registered users.
-     *
-     * @return True if the username already exists, false otherwise.
-     */
-    private boolean isExistentUsername() {
-        String inputUsername = nameField.getText().toString();
-        boolean isExistent = UserDAO.isExistentUsername(inputUsername, getContext());
-        if (isExistent && !inputUsername.equals(mUser .getUsername())) {
-            nameField.setError(usernameAlreadyStr);
-        }
-        return isExistent && !inputUsername.equals(mUser .getUsername());
-    }
 
-    /**
-     * Validates the new password length.
-     *
-     * @return True if the password is valid, false otherwise.
-     */
-    private boolean isValidPwd() {
-        boolean isValid = true;
-        if (newPwdField.getText().toString().trim().isEmpty()) {
-            return isValid; // -If the field is empty, password will remain unchanged-
-        }
-        if (newPwdField.getText().toString().length() < 5) {
-            newPwdField.setError(shortPwdStr);
-            isValid = false;
-        }
-        return isValid;
-    }
-
-    /**
-     * Checks if the entered passwords match and if the user's current password is correct.
-     *
-     * @return True if passwords match, false otherwise.
-     */
-    private boolean pwdsMatch() {
-        boolean areMatching = true;
-        if (!pwdField.getText().toString().equals(mUser .getPassword())) {
-            pwdField.setError(wrongPwdStr);
-            return false;
-        }
-        if (!newPwdField.getText().toString().equals(newPwd2Field.getText().toString())) {
-            areMatching = false;
-            newPwd2Field.setError(pwdDMatchStr);
-        }
-        return areMatching;
-    }
 }
