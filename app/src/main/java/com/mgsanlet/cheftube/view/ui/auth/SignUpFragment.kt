@@ -7,29 +7,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
-import com.mgsanlet.cheftube.data.local.UserDAO
 import com.mgsanlet.cheftube.data.model.User
-import com.mgsanlet.cheftube.view.ui.auth.LoginFragment.Companion.newInstance
 import com.mgsanlet.cheftube.utils.FragmentNavigator
 
 /**
  * Un fragmento responsable de manejar el proceso de registro de usuario.
- * Este fragmento permite al usuario registrarse proporcionando un nombre, correo electrónico y contraseña.
- * Valida los datos de entrada y asegura que el correo electrónico no esté ya en uso.
- * Después de un registro exitoso, el usuario es redirigido al fragmento de inicio de sesión
- * con credenciales prellenadas.
- *
- * @author MarioG
+ * Este fragmento permite al usuario registrarse proporcionando un nombre,
+ * correo electrónico y contraseña.
  */
 class SignUpFragment : Fragment() {
 
-    private lateinit var mNameEditText:  EditText
+    private lateinit var mNameEditText: EditText
     private lateinit var mEmailEditText: EditText
-    private lateinit var mPassword1EditText:   EditText
-    private lateinit var mPassword2EditText:  EditText
-    private lateinit var mSaveButton:    Button
+    private lateinit var mPassword1EditText: EditText
+    private lateinit var mPassword2EditText: EditText
+    private lateinit var mSaveButton: Button
+
+    private val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,67 +42,67 @@ class SignUpFragment : Fragment() {
         mPassword2EditText = view.findViewById(R.id.signUpPwd2Field)
         mSaveButton = view.findViewById(R.id.saveBtn)
 
-        // Listeners
-        mSaveButton.setOnClickListener {
-            if (isValidRegister) {
-                loadLoginFr()
-            }
-        }
+        mSaveButton.setOnClickListener { tryRegister() }
 
         return view
     }
 
-    /**
-     * Valida la entrada del usuario para el registro. Asegura que todos los campos estén llenos,
-     * el formato del correo electrónico sea correcto, que el correo electrónico no esté ya en uso,
-     * que la contraseña sea válida y que los campos de contraseña coincidan.
-     *
-     * @return True si todas las validaciones pasan, False de lo contrario.
-     */
-    private val isValidRegister: Boolean
-        get() = (!fieldsAreEmpty() &&
-                isValidEmail &&
-                !isExistentEmail &&
-                !isExistentUsername &&
-                isValidPwd &&
-                passwordsMatch()
-                )
+    private fun tryRegister() {
+        if (!isValidRegister) return
 
-    /**
-     * Verifica si alguno de los campos requeridos (nombre, correo electrónico, contraseña) está vacío.
-     * Establece un mensaje de error en el campo correspondiente si está vacío.
-     *
-     * @return True si algún campo está vacío, False de lo contrario.
-     */
-    private fun fieldsAreEmpty(): Boolean {
-        return when {
-            mNameEditText.text.toString().trim { it <= ' ' }.isEmpty() ||
-            mEmailEditText.text.toString().trim { it <= ' ' }.isEmpty() ||
-            mPassword1EditText.text.toString().trim { it <= ' ' }.isEmpty() ||
-            mPassword2EditText.text.toString().trim { it <= ' ' }.isEmpty() -> {
-                val requiredMessage = getString(R.string.required)
-                if (mNameEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
-                    mNameEditText.error = requiredMessage
-                }
-                if (mEmailEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
-                    mEmailEditText.error = requiredMessage
-                }
-                if (mPassword1EditText.text.toString().trim { it <= ' ' }.isEmpty()) {
-                    mPassword1EditText.error = requiredMessage
-                }
-                if (mPassword2EditText.text.toString().trim { it <= ' ' }.isEmpty()) {
-                    mPassword2EditText.error = requiredMessage
-                }
-                true
+        app.userRepository.createUser(
+            mNameEditText.text.toString(),
+            mEmailEditText.text.toString(),
+            mPassword1EditText.text.toString()
+        ).fold(
+            onSuccess = { user ->
+                app.setCurrentUser(user)
+                FragmentNavigator.loadFragment(null, this, LoginFragment(), R.id.authFrContainer)
+            },
+            onFailure = { error ->
+                Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
             }
-            else -> false
-        }
+        )
     }
 
     /**
-     * Valida que el correo electrónico ingresado esté en un formato válido utilizando expresiones regulares.
-     *
-     * @return True si el correo electrónico es válido, False de lo contrario.
+     * Valida la entrada del usuario para el registro
+     */
+    private val isValidRegister: Boolean
+        get() = !fieldsAreEmpty() &&
+                isValidEmail &&
+                isValidPwd &&
+                passwordsMatch()
+
+    /**
+     * Verifica si alguno de los campos requeridos está vacío
+     */
+    private fun fieldsAreEmpty(): Boolean {
+        val requiredMessage = getString(R.string.required)
+        var isEmpty = false
+
+        if (mNameEditText.text.toString().trim().isEmpty()) {
+            mNameEditText.error = requiredMessage
+            isEmpty = true
+        }
+        if (mEmailEditText.text.toString().trim().isEmpty()) {
+            mEmailEditText.error = requiredMessage
+            isEmpty = true
+        }
+        if (mPassword1EditText.text.toString().trim().isEmpty()) {
+            mPassword1EditText.error = requiredMessage
+            isEmpty = true
+        }
+        if (mPassword2EditText.text.toString().trim().isEmpty()) {
+            mPassword2EditText.error = requiredMessage
+            isEmpty = true
+        }
+
+        return isEmpty
+    }
+
+    /**
+     * Valida que el correo electrónico tenga un formato válido
      */
     private val isValidEmail: Boolean
         get() {
@@ -119,52 +117,13 @@ class SignUpFragment : Fragment() {
         }
 
     /**
-     * Verifica si el correo electrónico ingresado ya existe en el sistema comparándolo con
-     * los correos electrónicos de todos los usuarios registrados.
-     *
-     * @return True si el correo electrónico ya existe, False de lo contrario.
-     */
-    private val isExistentEmail: Boolean
-        get() {
-            val inputEmail = mEmailEditText.text.toString()
-
-            return when {
-                UserDAO.isExistentEmail(inputEmail, context) -> {
-                    mEmailEditText.error = getString(R.string.email_already)
-                    true
-                }
-                else -> false
-            }
-        }
-
-    /**
-     * Verifica si el nombre de usuario ingresado ya existe en el sistema comparándolo con
-     * los nombres de usuario de todos los usuarios registrados.
-     *
-     * @return True si el nombre de usuario ya existe, False de lo contrario.
-     */
-    private val isExistentUsername: Boolean
-        get() {
-            val inputUsername = mNameEditText.text.toString()
-
-            return when {
-                UserDAO.isExistentUsername(inputUsername, context) -> {
-                    mNameEditText.error = getString(R.string.username_already)
-                    true
-                }
-                else -> false
-            }
-        }
-
-    /**
-     * Valida la contraseña para asegurar que tenga al menos 5 caracteres de longitud.
-     *
-     * @return True si la contraseña es válida, False de lo contrario.
+     * Valida que la contraseña tenga la longitud mínima requerida
      */
     private val isValidPwd: Boolean
         get() {
+            val password = mPassword1EditText.text.toString()
             return when {
-                mPassword1EditText.text.toString().length < PASSWORD_MIN_LENGTH -> {
+                password.length < User.PASSWORD_MIN_LENGTH -> {
                     mPassword1EditText.error = getString(R.string.short_pwd)
                     false
                 }
@@ -173,58 +132,15 @@ class SignUpFragment : Fragment() {
         }
 
     /**
-     * Verifica si los dos campos de contraseña coinciden.
-     *
-     * @return True si las contraseñas coinciden, False de lo contrario.
+     * Verifica que las contraseñas coincidan
      */
     private fun passwordsMatch(): Boolean {
         return when {
-            mPassword1EditText.text.toString() == mPassword2EditText.text.toString() -> {
-                true
-            }
+            mPassword1EditText.text.toString() == mPassword2EditText.text.toString() -> true
             else -> {
                 mPassword2EditText.error = getString(R.string.pwd_d_match)
                 false
             }
         }
-    }
-
-    /**
-     * Carga el LoginFragment después de un registro exitoso.
-     * El nuevo usuario se registra en el UserDAO y el usuario es redirigido a la página de inicio de sesión
-     * con credenciales prellenadas.
-     */
-    private fun loadLoginFr() {
-        cleanErrors()
-        val newUser = newUser
-        UserDAO.register(newUser, context)
-        val loginFr = newInstance(newUser)
-        FragmentNavigator.loadFragmentInstance(null, this, loginFr, R.id.authFrContainer)
-    }
-
-    /**
-     * Limpia todos los mensajes de error de los campos de entrada (nombre, correo electrónico, contraseña).
-     */
-    private fun cleanErrors() {
-        mNameEditText.error = null
-        mEmailEditText.error = null
-        mPassword1EditText.error = null
-        mPassword2EditText.error = null
-    }
-
-    /**
-     * Crea un nuevo objeto de usuario con los campos de nombre, correo electrónico y contraseña proporcionados.
-     *
-     * @return Un nuevo objeto de usuario que contiene los detalles de registro.
-     */
-    private val newUser: User
-        get() = User(
-            mNameEditText.text.toString(),
-            mEmailEditText.text.toString(),
-            mPassword1EditText.text.toString()
-        )
-
-    companion object {
-        private const val PASSWORD_MIN_LENGTH = 5
     }
 }

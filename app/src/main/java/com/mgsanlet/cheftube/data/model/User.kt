@@ -1,70 +1,41 @@
-package com.mgsanlet.cheftube.data.model;
+package com.mgsanlet.cheftube.data.model
 
-import java.io.Serializable;
-import java.util.UUID;
+import org.mindrot.jbcrypt.BCrypt
+import java.io.Serializable
+import java.util.UUID
 
 /**
- * Represents a user with an ID, username, email, and password.
- * Provides methods to update user details and is serializable for easy storage and retrieval.
- * @author MarioG
+ * Representa un usuario con ID universal, nombre de usuario, email y hash de contraseña.
  */
-public class User implements Serializable {
-    private final String id;
-    private String username;
-    private String email;
-    private String password;
-
-    public User(String username, String email, String password) {
-        this.id = UUID.randomUUID().toString(); // -Generating new random ID-
-        this.username = username;
-        this.email = email;
-        this.password = password;
-    }
-
-    public User(String id, String username, String email, String password) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
+data class User(
+    val id: String = UUID.randomUUID().toString(), // ID único generado automáticamente
+    val username: String,
+    val email: String,
+    private val passwordHash: String
+) : Serializable {
 
     /**
-     * Updates the username and email for the user.
-     *
-     * @param username the new username
-     * @param email    the new email address
+     * Crea un nuevo usuario con un hash de contraseña.
      */
-    public void saveNewIdentity(String username, String email) {
-        this.username = username;
-        this.email = email;
+    companion object {
+        const val PASSWORD_MIN_LENGTH = 5
+
+        fun create(username: String, email: String, password: String): User {
+            require(password.length >= PASSWORD_MIN_LENGTH) { "La contraseña debe tener al menos $PASSWORD_MIN_LENGTH caracteres" }
+            val passwordHash = hashPassword(password)
+            return User(username = username, email = email, passwordHash = passwordHash)
+        }
+
+        private fun hashPassword(rawPassword: String): String {
+            return BCrypt.hashpw(rawPassword, BCrypt.gensalt())
+        }
     }
 
-    /**
-     * Updates the password for the user.
-     *
-     * @param password the new password
-     */
-    public void saveNewPassword(String password) {
-        this.password = password;
+    // Método para obtener el hash de la contraseña (usado por UserProvider)
+    internal fun getPasswordHash(): String = passwordHash
+
+    // Método para verificar la contraseña ingresada
+    fun verifyPassword(rawPassword: String): Boolean {
+        return BCrypt.checkpw(rawPassword, passwordHash)
     }
 }

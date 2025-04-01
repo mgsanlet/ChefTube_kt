@@ -1,28 +1,26 @@
-package com.mgsanlet.cheftube.data.local;
+package com.mgsanlet.cheftube.data.local
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.content.Context
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
+import com.mgsanlet.cheftube.data.provider.UserProvider
 
-public class DataBaseHelper extends SQLiteOpenHelper {
-
-    private static final String DATABASE_NAME = "credentials.db";
-    private static final int DATABASE_VERSION = 1;
-
-    public DataBaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+class DatabaseHelper(context: Context?) :
+    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+    
+    override fun onCreate(db: SQLiteDatabase) {
+        // Crear tabla de usuarios
+        db.execSQL(UserProvider.CREATE_TABLE)
     }
 
-    @Override
-    public void onCreate(SQLiteDatabase db){
-        db.execSQL("CREATE TABLE credential (user_id TEXT PRIMARY KEY, username TEXT, email TEXT, password TEXT);");
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        // En caso de actualización, eliminar tablas existentes y recrear
+        db.execSQL("DROP TABLE IF EXISTS ${UserProvider.TABLE_USERS}")
+        onCreate(db)
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
-        db.execSQL("DROP TABLE IF EXISTS credential");
-        onCreate(db);
+    companion object {
+        private const val DATABASE_NAME = "cheftube.db"
+        private const val DATABASE_VERSION = 1
     }
-
-
 }

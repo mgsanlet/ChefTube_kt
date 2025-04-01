@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.annotation)
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.room.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -55,4 +56,5 @@ dependencies {
     implementation(libs.gson)
     implementation (libs.zxing.android.embedded)
     implementation(libs.lingver)
+    implementation(libs.jbcrypt)
 }

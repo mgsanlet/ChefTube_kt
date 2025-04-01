@@ -1,79 +1,53 @@
-package com.mgsanlet.cheftube.data.model;
+package com.mgsanlet.cheftube.data.model
 
-import android.content.Context;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import android.content.Context
+import java.io.Serializable
+import java.util.Locale
 
 /**
- * Represents a recipe, containing details such as title, image, ingredients,
- * preparation steps, and a video URL.
- * This class is designed to be serializable for ease of storage and retrieval.
+ * Representa una rectea, incluyendo detalles como título, imagen, ingredientes,
+ * pasos de preparación, y una URL de video.
  * @author MarioG
  */
-public class Recipe implements Serializable {
-    private final int ttlRId;
-    private final int imgRId;
-    private final List<Integer> ingrRIds;
-    private final List<Integer> stepsRIds;
-    private final String videoUrl;
+data class Recipe(val ttlRId: Int, val imgRId: Int, val videoUrl: String) : Serializable {
+    private val ingredientsResIds: MutableList<Int> = ArrayList()
+    private val stepsResIds: MutableList<Int> = ArrayList()
 
-    public Recipe(int title, int imgResId, String videoUrl) {
-        this.ttlRId = title;
-        this.imgRId = imgResId;
-        this.videoUrl = videoUrl;
-        this.ingrRIds = new ArrayList<>();
-        this.stepsRIds = new ArrayList<>();
+    fun getIngredientsResIds(): List<Int> {
+        return ingredientsResIds
     }
 
-    public int getTtlRId() {
-        return ttlRId;
+    fun getStepsResIds(): List<Int> {
+        return stepsResIds
     }
 
-    public int getImgRId() {
-        return imgRId;
+    fun addIngredient(ingrRId: Int) {
+        ingredientsResIds.add(ingrRId)
     }
 
-    public String getVideoUrl() {
-        return videoUrl;
-    }
-
-    public List<Integer> getIngrRIds() {
-        return ingrRIds;
-    }
-
-    public List<Integer> getStepsRIds() {
-        return stepsRIds;
-    }
-
-    public void addIngredient(int ingrRId) {
-        this.ingrRIds.add(ingrRId);
-    }
-
-    public void addStep(int stepRId) {
-        this.stepsRIds.add(stepRId);
+    fun addStep(stepRId: Int) {
+        stepsResIds.add(stepRId)
     }
 
     /**
-     * Determines if the recipe matches a query string.
-     * The search checks ingredient names for matches and is case-insensitive.
+     * Determina si la receta coincide con un string de consulta.
+     * La búsqueda comprueba los ingredientes para encontrar coincidencias y es case-insensitive.
      *
-     * @param context the Android context, used to resolve string resources
-     * @param query   the search query
-     * @return true if the query matches any ingredient name, false otherwise
+     * @param context el contexto de Android, usado para acceder a los recursos
+     * @param query   la consulta de búsqueda
+     * @return true si la consulta coincide con algún ingrediente
      */
-    public boolean matchesQuery(Context context, String query) {
-        // -Converting the query to lowercase for case-insensitive comparison-
-        String lowerCaseQuery = query.toLowerCase();
+    fun matchesIngredientQuery(context: Context, query: String): Boolean {
+        // Convertir la consulta a minúsculas para una comparación case-insensitive
+        val lowerCaseQuery = query.lowercase(Locale.getDefault())
 
-        // -Checking if any ingredient name matches the query-
-        for (Integer ingredientId : ingrRIds) {
-            String ingredientName = context.getResources().getString(ingredientId);
-            if (ingredientName.toLowerCase().contains(lowerCaseQuery)) {
-                return true;
+        // Comprobar si algún ingrediente coincide con la consulta
+        for (ingredientId in ingredientsResIds) {
+            val ingredientName = context.resources.getString(ingredientId)
+            if (ingredientName.lowercase(Locale.getDefault()).contains(lowerCaseQuery)) {
+                return true
             }
         }
-        return false;
+        return false
     }
 }

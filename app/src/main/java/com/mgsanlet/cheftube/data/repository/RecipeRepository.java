@@ -55,7 +55,7 @@ public class RecipeRepository implements Serializable {
 
         // -Checking for matching recipes-
         for (Recipe recipe :getInstance()) {
-            if (recipe.matchesQuery(context, query)) {
+            if (recipe.matchesIngredientQuery(context, query)) {
                 filteredRecipes.add(recipe);
             }
         }

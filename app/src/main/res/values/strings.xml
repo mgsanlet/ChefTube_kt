@@ -9,6 +9,7 @@
     <string name="no_email_app">No email app found</string>
     <string name="wrong_pwd">Wrong password</string>
     <string name="invalid_login">Invalid Login</string>
+    <string name="user_not_found">User not found</string>
 
     <!-- EDIT TEXTS -->
     <string name="username">Username</string>

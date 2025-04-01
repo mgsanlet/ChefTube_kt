@@ -4,11 +4,13 @@
     <string name="invalid_email">Email inválido</string>
     <string name="email_already">El email ya existe</string>
     <string name="username_already">El nombre de usuario ya existe</string>
-    <string name="short_pwd">Contraseña muy corta</string>
+    <string name="short_pwd">Contraseña demasiado corta</string>
     <string name="pwd_d_match">Las contraseñas no coinciden</string>
-    <string name="no_email_app">No se encontró app de email</string>
+    <string name="no_email_app">No se encontró aplicación de email</string>
     <string name="wrong_pwd">Contraseña incorrecta</string>
     <string name="invalid_login">Login inválido</string>
+    <string name="user_not_found">Usuario no encontrado</string>
+    <string name="network_error">Error de red</string>
 
     <!-- EDIT TEXTS -->
     <string name="username">Nombre de usuario</string>
@@ -56,7 +58,7 @@
     <string name="minutes">Minutos</string>
     <string name="seconds">Segundos</string>
     <string name="powered_by_open_food_facts_api">Recursos de Open Food Facts API</string>
-    <string name="network_error">Error de red</string>
+
 
     <!-- IMAGE ALTS -->
     <string name="search_icon">Buscar</string>

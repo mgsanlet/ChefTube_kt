@@ -67,9 +67,9 @@ class RecipeDetailFragment : Fragment() {
             webView.loadUrl(videoUrl)
 
             // Agregando ingredientes dinámicamente al contenedor de ingredientes
-            for (ingredientId in recipe!!.ingrRIds) {
+            for (ingredientId in recipe!!.getIngredientsResIds()) {
                 val ingredientTextView = TextView(context)
-                ingredientTextView.setText(ingredientId!!)
+                ingredientTextView.setText(ingredientId)
                 if (context != null) {
                     ingredientTextView.setTextColor(
                         ContextCompat.getColor(
@@ -83,9 +83,9 @@ class RecipeDetailFragment : Fragment() {
             }
 
             // Agregando pasos dinámicamente al contenedor de pasos
-            for (stepId in recipe!!.stepsRIds) {
+            for (stepId in recipe!!.getStepsResIds()) {
                 val stepTextView = TextView(context)
-                stepTextView.setText(stepId!!)
+                stepTextView.setText(stepId)
                 stepTextView.setPadding(0, 4, 0, 2)
                 if (context != null) {
                     stepTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
