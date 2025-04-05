@@ -1,5 +1,6 @@
 [versions]
-agp = "8.6.1"
+agp = "8.9.1"
+fragmentKtx = "1.8.6"
 glide = "4.16.0"
 gson = "2.12.1"
 jbcrypt = "0.4"
@@ -7,6 +8,9 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
+kotlinxCoroutinesAndroid = "1.7.3"
+lifecycleLivedataKtxVersion = "2.3.1"
+lifecycleViewmodelKtxVersion = "2.3.1"
 lingver = "1.3.0"
 material = "1.12.0"
 activity = "1.10.1"
@@ -20,6 +24,8 @@ zxingAndroidEmbedded = "4.3.0"
 roomKtx = "2.6.1"
 
 [libraries]
+activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
+fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 jbcrypt = { module = "org.mindrot:jbcrypt", version.ref = "jbcrypt" }
@@ -28,6 +34,9 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
+lifecycle-livedata-ktx-v231 = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtxVersion" }
+lifecycle-viewmodel-ktx-v231 = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtxVersion" }
 lingver = { module = "com.github.YarikSOffice:lingver", version.ref = "lingver" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }

@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package com.mgsanlet.cheftube.view.ui.home
+package com.mgsanlet.cheftube.ui.view.home
 
 
 import android.content.Context
@@ -10,9 +10,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.android.volley.Request

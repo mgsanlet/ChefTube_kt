@@ -2,7 +2,7 @@ package com.mgsanlet.cheftube
 
 import android.app.Application
 import android.content.Context
-import com.mgsanlet.cheftube.data.local.DatabaseHelper
+import com.mgsanlet.cheftube.chore.DatabaseHelper
 import com.mgsanlet.cheftube.data.model.User
 import com.mgsanlet.cheftube.data.provider.UserProvider
 import com.mgsanlet.cheftube.data.repository.UserRepository

@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.data.local
+package com.mgsanlet.cheftube.chore
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase

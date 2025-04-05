@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.view.ui.auth
+package com.mgsanlet.cheftube.ui.view.auth
 
 import android.os.Bundle
 import android.view.View

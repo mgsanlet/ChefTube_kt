@@ -57,4 +57,13 @@ dependencies {
     implementation (libs.zxing.android.embedded)
     implementation(libs.lingver)
     implementation(libs.jbcrypt)
+    implementation (libs.kotlinx.coroutines.android)
+    // Fragment
+    implementation(libs.fragment.ktx)
+    // Activity
+    implementation(libs.activity.ktx)
+    // ViewModel
+    implementation(libs.lifecycle.viewmodel.ktx.v231)
+    // LiveData
+    implementation(libs.lifecycle.livedata.ktx.v231)
 }

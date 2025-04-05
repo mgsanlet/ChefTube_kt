@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.view.ui.home
+package com.mgsanlet.cheftube.ui.view.home
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -18,7 +18,7 @@ import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.ActivityHomeBinding
 import com.mgsanlet.cheftube.utils.FragmentNavigator
 import com.mgsanlet.cheftube.utils.SystemUiHelper
-import com.mgsanlet.cheftube.view.ui.auth.AuthActivity
+import com.mgsanlet.cheftube.ui.view.auth.AuthActivity
 import com.yariksoffice.lingver.Lingver
 import java.util.Locale
 

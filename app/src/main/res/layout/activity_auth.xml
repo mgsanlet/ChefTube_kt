@@ -9,7 +9,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_food"
 
-    tools:context=".view.ui.auth.AuthActivity"
+    tools:context=".ui.view.auth.AuthActivity"
     tools:ignore="VisualLintTextFieldSize">
 
     <ImageView
@@ -47,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@android:color/transparent"
-        android:name="com.mgsanlet.cheftube.view.ui.auth.LoginFragment"
+        android:name="com.mgsanlet.cheftube.ui.view.auth.LoginFragment"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"

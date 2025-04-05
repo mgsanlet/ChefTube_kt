@@ -1,7 +1,7 @@
-package com.mgsanlet.cheftube.view.adapter
+package com.mgsanlet.cheftube.ui.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,9 +12,8 @@ import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.Recipe
 import com.mgsanlet.cheftube.databinding.ItemRecipeBinding
 import com.mgsanlet.cheftube.utils.FragmentNavigator
-import com.mgsanlet.cheftube.view.adapter.RecipeFeedAdapter.RecipeViewHolder
-import com.mgsanlet.cheftube.view.ui.home.RecipeDetailFragment
-import com.mgsanlet.cheftube.view.ui.home.RecipeFeedFragment
+import com.mgsanlet.cheftube.ui.view.home.RecipeDetailFragment
+import com.mgsanlet.cheftube.ui.view.home.RecipeFeedFragment
 
 /**
  * Adaptador para mostrar una lista de recetas en un RecyclerView.
@@ -22,18 +21,30 @@ import com.mgsanlet.cheftube.view.ui.home.RecipeFeedFragment
  * @author MarioG
  */
 class RecipeFeedAdapter(
+    private val mContext: Context,
     private val recipeList: List<Recipe>,
-    private val fragmentManager: FragmentManager
-) : RecyclerView.Adapter<RecipeViewHolder>() {
+    private val fragmentManager: FragmentManager,
+) : RecyclerView.Adapter<RecipeFeedAdapter.RecipeViewHolder>() {
+
+    inner class RecipeViewHolder(var binding: ItemRecipeBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_recipe, parent, false)
-        return RecipeViewHolder(view)
+        val binding = ItemRecipeBinding.inflate(LayoutInflater.from(mContext), parent, false)
+        return RecipeViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
-        holder.bind(recipeList[position])
+        val recipe = recipeList[position]
+        val binding = holder.binding
+
+        binding.titleTextView.setText(recipe.ttlRId)
+        // Cargar imágenes de recetas con esquinas redondeadas usando Glide
+        Glide.with(mContext)
+            .load(recipe.imgRId)
+            .apply(RequestOptions.bitmapTransform(RoundedCorners(40)))
+            .into(binding.imageView)
+
+        binding.imageView.setOnClickListener { navToRecipeDetail(recipe) }
     }
 
     override fun getItemCount(): Int {
@@ -56,22 +67,6 @@ class RecipeFeedAdapter(
             FragmentNavigator.loadFragmentInstance(
                 null, currentFragment, detailFragment, R.id.fragmentContainerView
             )
-        }
-    }
-
-    inner class RecipeViewHolder(recipeView: View) : RecyclerView.ViewHolder(recipeView) {
-
-        private val binding = ItemRecipeBinding.bind(recipeView)
-
-        fun bind(recipe: Recipe) {
-            binding.titleTextView.setText(recipe.ttlRId)
-            // Cargar imágenes de recetas con esquinas redondeadas usando Glide
-            Glide.with(itemView.context)
-                .load(recipe.imgRId)
-                .apply(RequestOptions.bitmapTransform(RoundedCorners(40)))
-                .into(binding.imageView)
-
-            binding.imageView.setOnClickListener { navToRecipeDetail(recipe) }
         }
     }
 }

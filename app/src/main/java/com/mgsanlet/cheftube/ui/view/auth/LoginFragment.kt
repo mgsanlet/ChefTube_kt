@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.view.ui.auth
+package com.mgsanlet.cheftube.ui.view.auth
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentLoginBinding
-import com.mgsanlet.cheftube.view.ui.home.HomeActivity
+import com.mgsanlet.cheftube.ui.view.home.HomeActivity
 import com.mgsanlet.cheftube.utils.FragmentNavigator
 
 /**

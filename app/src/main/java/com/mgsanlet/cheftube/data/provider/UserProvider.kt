@@ -1,9 +1,8 @@
 package com.mgsanlet.cheftube.data.provider
 
 import android.content.ContentValues
-import android.database.sqlite.SQLiteDatabase
 import android.util.Log
-import com.mgsanlet.cheftube.data.local.DatabaseHelper
+import com.mgsanlet.cheftube.chore.DatabaseHelper
 import com.mgsanlet.cheftube.data.model.User
 
 /**
