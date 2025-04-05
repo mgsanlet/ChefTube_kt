@@ -20,6 +20,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.zxing.integration.android.IntentIntegrator
 import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.databinding.FragmentScannerBinding
 import java.util.Locale
 
 /**
@@ -30,29 +31,20 @@ import java.util.Locale
 @Suppress("DEPRECATION") // Actualización muy reciente de lirería ZXING
 class ScannerFragment : Fragment() {
 
-    private lateinit var mScanButton: ImageButton
-    private lateinit var mProductNameTextView: TextView
-    private lateinit var mNutriscoreTextView: TextView
-    private lateinit var mEcoscoreTextView: TextView
-    private lateinit var mMoreInfoButton: Button
+    private var _binding: FragmentScannerBinding? = null
+    private val binding get() = _binding!!
 
     private var currentBarcode: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_healthy, container, false)
+    ): View {
+        _binding = FragmentScannerBinding.inflate(inflater, container, false)
 
-        mScanButton = view.findViewById(R.id.scanButton)
-        mProductNameTextView = view.findViewById(R.id.productNameTView)
-        mNutriscoreTextView = view.findViewById(R.id.nutriscoreTView)
-        mEcoscoreTextView = view.findViewById(R.id.ecoscoreTView)
-        mMoreInfoButton = view.findViewById(R.id.infoBtn)
-
-        mScanButton.setOnClickListener { startBarcodeScan() }
-        mMoreInfoButton.setOnClickListener { openProductPage() }
-        return view
+        binding.scanButton.setOnClickListener { startBarcodeScan() }
+        binding.infoButton.setOnClickListener { openProductPage() }
+        return binding.root
     }
 
     /**

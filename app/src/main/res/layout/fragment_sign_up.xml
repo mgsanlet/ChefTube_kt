@@ -15,7 +15,7 @@
     tools:context=".view.ui.auth.LoginFragment">
 
     <EditText
-        android:id="@+id/signUpNameField"
+        android:id="@+id/nameEditText"
         style="@style/AuthFields"
 
         android:layout_width="0dp"
@@ -38,7 +38,7 @@
         tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
 
     <EditText
-        android:id="@+id/signUpEmailField"
+        android:id="@+id/emailEditText"
         style="@style/AuthFields"
 
         android:layout_width="0dp"
@@ -56,12 +56,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signUpNameField"
+        app:layout_constraintTop_toBottomOf="@+id/nameEditText"
 
         tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
 
     <EditText
-        android:id="@+id/signUpPwdField"
+        android:id="@+id/password1EditText"
         style="@style/AuthFields"
 
         android:layout_width="0dp"
@@ -79,12 +79,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signUpEmailField"
+        app:layout_constraintTop_toBottomOf="@+id/emailEditText"
 
         tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
 
     <EditText
-        android:id="@+id/signUpPwd2Field"
+        android:id="@+id/password2EditText"
         style="@style/AuthFields"
 
         android:layout_width="0dp"
@@ -102,12 +102,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signUpPwdField"
+        app:layout_constraintTop_toBottomOf="@+id/password1EditText"
 
         tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
 
     <Button
-        android:id="@+id/saveBtn"
+        android:id="@+id/saveButton"
         style="@style/AuthBtns"
 
         android:layout_width="wrap_content"
@@ -122,7 +122,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signUpPwd2Field"
+        app:layout_constraintTop_toBottomOf="@+id/password2EditText"
         app:layout_constraintVertical_bias="0.0"
 
         tools:ignore="TextContrastCheck" />

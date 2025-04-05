@@ -1,11 +1,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    tools:background="#000000">
 
     <TextView
-        android:id="@+id/recipeTitle"
+        android:id="@+id/titleTextView"
+        tools:text="Recipe title"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="10dp"
@@ -19,10 +22,11 @@
         android:background="@drawable/black_bg_box_shape" />
 
     <ImageView
-        android:id="@+id/recipeImage"
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:contentDescription="@string/recipe_image"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        tools:src="@drawable/recipe_01" />
 
 </LinearLayout>

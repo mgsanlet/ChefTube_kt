@@ -25,7 +25,7 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/editTextSearch"
+            android:id="@+id/queryEditText"
             style="@style/AuthFields"
 
             android:layout_width="0dp"
@@ -44,7 +44,7 @@
             tools:ignore="VisualLintTextFieldSize" />
 
         <Button
-            android:id="@+id/okBtn"
+            android:id="@+id/okButton"
             style="@style/AuthBtns"
 
             android:layout_width="wrap_content"

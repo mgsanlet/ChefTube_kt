@@ -9,16 +9,14 @@ import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
-import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.Recipe
+import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
 
 /**
  * Un fragmento que muestra los detalles de una receta, incluyendo su título, ingredientes,
@@ -26,23 +24,22 @@ import com.mgsanlet.cheftube.data.model.Recipe
  * para el tiempo de cocción o preparación.
  */
 class RecipeDetailFragment : Fragment() {
-
-    private lateinit var mTimerTextView   : TextView
-    private lateinit var mStartPauseButton: Button
+    
+    private var _binding: FragmentRecipeDetailBinding? = null
+    private val binding get() = _binding!!
 
     // -Variables del cronómetro-
     private var mCountDownTimer: CountDownTimer? = null
     private var mTimeLeftInMillis: Long = 0
     private var mIsTimerRunning = false
     private lateinit var mMediaPlayer: MediaPlayer
-
-    @SuppressLint("SetJavaScriptEnabled")
+    
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_recipe_detail, container, false)
+    ): View {
+        _binding = FragmentRecipeDetailBinding.inflate(inflater, container, false)
         var recipe: Recipe? = null
 
         arguments?.let {
@@ -54,56 +51,65 @@ class RecipeDetailFragment : Fragment() {
             }
         }
 
-        val title = view.findViewById<TextView>(R.id.recipeDetailTitle)
-        val webView = view.findViewById<WebView>(R.id.recipeDetailVideo)
-        val ingredientsContainer = view.findViewById<LinearLayout>(R.id.ingredientsLinearLayout)
-        val stepsContainer = view.findViewById<LinearLayout>(R.id.stepsLinearLayout)
-
-        // Configurar el título y video
-        if (recipe != null) {
-            title.text = getString(recipe!!.ttlRId)
-            webView.settings.javaScriptEnabled = true
-            val videoUrl = recipe!!.videoUrl
-            webView.loadUrl(videoUrl)
-
-            // Agregando ingredientes dinámicamente al contenedor de ingredientes
-            for (ingredientId in recipe!!.getIngredientsResIds()) {
-                val ingredientTextView = TextView(context)
-                ingredientTextView.setText(ingredientId)
-                if (context != null) {
-                    ingredientTextView.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.white
-                        )
-                    )
-                }
-                ingredientTextView.textSize = 16f
-                ingredientsContainer.addView(ingredientTextView)
-            }
-
-            // Agregando pasos dinámicamente al contenedor de pasos
-            for (stepId in recipe!!.getStepsResIds()) {
-                val stepTextView = TextView(context)
-                stepTextView.setText(stepId)
-                stepTextView.setPadding(0, 4, 0, 2)
-                if (context != null) {
-                    stepTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-                }
-                stepTextView.textSize = 12f
-                stepsContainer.addView(stepTextView)
-            }
-        }
-
-        // Inicializar elementos de la interfaz del temporizador
-        mTimerTextView = view.findViewById(R.id.timerTextView)
-        mStartPauseButton = view.findViewById(R.id.startPauseButton)
+        setRecipeDetails(recipe)
 
         // Listeners
-        mStartPauseButton.setOnClickListener { startPauseTimer() }
-        mTimerTextView.setOnClickListener { showSetTimerDialog() }
+        binding.startPauseButton.setOnClickListener { startPauseTimer() }
+        binding.timerTextView.setOnClickListener { showSetTimerDialog() }
 
-        return view
+        return binding.root
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun setRecipeDetails(recipe: Recipe?) {
+        if (recipe != null) {
+            binding.titleTextView.text = getString(recipe.ttlRId)
+            // Configurar vídeo
+            binding.videoWebView.settings.javaScriptEnabled = true
+            val videoUrl = recipe.videoUrl
+            binding.videoWebView.loadUrl(videoUrl)
+
+            // Agregar ingredientes dinámicamente al contenedor de ingredientes
+            fillIngredients(recipe)
+
+            // Agregar pasos dinámicamente al contenedor de pasos
+            fillSteps(recipe)
+        }
+    }
+
+    private fun fillIngredients(recipe: Recipe) {
+        for (ingredientId in recipe.getIngredientsResIds()) {
+            val ingredientTextView = TextView(context)
+            ingredientTextView.setText(ingredientId)
+            if (context != null) {
+                ingredientTextView.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
+                )
+            }
+            ingredientTextView.textSize = 16f
+            binding.ingredientsLinearLayout.addView(ingredientTextView)
+        }
+    }
+
+    private fun fillSteps(recipe: Recipe) {
+        for (stepId in recipe.getStepsResIds()) {
+            val stepTextView = TextView(context)
+            stepTextView.setText(stepId)
+            stepTextView.setPadding(0, 4, 0, 2)
+            if (context != null) {
+                stepTextView.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
+                )
+            }
+            stepTextView.textSize = 12f
+            binding.stepsLinearLayout.addView(stepTextView)
+        }
     }
 
     /**
@@ -132,13 +138,13 @@ class RecipeDetailFragment : Fragment() {
 
             override fun onFinish() {
                 mIsTimerRunning = false
-                mStartPauseButton.setText(R.string.start)
+                binding.startPauseButton.setText(R.string.start)
                 playAlarmSound()
             }
         }.start()
 
         mIsTimerRunning = true
-        mStartPauseButton.setText(R.string.pause)
+        binding.startPauseButton.setText(R.string.pause)
     }
 
     /**
@@ -148,7 +154,7 @@ class RecipeDetailFragment : Fragment() {
     private fun pauseTimer() {
         mCountDownTimer!!.cancel()
         mIsTimerRunning = false
-        mStartPauseButton.setText(R.string.start)
+        binding.startPauseButton.setText(R.string.start)
     }
 
     /**
@@ -162,7 +168,7 @@ class RecipeDetailFragment : Fragment() {
         val seconds = (mTimeLeftInMillis / 1000).toInt() % 60
 
         val timeLeftFormatted = String.format("%02d:%02d", minutes, seconds)
-        mTimerTextView.text = timeLeftFormatted
+        binding.timerTextView.text = timeLeftFormatted
     }
 
     /**

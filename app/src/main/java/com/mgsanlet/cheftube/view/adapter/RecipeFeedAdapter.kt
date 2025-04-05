@@ -3,8 +3,6 @@ package com.mgsanlet.cheftube.view.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -12,6 +10,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.Recipe
+import com.mgsanlet.cheftube.databinding.ItemRecipeBinding
 import com.mgsanlet.cheftube.utils.FragmentNavigator
 import com.mgsanlet.cheftube.view.adapter.RecipeFeedAdapter.RecipeViewHolder
 import com.mgsanlet.cheftube.view.ui.home.RecipeDetailFragment
@@ -26,6 +25,7 @@ class RecipeFeedAdapter(
     private val recipeList: List<Recipe>,
     private val fragmentManager: FragmentManager
 ) : RecyclerView.Adapter<RecipeViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_recipe, parent, false)
@@ -48,30 +48,30 @@ class RecipeFeedAdapter(
     private fun navToRecipeDetail(recipe: Recipe) {
         // Obtener el fragmento visible actual
         val currentFragment = fragmentManager
-            .findFragmentById(R.id.mainFrContainer) as RecipeFeedFragment?
+            .findFragmentById(R.id.fragmentContainerView) as RecipeFeedFragment?
 
         if (currentFragment != null && currentFragment.isVisible) {
             val detailFragment = RecipeDetailFragment.newInstance(recipe)
 
             FragmentNavigator.loadFragmentInstance(
-                null, currentFragment, detailFragment, R.id.mainFrContainer
+                null, currentFragment, detailFragment, R.id.fragmentContainerView
             )
         }
     }
 
     inner class RecipeViewHolder(recipeView: View) : RecyclerView.ViewHolder(recipeView) {
-        private var title: TextView = recipeView.findViewById(R.id.recipeTitle)
-        private var image: ImageView = recipeView.findViewById(R.id.recipeImage)
+
+        private val binding = ItemRecipeBinding.bind(recipeView)
 
         fun bind(recipe: Recipe) {
-            title.setText(recipe.ttlRId)
+            binding.titleTextView.setText(recipe.ttlRId)
             // Cargar imágenes de recetas con esquinas redondeadas usando Glide
             Glide.with(itemView.context)
                 .load(recipe.imgRId)
                 .apply(RequestOptions.bitmapTransform(RoundedCorners(40)))
-                .into(image)
+                .into(binding.imageView)
 
-            image.setOnClickListener { navToRecipeDetail(recipe) }
+            binding.imageView.setOnClickListener { navToRecipeDetail(recipe) }
         }
     }
 }

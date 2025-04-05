@@ -15,6 +15,7 @@ import com.mgsanlet.cheftube.utils.SystemUiHelper
  * @autor MarioG
  */
 class AuthActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.enableEdgeToEdge()

@@ -5,13 +5,12 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.User
+import com.mgsanlet.cheftube.databinding.FragmentSignUpBinding
 import com.mgsanlet.cheftube.utils.FragmentNavigator
 
 /**
@@ -21,11 +20,8 @@ import com.mgsanlet.cheftube.utils.FragmentNavigator
  */
 class SignUpFragment : Fragment() {
 
-    private lateinit var mNameEditText: EditText
-    private lateinit var mEmailEditText: EditText
-    private lateinit var mPassword1EditText: EditText
-    private lateinit var mPassword2EditText: EditText
-    private lateinit var mSaveButton: Button
+    private var _binding: FragmentSignUpBinding? = null
+    private val binding get() = _binding!!
 
     private val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
 
@@ -33,27 +29,21 @@ class SignUpFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_sign_up, container, false)
+    ): View {
+        _binding = FragmentSignUpBinding.inflate(inflater, container, false)
 
-        mNameEditText = view.findViewById(R.id.signUpNameField)
-        mEmailEditText = view.findViewById(R.id.signUpEmailField)
-        mPassword1EditText = view.findViewById(R.id.signUpPwdField)
-        mPassword2EditText = view.findViewById(R.id.signUpPwd2Field)
-        mSaveButton = view.findViewById(R.id.saveBtn)
+        binding.saveButton.setOnClickListener { tryRegister() }
 
-        mSaveButton.setOnClickListener { tryRegister() }
-
-        return view
+        return binding.root
     }
 
     private fun tryRegister() {
         if (!isValidRegister) return
 
         app.userRepository.createUser(
-            mNameEditText.text.toString(),
-            mEmailEditText.text.toString(),
-            mPassword1EditText.text.toString()
+            binding.nameEditText.text.toString(),
+            binding.emailEditText.text.toString(),
+            binding.password1EditText.text.toString()
         ).fold(
             onSuccess = { user ->
                 app.setCurrentUser(user)
@@ -81,20 +71,20 @@ class SignUpFragment : Fragment() {
         val requiredMessage = getString(R.string.required)
         var isEmpty = false
 
-        if (mNameEditText.text.toString().trim().isEmpty()) {
-            mNameEditText.error = requiredMessage
+        if (binding.nameEditText.text.toString().trim().isEmpty()) {
+            binding.nameEditText.error = requiredMessage
             isEmpty = true
         }
-        if (mEmailEditText.text.toString().trim().isEmpty()) {
-            mEmailEditText.error = requiredMessage
+        if (binding.emailEditText.text.toString().trim().isEmpty()) {
+            binding.emailEditText.error = requiredMessage
             isEmpty = true
         }
-        if (mPassword1EditText.text.toString().trim().isEmpty()) {
-            mPassword1EditText.error = requiredMessage
+        if (binding.password1EditText.text.toString().trim().isEmpty()) {
+            binding.password1EditText.error = requiredMessage
             isEmpty = true
         }
-        if (mPassword2EditText.text.toString().trim().isEmpty()) {
-            mPassword2EditText.error = requiredMessage
+        if (binding.password2EditText.text.toString().trim().isEmpty()) {
+            binding.password2EditText.error = requiredMessage
             isEmpty = true
         }
 
@@ -106,11 +96,11 @@ class SignUpFragment : Fragment() {
      */
     private val isValidEmail: Boolean
         get() {
-            val email = mEmailEditText.text.toString()
+            val email = binding.emailEditText.text.toString()
             return when {
                 Patterns.EMAIL_ADDRESS.matcher(email).matches() -> true
                 else -> {
-                    mEmailEditText.error = getString(R.string.invalid_email)
+                    binding.emailEditText.error = getString(R.string.invalid_email)
                     false
                 }
             }
@@ -121,10 +111,10 @@ class SignUpFragment : Fragment() {
      */
     private val isValidPwd: Boolean
         get() {
-            val password = mPassword1EditText.text.toString()
+            val password = binding.password1EditText.text.toString()
             return when {
                 password.length < User.PASSWORD_MIN_LENGTH -> {
-                    mPassword1EditText.error = getString(R.string.short_pwd)
+                    binding.password1EditText.error = getString(R.string.short_pwd)
                     false
                 }
                 else -> true
@@ -136,9 +126,9 @@ class SignUpFragment : Fragment() {
      */
     private fun passwordsMatch(): Boolean {
         return when {
-            mPassword1EditText.text.toString() == mPassword2EditText.text.toString() -> true
+            binding.password1EditText.text.toString() == binding.password2EditText.text.toString() -> true
             else -> {
-                mPassword2EditText.error = getString(R.string.pwd_d_match)
+                binding.password2EditText.error = getString(R.string.pwd_d_match)
                 false
             }
         }

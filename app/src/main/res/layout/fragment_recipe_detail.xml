@@ -21,14 +21,15 @@
             android:background="@drawable/black_bg_box_shape">
 
             <TextView
-                android:id="@+id/recipeDetailTitle"
+                android:id="@+id/titleTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                tools:text="Recipe Title"/>
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -36,7 +37,7 @@
                 android:layout_marginBottom="40dp">
 
                 <WebView
-                    android:id="@+id/recipeDetailVideo"
+                    android:id="@+id/videoWebView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
             </FrameLayout>
@@ -99,9 +100,9 @@
             android:gravity="center"/>
 
         <Button
+            android:id="@+id/startPauseButton"
             style="@style/AuthBtns"
             app:backgroundTint="#00FFFFFF"
-            android:id="@+id/startPauseButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/start"

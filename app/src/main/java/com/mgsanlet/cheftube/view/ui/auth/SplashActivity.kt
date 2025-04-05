@@ -4,12 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.databinding.ActivitySplashBinding
 import com.mgsanlet.cheftube.utils.SystemUiHelper
 
 /**
@@ -25,33 +24,29 @@ la compatibilidad con versiones desde la API 26 y se prefiere centralizar la log
 pantalla de presentación en esta clase para que sea más mantenible*/
 class SplashActivity : AppCompatActivity() {
 
-    private lateinit var mLogoImageView: ImageView
-    private lateinit var mTitleImageView: ImageView
+    private lateinit var binding: ActivitySplashBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        binding = ActivitySplashBinding.inflate(layoutInflater)
         this.enableEdgeToEdge()
-        setContentView(R.layout.activity_splash)
         SystemUiHelper.hideSystemBars(window.decorView)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) {
+        setContentView(binding.root)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) {
             v: View, insets: WindowInsetsCompat ->
                 val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
                 v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
                 insets
         }
 
-        mLogoImageView = findViewById(R.id.splash_logo)
-        mTitleImageView = findViewById(R.id.splash_title)
+        binding.logoImageView.alpha = 0f
+        binding.titleImageView.alpha = 0f
 
-        mLogoImageView.alpha = 0f
-        mTitleImageView.alpha = 0f
-
-        mLogoImageView.animate()
+        binding.logoImageView.animate()
             .alpha(1f)
             .setDuration(ANIMATION_DURATION)
 
-        mTitleImageView.animate()
+        binding.titleImageView.animate()
             .alpha(1f)
             .setDuration(ANIMATION_DURATION)
             .withEndAction {
@@ -64,8 +59,8 @@ class SplashActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         // Cancela las animaciones en curso para prevenir fugas de memoria
-        mLogoImageView.animate().cancel()
-        mTitleImageView.animate().cancel()
+        binding.logoImageView.animate().cancel()
+        binding.titleImageView.animate().cancel()
     }
 
     companion object {

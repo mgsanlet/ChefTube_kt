@@ -5,13 +5,12 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.User
+import com.mgsanlet.cheftube.databinding.FragmentProfileBinding
 
 /**
  * ProfileFragment permite al usuario ver y modificar los detalles de su perfil,
@@ -19,12 +18,8 @@ import com.mgsanlet.cheftube.data.model.User
  */
 class ProfileFragment : Fragment() {
 
-    private lateinit var mUsernameEditText: EditText
-    private lateinit var mEmailEditText: EditText
-    private lateinit var mOldPasswordEditText: EditText
-    private lateinit var mNewPassword1EditText: EditText
-    private lateinit var mNewPassword2EditText: EditText
-    private lateinit var mSaveButton: Button
+    private var _binding: FragmentProfileBinding? = null
+    private val binding get() = _binding!!
 
     private val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
     private val currentUser get() = app.getCurrentUser()
@@ -33,25 +28,18 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_profile, container, false)
+    ): View {
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
 
-        mUsernameEditText = view.findViewById(R.id.profileNameField)
-        mEmailEditText = view.findViewById(R.id.profileEmailField)
-        mOldPasswordEditText = view.findViewById(R.id.profilePwdField)
-        mNewPassword1EditText = view.findViewById(R.id.profileNewPwdField)
-        mNewPassword2EditText = view.findViewById(R.id.profileNewPwd2Field)
-        mSaveButton = view.findViewById(R.id.profileSaveBtn)
-
-        mSaveButton.setOnClickListener { tryUpdateProfile() }
+        binding.saveButton.setOnClickListener { tryUpdateProfile() }
         loadUserCurrentData()
-        return view
+        return binding.root
     }
 
     private fun loadUserCurrentData() {
         currentUser?.let { user ->
-            mUsernameEditText.setText(user.username)
-            mEmailEditText.setText(user.email)
+            binding.nameEditText.setText(user.username)
+            binding.emailEditText.setText(user.email)
         }
     }
 
@@ -60,18 +48,18 @@ class ProfileFragment : Fragment() {
 
         currentUser?.let { user ->
             // Obtener los nuevos datos o mantener los actuales
-            val newUsername = mUsernameEditText.text.toString().takeIf { it != user.username } ?: user.username
-            val newEmail = mEmailEditText.text.toString().takeIf { it != user.email } ?: user.email
-            val oldPassword = mOldPasswordEditText.text.toString()
+            val newUsername = binding.nameEditText.text.toString().takeIf { it != user.username } ?: user.username
+            val newEmail = binding.emailEditText.text.toString().takeIf { it != user.email } ?: user.email
+            val oldPassword = binding.oldPasswordEditText.text.toString()
             
             // Verificar contraseña antigua
             if (!user.verifyPassword(oldPassword)) {
-                mOldPasswordEditText.error = getString(R.string.wrong_pwd)
+                binding.oldPasswordEditText.error = getString(R.string.wrong_pwd)
                 return
             }
 
             // Determinar qué contraseña usar (la nueva o la antigua)
-            val finalPassword = mNewPassword1EditText.text.toString().ifEmpty {
+            val finalPassword = binding.newPassword1EditText.text.toString().ifEmpty {
                 oldPassword // Si no hay nueva contraseña, mantenemos la antigua
             }
 
@@ -96,9 +84,9 @@ class ProfileFragment : Fragment() {
     }
 
     private fun clearPasswordFields() {
-        mOldPasswordEditText.text.clear()
-        mNewPassword1EditText.text.clear()
-        mNewPassword2EditText.text.clear()
+        binding.oldPasswordEditText.text.clear()
+        binding.newPassword1EditText.text.clear()
+        binding.newPassword2EditText.text.clear()
     }
 
     private val isValidData: Boolean
@@ -110,16 +98,16 @@ class ProfileFragment : Fragment() {
         var empty = false
         val requiredMessage = getString(R.string.required)
 
-        if (mUsernameEditText.text.toString().trim().isEmpty()) {
-            mUsernameEditText.error = requiredMessage
+        if (binding.nameEditText.text.toString().trim().isEmpty()) {
+            binding.nameEditText.error = requiredMessage
             empty = true
         }
-        if (mEmailEditText.text.toString().trim().isEmpty()) {
-            mEmailEditText.error = requiredMessage
+        if (binding.emailEditText.text.toString().trim().isEmpty()) {
+            binding.emailEditText.error = requiredMessage
             empty = true
         }
-        if (mOldPasswordEditText.text.toString().trim().isEmpty()) {
-            mOldPasswordEditText.error = requiredMessage
+        if (binding.oldPasswordEditText.text.toString().trim().isEmpty()) {
+            binding.oldPasswordEditText.error = requiredMessage
             empty = true
         }
 
@@ -128,17 +116,17 @@ class ProfileFragment : Fragment() {
 
     private val isValidEmail: Boolean
         get() {
-            val email = mEmailEditText.text.toString()
+            val email = binding.emailEditText.text.toString()
             return if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                mEmailEditText.error = getString(R.string.invalid_email)
+                binding.emailEditText.error = getString(R.string.invalid_email)
                 false
             } else true
         }
 
     private val isValidNewPassword: Boolean
         get() {
-            val newPassword1 = mNewPassword1EditText.text.toString()
-            val newPassword2 = mNewPassword2EditText.text.toString()
+            val newPassword1 = binding.newPassword1EditText.text.toString()
+            val newPassword2 = binding.newPassword2EditText.text.toString()
 
             // Si no hay nueva contraseña, es válido
             if (newPassword1.isEmpty() && newPassword2.isEmpty()) {
@@ -147,20 +135,20 @@ class ProfileFragment : Fragment() {
 
             // Si solo uno de los campos está vacío, no es válido
             if (newPassword1.isEmpty() || newPassword2.isEmpty()) {
-                if (newPassword1.isEmpty()) mNewPassword1EditText.error = getString(R.string.required)
-                if (newPassword2.isEmpty()) mNewPassword2EditText.error = getString(R.string.required)
+                if (newPassword1.isEmpty()) binding.newPassword1EditText.error = getString(R.string.required)
+                if (newPassword2.isEmpty()) binding.newPassword2EditText.error = getString(R.string.required)
                 return false
             }
 
             // Verificar que las contraseñas coincidan
             if (newPassword1 != newPassword2) {
-                mNewPassword2EditText.error = getString(R.string.pwd_d_match)
+                binding.newPassword2EditText.error = getString(R.string.pwd_d_match)
                 return false
             }
 
             // Verificar longitud mínima
             if (newPassword1.length < User.PASSWORD_MIN_LENGTH) {
-                mNewPassword1EditText.error = getString(R.string.short_pwd)
+                binding.newPassword1EditText.error = getString(R.string.short_pwd)
                 return false
             }
 

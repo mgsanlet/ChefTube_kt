@@ -13,10 +13,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.databinding.ActivityHomeBinding
 import com.mgsanlet.cheftube.utils.FragmentNavigator
 import com.mgsanlet.cheftube.utils.SystemUiHelper
 import com.mgsanlet.cheftube.view.ui.auth.AuthActivity
@@ -30,27 +29,24 @@ import java.util.Locale
  */
 class HomeActivity : AppCompatActivity() {
 
-    private lateinit var mTopMaterialToolbar: MaterialToolbar
-    private lateinit var mBottomNavView: BottomNavigationView
+    private lateinit var binding: ActivityHomeBinding
 
     private val app by lazy { ChefTubeApplication.getInstance(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityHomeBinding.inflate(layoutInflater)
         this.enableEdgeToEdge()
         SystemUiHelper.hideSystemBars(window.decorView)
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v: View, insets: WindowInsetsCompat ->
+        setContentView(binding.root)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v: View, insets: WindowInsetsCompat ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        mTopMaterialToolbar = findViewById(R.id.materialToolbar)
-        mBottomNavView = findViewById(R.id.bottomNavigationView)
-
         // Configurar MaterialToolbar
-        setSupportActionBar(mTopMaterialToolbar)
+        setSupportActionBar(binding.materialToolbar)
         supportActionBar?.title = ""
 
         // Configurar BottomNavigationView
@@ -113,27 +109,27 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setUpBottomNav() {
-        mBottomNavView.selectedItemId = R.id.home_item
-        mBottomNavView.setOnApplyWindowInsetsListener(null)
-        mBottomNavView.setPadding(0, 0, 0, 0)
+        binding.bottomNavigationView.selectedItemId = R.id.home_item
+        binding.bottomNavigationView.setOnApplyWindowInsetsListener(null)
+        binding.bottomNavigationView.setPadding(0, 0, 0, 0)
 
-        mBottomNavView.setOnItemSelectedListener { item: MenuItem ->
+        binding.bottomNavigationView.setOnItemSelectedListener { item: MenuItem ->
             when (item.itemId) {
                 R.id.profile_item -> {
                     FragmentNavigator.loadFragment(
-                        this, null, ProfileFragment(), R.id.mainFrContainer
+                        this, null, ProfileFragment(), R.id.fragmentContainerView
                     )
                     true
                 }
                 R.id.home_item -> {
                     FragmentNavigator.loadFragment(
-                        this, null, RecipeFeedFragment(), R.id.mainFrContainer
+                        this, null, RecipeFeedFragment(), R.id.fragmentContainerView
                     )
                     true
                 }
                 R.id.scanner_item -> {
                     FragmentNavigator.loadFragment(
-                        this, null, ScannerFragment(), R.id.mainFrContainer
+                        this, null, ScannerFragment(), R.id.fragmentContainerView
                     )
                     true
                 }
