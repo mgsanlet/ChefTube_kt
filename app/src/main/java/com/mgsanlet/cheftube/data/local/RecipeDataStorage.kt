@@ -1,6 +1,7 @@
-package com.mgsanlet.cheftube.data.datasource
+package com.mgsanlet.cheftube.data.local
 
 import android.content.Context
+import androidx.media3.common.util.Log
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.Recipe
 import kotlinx.coroutines.Dispatchers
@@ -11,12 +12,14 @@ import kotlinx.coroutines.withContext
  * Provides methods to initialize, register, and filter recipes.
  * @author MarioG
  */
-class RecipeDataStorage {
+object RecipeDataStorage {
     private val recipeList = ArrayList<Recipe>()
+    private val recipeMap = mutableMapOf<String, Recipe>()
 
     suspend fun addRecipesToList(): List<Recipe> = withContext(Dispatchers.IO) {
         register(
             Recipe(
+                "1",
                 R.string.recipe_01, R.drawable.recipe_01,
                 "https://www.youtube.com/embed/Lor3PbTSAho"
             )
@@ -30,6 +33,7 @@ class RecipeDataStorage {
         recipeList[0].addStep(R.string.step_01_03)
         register(
             Recipe(
+                "2",
                 R.string.recipe_02, R.drawable.recipe_02,
                 "https://www.youtube.com/embed/NBjsqZZ2Tc4"
             )
@@ -43,6 +47,7 @@ class RecipeDataStorage {
         recipeList[1].addStep(R.string.step_02_03)
         register(
             Recipe(
+                "3",
                 R.string.recipe_03, R.drawable.recipe_03,
                 "https://www.youtube.com/embed/E0n2ZhOw-MI"
             )
@@ -55,6 +60,7 @@ class RecipeDataStorage {
         recipeList[2].addStep(R.string.step_03_03)
         register(
             Recipe(
+                "4",
                 R.string.recipe_04, R.drawable.recipe_04,
                 "https://www.youtube.com/embed/VDX-YXCARpM"
             )
@@ -67,6 +73,7 @@ class RecipeDataStorage {
         recipeList[3].addStep(R.string.step_04_03)
         register(
             Recipe(
+                "5",
                 R.string.recipe_05, R.drawable.recipe_05,
                 "https://www.youtube.com/embed/OG4pJdxxmj4"
             )
@@ -79,6 +86,7 @@ class RecipeDataStorage {
         recipeList[4].addStep(R.string.step_05_03)
         register(
             Recipe(
+                "6",
                 R.string.recipe_06, R.drawable.recipe_06,
                 "https://www.youtube.com/embed/168HrdzakaA"
             )
@@ -91,6 +99,7 @@ class RecipeDataStorage {
         recipeList[5].addStep(R.string.step_06_03)
         register(
             Recipe(
+                "7",
                 R.string.recipe_07, R.drawable.recipe_07,
                 "https://www.youtube.com/embed/Sjx3J6du-gI"
             )
@@ -112,6 +121,7 @@ class RecipeDataStorage {
     private fun register(recipe: Recipe?) {
         if (recipe != null) {
             recipeList.add(recipe)
+            recipeMap[recipe.id] = recipe
         }
     }
 
@@ -133,5 +143,9 @@ class RecipeDataStorage {
             }
         }
         return@withContext filteredRecipes
+    }
+
+    suspend fun getById(recipeId: String): Recipe? = withContext(Dispatchers.IO) {
+        return@withContext recipeMap[recipeId]
     }
 }

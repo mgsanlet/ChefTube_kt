@@ -1,7 +1,6 @@
 package com.mgsanlet.cheftube.data.model
 
 import android.content.Context
-import java.io.Serializable
 import java.util.Locale
 
 /**
@@ -9,7 +8,8 @@ import java.util.Locale
  * pasos de preparación, y una URL de video.
  * @author MarioG
  */
-data class Recipe(val ttlRId: Int, val imgRId: Int, val videoUrl: String) : Serializable {
+data class Recipe(val id: String, val ttlRId: Int, val imgRId: Int, val videoUrl: String) {
+
     private val ingredientsResIds: MutableList<Int> = ArrayList()
     private val stepsResIds: MutableList<Int> = ArrayList()
 

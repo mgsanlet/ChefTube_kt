@@ -62,7 +62,7 @@ class RecipeFeedAdapter(
             .findFragmentById(R.id.fragmentContainerView) as RecipeFeedFragment?
 
         if (currentFragment != null && currentFragment.isVisible) {
-            val detailFragment = RecipeDetailFragment.newInstance(recipe)
+            val detailFragment = RecipeDetailFragment.newInstance(recipe.id)
 
             FragmentNavigator.loadFragmentInstance(
                 null, currentFragment, detailFragment, R.id.fragmentContainerView

@@ -42,10 +42,10 @@ class RecipeFeedFragment : Fragment() {
         binding.searchButton.setOnClickListener { setUpSearchBtn() }
 
         viewModel.recipeList.observe(viewLifecycleOwner){
-            Toast.makeText(
-                context, getString(R.string.results) + it.size,
-                Toast.LENGTH_SHORT
-            ).show()
+//            Toast.makeText(
+//                context, getString(R.string.results) + it.size,
+//                Toast.LENGTH_SHORT
+//            ).show()
             if (it.isEmpty()) {
                 displayNoResults() // Mostrar mensaje de sin resultados
             } else {
