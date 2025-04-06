@@ -17,99 +17,99 @@ object RecipeDataStorage {
     private val recipeMap = mutableMapOf<String, Recipe>()
 
     suspend fun addRecipesToList(): List<Recipe> = withContext(Dispatchers.IO) {
-        register(
-            Recipe(
-                "1",
-                R.string.recipe_01, R.drawable.recipe_01,
-                "https://www.youtube.com/embed/Lor3PbTSAho"
-            )
+        val recipe1 = Recipe(
+            "1",
+            R.string.recipe_01, R.drawable.recipe_01,
+            "https://www.youtube.com/embed/Lor3PbTSAho"
         )
-        recipeList[0].addIngredient(R.string.ingredient_01_01)
-        recipeList[0].addIngredient(R.string.ingredient_01_02)
-        recipeList[0].addIngredient(R.string.ingredient_01_03)
-        recipeList[0].addIngredient(R.string.ingredient_01_04)
-        recipeList[0].addStep(R.string.step_01_01)
-        recipeList[0].addStep(R.string.step_01_02)
-        recipeList[0].addStep(R.string.step_01_03)
-        register(
-            Recipe(
-                "2",
-                R.string.recipe_02, R.drawable.recipe_02,
-                "https://www.youtube.com/embed/NBjsqZZ2Tc4"
-            )
+        recipe1.addIngredient(R.string.ingredient_01_01)
+        recipe1.addIngredient(R.string.ingredient_01_02)
+        recipe1.addIngredient(R.string.ingredient_01_03)
+        recipe1.addIngredient(R.string.ingredient_01_04)
+        recipe1.addStep(R.string.step_01_01)
+        recipe1.addStep(R.string.step_01_02)
+        recipe1.addStep(R.string.step_01_03)
+        register(recipe1)
+
+        val recipe2 = Recipe(
+            "2",
+            R.string.recipe_02, R.drawable.recipe_02,
+            "https://www.youtube.com/embed/NBjsqZZ2Tc4"
         )
-        recipeList[1].addIngredient(R.string.ingredient_02_01)
-        recipeList[1].addIngredient(R.string.ingredient_02_02)
-        recipeList[1].addIngredient(R.string.ingredient_02_03)
-        recipeList[1].addIngredient(R.string.ingredient_02_04)
-        recipeList[1].addStep(R.string.step_02_01)
-        recipeList[1].addStep(R.string.step_02_02)
-        recipeList[1].addStep(R.string.step_02_03)
-        register(
-            Recipe(
-                "3",
-                R.string.recipe_03, R.drawable.recipe_03,
-                "https://www.youtube.com/embed/E0n2ZhOw-MI"
-            )
+        recipe2.addIngredient(R.string.ingredient_02_01)
+        recipe2.addIngredient(R.string.ingredient_02_02)
+        recipe2.addIngredient(R.string.ingredient_02_03)
+        recipe2.addIngredient(R.string.ingredient_02_04)
+        recipe2.addStep(R.string.step_02_01)
+        recipe2.addStep(R.string.step_02_02)
+        recipe2.addStep(R.string.step_02_03)
+        register(recipe2)
+
+        val recipe3 = Recipe(
+            "3",
+            R.string.recipe_03, R.drawable.recipe_03,
+            "https://www.youtube.com/embed/E0n2ZhOw-MI"
         )
-        recipeList[2].addIngredient(R.string.ingredient_03_01)
-        recipeList[2].addIngredient(R.string.ingredient_03_02)
-        recipeList[2].addIngredient(R.string.ingredient_03_03)
-        recipeList[2].addStep(R.string.step_03_01)
-        recipeList[2].addStep(R.string.step_03_02)
-        recipeList[2].addStep(R.string.step_03_03)
-        register(
-            Recipe(
-                "4",
-                R.string.recipe_04, R.drawable.recipe_04,
-                "https://www.youtube.com/embed/VDX-YXCARpM"
-            )
+        recipe3.addIngredient(R.string.ingredient_03_01)
+        recipe3.addIngredient(R.string.ingredient_03_02)
+        recipe3.addIngredient(R.string.ingredient_03_03)
+        recipe3.addStep(R.string.step_03_01)
+        recipe3.addStep(R.string.step_03_02)
+        recipe3.addStep(R.string.step_03_03)
+        register(recipe3)
+
+        val recipe4 = Recipe(
+            "4",
+            R.string.recipe_04, R.drawable.recipe_04,
+            "https://www.youtube.com/embed/VDX-YXCARpM"
         )
-        recipeList[3].addIngredient(R.string.ingredient_04_01)
-        recipeList[3].addIngredient(R.string.ingredient_04_02)
-        recipeList[3].addIngredient(R.string.ingredient_04_03)
-        recipeList[3].addStep(R.string.step_04_01)
-        recipeList[3].addStep(R.string.step_04_02)
-        recipeList[3].addStep(R.string.step_04_03)
-        register(
-            Recipe(
-                "5",
-                R.string.recipe_05, R.drawable.recipe_05,
-                "https://www.youtube.com/embed/OG4pJdxxmj4"
-            )
+        recipe4.addIngredient(R.string.ingredient_04_01)
+        recipe4.addIngredient(R.string.ingredient_04_02)
+        recipe4.addIngredient(R.string.ingredient_04_03)
+        recipe4.addStep(R.string.step_04_01)
+        recipe4.addStep(R.string.step_04_02)
+        recipe4.addStep(R.string.step_04_03)
+        register(recipe4)
+
+        val recipe5 = Recipe(
+            "5",
+            R.string.recipe_05, R.drawable.recipe_05,
+            "https://www.youtube.com/embed/OG4pJdxxmj4"
         )
-        recipeList[4].addIngredient(R.string.ingredient_05_01)
-        recipeList[4].addIngredient(R.string.ingredient_05_02)
-        recipeList[4].addIngredient(R.string.ingredient_05_03)
-        recipeList[4].addStep(R.string.step_05_01)
-        recipeList[4].addStep(R.string.step_05_02)
-        recipeList[4].addStep(R.string.step_05_03)
-        register(
-            Recipe(
-                "6",
-                R.string.recipe_06, R.drawable.recipe_06,
-                "https://www.youtube.com/embed/168HrdzakaA"
-            )
+        recipe5.addIngredient(R.string.ingredient_05_01)
+        recipe5.addIngredient(R.string.ingredient_05_02)
+        recipe5.addIngredient(R.string.ingredient_05_03)
+        recipe5.addStep(R.string.step_05_01)
+        recipe5.addStep(R.string.step_05_02)
+        recipe5.addStep(R.string.step_05_03)
+        register(recipe5)
+
+        val recipe6 = Recipe(
+            "6",
+            R.string.recipe_06, R.drawable.recipe_06,
+            "https://www.youtube.com/embed/168HrdzakaA"
         )
-        recipeList[5].addIngredient(R.string.ingredient_06_01)
-        recipeList[5].addIngredient(R.string.ingredient_06_02)
-        recipeList[5].addIngredient(R.string.ingredient_06_03)
-        recipeList[5].addStep(R.string.step_06_01)
-        recipeList[5].addStep(R.string.step_06_02)
-        recipeList[5].addStep(R.string.step_06_03)
-        register(
-            Recipe(
-                "7",
-                R.string.recipe_07, R.drawable.recipe_07,
-                "https://www.youtube.com/embed/Sjx3J6du-gI"
-            )
+        recipe6.addIngredient(R.string.ingredient_06_01)
+        recipe6.addIngredient(R.string.ingredient_06_02)
+        recipe6.addIngredient(R.string.ingredient_06_03)
+        recipe6.addStep(R.string.step_06_01)
+        recipe6.addStep(R.string.step_06_02)
+        recipe6.addStep(R.string.step_06_03)
+        register(recipe6)
+
+        val recipe7 = Recipe(
+            "7",
+            R.string.recipe_07, R.drawable.recipe_07,
+            "https://www.youtube.com/embed/Sjx3J6du-gI"
         )
-        recipeList[6].addIngredient(R.string.ingredient_07_01)
-        recipeList[6].addIngredient(R.string.ingredient_07_02)
-        recipeList[6].addIngredient(R.string.ingredient_07_03)
-        recipeList[6].addStep(R.string.step_07_01)
-        recipeList[6].addStep(R.string.step_07_02)
-        recipeList[6].addStep(R.string.step_07_03)
+        recipe7.addIngredient(R.string.ingredient_07_01)
+        recipe7.addIngredient(R.string.ingredient_07_02)
+        recipe7.addIngredient(R.string.ingredient_07_03)
+        recipe7.addStep(R.string.step_07_01)
+        recipe7.addStep(R.string.step_07_02)
+        recipe7.addStep(R.string.step_07_03)
+        register(recipe7)
+
         return@withContext recipeList
     }
 
