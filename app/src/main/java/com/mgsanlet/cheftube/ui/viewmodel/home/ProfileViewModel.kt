@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.data.model.User
 import com.mgsanlet.cheftube.data.repository.UserRepository
-class ProfileViewModel(val app: ChefTubeApplication) {
+class ProfileViewModel(private val app: ChefTubeApplication): ViewModel() {
     private val userRepository: UserRepository = app.userRepository
-    lateinit var currentUser: MutableLiveData<User>
+    var currentUser: MutableLiveData<User> = MutableLiveData()
 
     init {
         app.getCurrentUser()?.let { currentUser.value = it }
@@ -32,7 +32,10 @@ class ProfileViewModel(val app: ChefTubeApplication) {
         ).copy(id = currentUser.value!!.id)
 
         val result = userRepository.updateUser(updatedUser, oldPassword)
-        if (result.isSuccess) app.setCurrentUser(updatedUser)
+        if (result.isSuccess){
+            app.setCurrentUser(updatedUser)
+            currentUser.value = updatedUser
+        }
         return result
     }
 

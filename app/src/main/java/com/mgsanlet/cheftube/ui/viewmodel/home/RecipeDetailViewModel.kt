@@ -25,7 +25,6 @@ class RecipeDetailViewModel(recipeId: String, app: ChefTubeApplication) : ViewMo
     // Estado del cronómetro
     private var timer: CountDownTimer? = null
     var timeLeftInMillis: Long = 0
-    private var isTimerRunning = false
 
     val timerState = MutableLiveData<TimerState>()
     val timeLeft = MutableLiveData<String>()
@@ -68,13 +67,12 @@ class RecipeDetailViewModel(recipeId: String, app: ChefTubeApplication) : ViewMo
 
     // Métodos públicos para controlar el cronómetro
     fun startTimer(timeInMillis: Long) {
-        if (timeLeftInMillis <= 0) return
+        if (timeLeftInMillis < 1000) return
 
         timer?.cancel()
         timer = null
 
         timeLeftInMillis = timeInMillis
-        isTimerRunning = true
         timer = object : CountDownTimer(timeInMillis, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 timeLeftInMillis = millisUntilFinished
@@ -82,7 +80,6 @@ class RecipeDetailViewModel(recipeId: String, app: ChefTubeApplication) : ViewMo
             }
 
             override fun onFinish() {
-                isTimerRunning = false
                 timerState.value = TimerState.Finished
             }
         }.start()
@@ -92,7 +89,7 @@ class RecipeDetailViewModel(recipeId: String, app: ChefTubeApplication) : ViewMo
     fun pauseTimer() {
         timer?.cancel()
         timer = null
-        isTimerRunning = false
+
         timerState.value = TimerState.Paused
     }
 
@@ -100,7 +97,6 @@ class RecipeDetailViewModel(recipeId: String, app: ChefTubeApplication) : ViewMo
         timer?.cancel()
         timer = null
         timeLeftInMillis = 0
-        isTimerRunning = false
         timerState.value = TimerState.Initial
     }
 

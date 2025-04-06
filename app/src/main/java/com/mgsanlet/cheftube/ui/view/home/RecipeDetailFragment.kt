@@ -106,7 +106,7 @@ class RecipeDetailFragment : Fragment() {
         binding.startPauseButton.setOnClickListener {
             when (viewModel.timerState.value) {
                 TimerState.Initial, TimerState.Finished -> {
-                    if (viewModel.timeLeftInMillis > 0) {
+                    if (viewModel.timeLeftInMillis >= 1000) {
                         viewModel.startTimer(viewModel.timeLeftInMillis)
                     } else {
                         showSetTimerDialog()
