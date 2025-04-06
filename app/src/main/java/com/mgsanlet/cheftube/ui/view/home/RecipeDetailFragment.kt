@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.Recipe
 import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
@@ -32,9 +33,10 @@ class RecipeDetailFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: RecipeDetailViewModel by viewModels {
+        val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
         val recipeId = requireArguments().getString(ARG_RECIPE)
             ?: throw IllegalArgumentException("Recipe ID is required")
-            RecipeDetailViewModelFactory(recipeId)
+            RecipeDetailViewModelFactory(recipeId, app)
     }
 
     override fun onCreateView(

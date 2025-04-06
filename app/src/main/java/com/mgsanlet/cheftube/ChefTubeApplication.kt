@@ -5,12 +5,15 @@ import android.content.Context
 import com.mgsanlet.cheftube.chore.DatabaseHelper
 import com.mgsanlet.cheftube.data.model.User
 import com.mgsanlet.cheftube.data.provider.UserProvider
+import com.mgsanlet.cheftube.data.repository.RecipeRepository
 import com.mgsanlet.cheftube.data.repository.UserRepository
 import com.yariksoffice.lingver.Lingver
 import java.util.Locale
 
 class ChefTubeApplication : Application() {
     lateinit var userRepository: UserRepository
+        private set
+    lateinit var recipeRepository: RecipeRepository
         private set
 
     // Usuario actual de la aplicación
@@ -37,6 +40,7 @@ class ChefTubeApplication : Application() {
         val dbHelper = DatabaseHelper(this)
         val userProvider = UserProvider(dbHelper)
         userRepository = UserRepository(this, userProvider)
+        recipeRepository = RecipeRepository()
     }
 
     fun setCurrentUser(user: User?) {

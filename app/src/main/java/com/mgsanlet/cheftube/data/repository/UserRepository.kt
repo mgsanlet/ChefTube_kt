@@ -112,4 +112,17 @@ class UserRepository(
             Result.failure(e)
         }
     }
+
+    fun getUserByEmail(email: String): Result<User> {
+        return try {
+            val user = userProvider.getUserByEmail(email)
+            if (user != null) {
+                Result.success(user)
+            } else {
+                Result.failure(Exception(context.getString(R.string.user_not_found)))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

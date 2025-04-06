@@ -7,10 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.User
 import com.mgsanlet.cheftube.databinding.FragmentProfileBinding
+import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileViewModel
+import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileViewModelFactory
 
 /**
  * ProfileFragment permite al usuario ver y modificar los detalles de su perfil,
@@ -21,8 +24,10 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
-    private val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
-    private val currentUser get() = app.getCurrentUser()
+    private val viewModel: ProfileViewModel by viewModels {
+        val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
+        ProfileViewModelFactory(app)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,58 +35,53 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
-
+        setupObservers()
         binding.saveButton.setOnClickListener { tryUpdateProfile() }
-        loadUserCurrentData()
         return binding.root
     }
 
-    private fun loadUserCurrentData() {
-        currentUser?.let { user ->
-            binding.nameEditText.setText(user.username)
-            binding.emailEditText.setText(user.email)
+    private fun setupObservers() {
+        viewModel.currentUser.observe(viewLifecycleOwner) {
+            binding.nameEditText.setText(it.username)
+            binding.emailEditText.setText(it.email)
         }
     }
 
     private fun tryUpdateProfile() {
         if (!isValidData) return
 
-        currentUser?.let { user ->
-            // Obtener los nuevos datos o mantener los actuales
-            val newUsername = binding.nameEditText.text.toString().takeIf { it != user.username } ?: user.username
-            val newEmail = binding.emailEditText.text.toString().takeIf { it != user.email } ?: user.email
-            val oldPassword = binding.oldPasswordEditText.text.toString()
-            
-            // Verificar contraseña antigua
-            if (!user.verifyPassword(oldPassword)) {
-                binding.oldPasswordEditText.error = getString(R.string.wrong_pwd)
-                return
-            }
+        // Obtener los nuevos datos o mantener los actuales
+        val finalUsername = binding.nameEditText.text.toString()
 
-            // Determinar qué contraseña usar (la nueva o la antigua)
-            val finalPassword = binding.newPassword1EditText.text.toString().ifEmpty {
-                oldPassword // Si no hay nueva contraseña, mantenemos la antigua
-            }
+        val finalEmail = binding.emailEditText.text.toString()
 
-            // Crear usuario actualizado con los datos correspondientes
-            val updatedUser = User.create(
-                username = newUsername,
-                email = newEmail,
-                password = finalPassword
-            ).copy(id = user.id) // Mantener el mismo ID
+        val oldPassword = binding.oldPasswordEditText.text.toString()
 
-            app.userRepository.updateUser(updatedUser, oldPassword).fold(
-                onSuccess = { newUser ->
-                    app.setCurrentUser(newUser)
-                    Toast.makeText(context, getString(R.string.data_saved), Toast.LENGTH_SHORT).show()
-                    clearPasswordFields()
-                },
-                onFailure = { error ->
-                    Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
-                }
-            )
+        // Verificar contraseña antigua
+        if (!viewModel.verifyPassword(oldPassword)) {
+            binding.oldPasswordEditText.error = getString(R.string.wrong_pwd)
+            return
         }
+        // Determinar qué contraseña usar (la nueva o la antigua)
+        val finalPassword = binding.newPassword1EditText.text.toString().ifEmpty {
+            oldPassword // Si no hay nueva contraseña, mantenemos la antigua
+        }
+
+        // Crear usuario actualizado con los datos correspondientes
+         // Mantener el mismo ID
+
+        viewModel.updateUser(finalUsername, finalEmail,finalPassword, oldPassword).fold(
+            onSuccess = {
+                Toast.makeText(context, getString(R.string.data_saved), Toast.LENGTH_SHORT)
+                    .show()
+                clearPasswordFields()
+            },
+            onFailure = { error ->
+                Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
+            }
+        )
     }
+
 
     private fun clearPasswordFields() {
         binding.oldPasswordEditText.text.clear()
@@ -117,10 +117,15 @@ class ProfileFragment : Fragment() {
     private val isValidEmail: Boolean
         get() {
             val email = binding.emailEditText.text.toString()
-            return if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 binding.emailEditText.error = getString(R.string.invalid_email)
-                false
-            } else true
+                return false
+            }
+            if (viewModel.newEmailAlreadyExists(email)){
+                binding.emailEditText.error = getString(R.string.email_already)
+                return false
+            }
+            return true
         }
 
     private val isValidNewPassword: Boolean
@@ -135,8 +140,10 @@ class ProfileFragment : Fragment() {
 
             // Si solo uno de los campos está vacío, no es válido
             if (newPassword1.isEmpty() || newPassword2.isEmpty()) {
-                if (newPassword1.isEmpty()) binding.newPassword1EditText.error = getString(R.string.required)
-                if (newPassword2.isEmpty()) binding.newPassword2EditText.error = getString(R.string.required)
+                if (newPassword1.isEmpty()) binding.newPassword1EditText.error =
+                    getString(R.string.required)
+                if (newPassword2.isEmpty()) binding.newPassword2EditText.error =
+                    getString(R.string.required)
                 return false
             }
 

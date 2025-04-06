@@ -21,6 +21,7 @@ import com.mgsanlet.cheftube.utils.SystemUiHelper
 import com.mgsanlet.cheftube.ui.view.auth.AuthActivity
 import com.yariksoffice.lingver.Lingver
 import java.util.Locale
+import androidx.core.content.edit
 
 /**
  * HomeActivity contiene la vista principal de la aplicación desde la que el usuario
@@ -97,9 +98,9 @@ class HomeActivity : AppCompatActivity() {
 
     private fun saveLanguage(languageCode: String) {
         getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-            .edit()
-            .putString(LANGUAGE_KEY, languageCode)
-            .apply()
+            .edit {
+                putString(LANGUAGE_KEY, languageCode)
+            }
     }
 
     private fun onLogout() {

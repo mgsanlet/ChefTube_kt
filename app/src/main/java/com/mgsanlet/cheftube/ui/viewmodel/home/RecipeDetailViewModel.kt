@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.data.model.Recipe
 import com.mgsanlet.cheftube.data.repository.RecipeRepository
 import com.mgsanlet.cheftube.ui.state.RecipeState
@@ -16,10 +17,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RecipeDetailViewModel(recipeId: String) : ViewModel() {
-    private var recipeRepository = RecipeRepository()
+class RecipeDetailViewModel(recipeId: String, app: ChefTubeApplication) : ViewModel() {
+    private var recipeRepository = app.recipeRepository
     var recipeState = MutableLiveData<RecipeState>()
     private val _recipeId: String = recipeId
+
     // Estado del cronómetro
     private var timer: CountDownTimer? = null
     var timeLeftInMillis: Long = 0
@@ -45,7 +47,7 @@ class RecipeDetailViewModel(recipeId: String) : ViewModel() {
             try {
                 recipeState.value = RecipeState.Loading
                 val result = withContext(Dispatchers.IO) {
-                    recipeRepository.getById(_recipeId) //TODO log
+                    recipeRepository.getById(_recipeId)
                 }
                 if (result != null) {
                     recipeState.value = RecipeState.Success(result)
@@ -111,8 +113,11 @@ class RecipeDetailViewModel(recipeId: String) : ViewModel() {
 }
 
 @Suppress("UNCHECKED_CAST")
-class RecipeDetailViewModelFactory(private val recipeId: String) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass : Class<T>): T {
-        return RecipeDetailViewModel(recipeId) as T
+class RecipeDetailViewModelFactory(
+    private val recipeId: String,
+    private val app: ChefTubeApplication
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return RecipeDetailViewModel(recipeId, app) as T
     }
 }

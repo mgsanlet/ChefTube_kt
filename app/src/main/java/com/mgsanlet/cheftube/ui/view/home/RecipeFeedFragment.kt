@@ -6,15 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentRecipeFeedBinding
 import com.mgsanlet.cheftube.ui.adapter.RecipeFeedAdapter
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedViewModel
+import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedViewModelFactory
 
 /**
  * Un fragmento que muestra una lista de recetas. Cada receta se muestra con su título y una imagen.
@@ -27,7 +28,10 @@ class RecipeFeedFragment : Fragment() {
     private var _binding: FragmentRecipeFeedBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: RecipeFeedViewModel
+    private val viewModel: RecipeFeedViewModel by viewModels {
+        val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
+        RecipeFeedViewModelFactory(app)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,12 +64,6 @@ class RecipeFeedFragment : Fragment() {
         binding.recipeFeedRecyclerView.visibility = View.VISIBLE // Mostrar RecyclerView
 
         return binding.root
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val tempViewModel : RecipeFeedViewModel by viewModels()
-        viewModel = tempViewModel
     }
 
     /**
