@@ -26,7 +26,7 @@
         android:label="ChefTube"
         android:roundIcon="@drawable/ic_app2"
         android:supportsRtl="true"
-        android:theme="@style/Theme.RecipeBook"
+        android:theme="@style/Theme.ChefTube"
         tools:targetApi="34">
 
         <activity

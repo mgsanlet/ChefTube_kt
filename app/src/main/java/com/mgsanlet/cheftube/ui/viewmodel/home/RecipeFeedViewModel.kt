@@ -14,14 +14,12 @@ class RecipeFeedViewModel(app: ChefTubeApplication) : ViewModel() {
     private var recipeRepository = app.recipeRepository
     var recipeList = MutableLiveData<List<Recipe>>()
 
-    init {
-        addRecipesToList()
-    }
-    private fun addRecipesToList() {
+    init{
         CoroutineScope(Dispatchers.Main).launch {
-            recipeList.value = recipeRepository.addRecipesToList()
+            recipeList.value = recipeRepository.getAll()
         }
     }
+
     fun filterRecipesByIngredient(context: Context, query: String) {
         CoroutineScope(Dispatchers.Main).launch {
             recipeList.value = recipeRepository.filterRecipesByIngredient(context, query)

@@ -12,7 +12,6 @@
         android:layout_height="250dp"
         android:layout_gravity="center"
         android:indeterminate="true"
-        android:indeterminateTint="@color/secondary_green"
         />
 
     <ScrollView

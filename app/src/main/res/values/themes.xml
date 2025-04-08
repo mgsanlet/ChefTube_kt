@@ -1,9 +1,8 @@
 <resources>
-    <!-- Base application theme. -->
-    <style name="Base.Theme.RecipeBook" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+    <style name="Base.Theme.ChefTube" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item> <!-- Ocultar splash -->
     </style>
 
-    <style name="Theme.RecipeBook" parent="Base.Theme.RecipeBook" />
+    <style name="Theme.ChefTube" parent="Base.Theme.ChefTube" />
 </resources>

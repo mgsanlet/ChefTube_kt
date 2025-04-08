@@ -67,4 +67,6 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx.v231)
     // LiveData
     implementation(libs.lifecycle.livedata.ktx.v231)
+    //Splash
+    implementation(libs.core.splashscreen)
 }

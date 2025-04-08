@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.media3.common.util.Log
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.Recipe
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
@@ -16,7 +18,13 @@ object RecipeDataStorage {
     private val recipeList = ArrayList<Recipe>()
     private val recipeMap = mutableMapOf<String, Recipe>()
 
-    suspend fun addRecipesToList(): List<Recipe> = withContext(Dispatchers.IO) {
+    init{
+        CoroutineScope(Dispatchers.Main).launch {
+            addRecipesToList()
+        }
+    }
+
+    private suspend fun addRecipesToList(): List<Recipe> = withContext(Dispatchers.IO) {
         val recipe1 = Recipe(
             "1",
             R.string.recipe_01, R.drawable.recipe_01,
@@ -147,5 +155,9 @@ object RecipeDataStorage {
 
     suspend fun getById(recipeId: String): Recipe? = withContext(Dispatchers.IO) {
         return@withContext recipeMap[recipeId]
+    }
+
+    suspend fun getAll(): List<Recipe> = withContext(Dispatchers.IO) {
+        return@withContext recipeList
     }
 }

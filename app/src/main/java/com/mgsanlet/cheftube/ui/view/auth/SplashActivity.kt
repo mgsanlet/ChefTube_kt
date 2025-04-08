@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.mgsanlet.cheftube.databinding.ActivitySplashBinding
@@ -42,12 +43,25 @@ class SplashActivity : AppCompatActivity() {
         binding.logoImageView.alpha = 0f
         binding.titleImageView.alpha = 0f
 
+        binding.logoImageView.alpha = 0f // Comienza completamente transparente
+        binding.logoImageView.scaleX = 0.5f // Comienza más pequeño
+        binding.logoImageView.scaleY = 0.5f // Comienza más pequeño
+
         binding.logoImageView.animate()
             .alpha(1f)
+            .scaleX(1.5f)
+            .scaleY(1.5f)
+            .rotation(360f)
             .setDuration(ANIMATION_DURATION)
+
+        binding.titleImageView.alpha = 0f // Comienza completamente transparente
+        binding.titleImageView.scaleX = 0.5f // Comienza más pequeño
+        binding.titleImageView.scaleY = 0.5f // Comienza más pequeño
 
         binding.titleImageView.animate()
             .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
             .setDuration(ANIMATION_DURATION)
             .withEndAction {
                 // Iniciar AuthActivity después de que finalice la animación del título
@@ -64,6 +78,6 @@ class SplashActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val ANIMATION_DURATION = 500L
+        private const val ANIMATION_DURATION = 1000L
     }
 }
