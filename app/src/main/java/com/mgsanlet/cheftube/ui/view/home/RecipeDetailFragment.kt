@@ -3,8 +3,6 @@ package com.mgsanlet.cheftube.ui.view.home
 import android.annotation.SuppressLint
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
-import android.graphics.Color
-import android.graphics.PorterDuff
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
@@ -159,6 +157,7 @@ class RecipeDetailFragment : Fragment() {
     }
 
     private fun fillIngredients(recipe: Recipe) {
+        binding.ingredientsLinearLayout.removeAllViews()
         for (ingredientId in recipe.getIngredientsResIds()) {
             val ingredientTextView = TextView(context)
             ingredientTextView.setText(ingredientId)
@@ -176,6 +175,7 @@ class RecipeDetailFragment : Fragment() {
     }
 
     private fun fillSteps(recipe: Recipe) {
+        binding.stepsLinearLayout.removeAllViews()
         for (stepId in recipe.getStepsResIds()) {
             val stepTextView = TextView(context)
             stepTextView.setText(stepId)

@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.mgsanlet.cheftube.R
@@ -41,6 +42,8 @@ class RecipeFeedAdapter(
         // Cargar imágenes de recetas con esquinas redondeadas usando Glide
         Glide.with(mContext)
             .load(recipe.imgRId)
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .apply(RequestOptions.bitmapTransform(RoundedCorners(40)))
             .into(binding.imageView)
 
