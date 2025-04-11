@@ -24,6 +24,7 @@ volley = "1.2.1"
 zxingAndroidEmbedded = "4.3.0"
 roomKtx = "2.6.1"
 media3CommonKtx = "1.6.0"
+databindingRuntime = "8.9.1"
 
 [libraries]
 activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
@@ -51,6 +52,7 @@ volley = { module = "com.android.volley:volley", version.ref = "volley" }
 zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3CommonKtx" }
+databinding-runtime = { group = "androidx.databinding", name = "databinding-runtime", version.ref = "databindingRuntime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

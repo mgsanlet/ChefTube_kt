@@ -2,46 +2,98 @@
 
 package com.mgsanlet.cheftube.ui.view.home
 
-
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.Fragment
-import com.android.volley.Request
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
+import androidx.core.graphics.toColorInt
+import androidx.fragment.app.viewModels
 import com.google.zxing.integration.android.IntentIntegrator
+import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentScannerBinding
-import java.util.Locale
+import com.mgsanlet.cheftube.ui.view.base.BaseFragment
+import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerViewModel
+import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerViewModelFactory
+import androidx.core.net.toUri
+import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerState
 
 /**
  * Un fragmento que proporciona funcionalidad para escanear códigos de barras de productos y mostrar
  * información nutricional utilizando la API de Open Food Facts.
  * @author MarioG
  */
-@Suppress("DEPRECATION") // Actualización muy reciente de lirería ZXING
-class ScannerFragment : Fragment() {
+class ScannerFragment : BaseFragment<FragmentScannerBinding, ScannerViewModel>() {
 
-    private var _binding: FragmentScannerBinding? = null
-    private val binding get() = _binding!!
+    private val _viewModel: ScannerViewModel by viewModels {
+        val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
+        ScannerViewModelFactory(app)
+    }
 
-    private var currentBarcode: String? = null
+    override fun inflateViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentScannerBinding =
+        FragmentScannerBinding.inflate(inflater, container, false)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentScannerBinding.inflate(inflater, container, false)
+    override fun defineViewModel(): ScannerViewModel = _viewModel
 
+    override fun setUpObservers() {
+        viewModel.scannerState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is ScannerState.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.resultTextView.visibility = View.GONE
+                    binding.infoButton.isEnabled = false
+                }
+                is ScannerState.ProductFound -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.resultTextView.apply {
+                        visibility = View.VISIBLE
+                        text = "Nombre del producto"
+                        setBackgroundResource(R.drawable.result_green_shapes)
+                    }
+                    binding.infoButton.isEnabled = true
+                    binding.infoButton.setBackgroundColor("#FB9E27".toColorInt())
+                }
+                is ScannerState.ProductNotFound -> {
+                    showBadResult(getString(R.string.product_not_found))
+                }
+                is ScannerState.NetworkError -> {
+                   showBadResult(getString(R.string.network_error))
+                }
+                is ScannerState.Error -> {
+                    showBadResult(getString(R.string.api_error, state.code))
+                }
+            }
+        }
+    }
+
+    private fun showBadResult(message: String) {
+        binding.progressBar.visibility = View.GONE
+        binding.resultTextView.apply {
+            visibility = View.VISIBLE
+            text = message
+            setBackgroundResource(R.drawable.result_red_shapes)
+        }
+        binding.infoButton.isEnabled = false
+    }
+
+    override fun setUpListeners() {
         binding.scanButton.setOnClickListener { startBarcodeScan() }
         binding.infoButton.setOnClickListener { openProductPage() }
-        return binding.root
+    }
+
+    override fun setUpViewProperties() {
+        binding.infoButton.isEnabled = false
+        binding.infoButton.setBackgroundColor("#505050".toColorInt())
+        binding.progressBar.visibility = View.GONE
+        binding.resultTextView.visibility = View.GONE
+    }
+
+    override fun onResume(){
+        super.onResume()
+        binding.progressBar.visibility = View.GONE
     }
 
     /**
@@ -53,13 +105,13 @@ class ScannerFragment : Fragment() {
      * - Desactiva el guardado de imágenes de códigos de barras
      */
     private fun startBarcodeScan() {
-        val integrator = IntentIntegrator.forSupportFragment(this)
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES)
-        integrator.setPrompt(getString(R.string.scan_prompt))
-        integrator.setCameraId(0)
-        integrator.setBeepEnabled(true)
-        integrator.setBarcodeImageEnabled(false)
-        integrator.initiateScan()
+        IntentIntegrator.forSupportFragment(this)
+        .setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES)
+        .setPrompt(getString(R.string.scan_prompt))
+        .setCameraId(0)
+        .setBeepEnabled(true)
+        .setBarcodeImageEnabled(false)
+        .initiateScan()
     }
 
     /**
@@ -73,58 +125,15 @@ class ScannerFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        //String barcode = "3017620422003";  ejemplo
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        if (result != null) {
-            if (result.contents != null) {
-                currentBarcode = result.contents
-                fetchProductData()
-            }
-        }
-    }
-
-    /**
-     * Verifica si el producto existe en la API de Open Food Facts usando el código de barras
-     */
-    private fun fetchProductData() {
-        val url = BASE_URL + currentBarcode
-        val requestQueue = Volley.newRequestQueue(context)
-
-        val stringRequest = StringRequest(
-            Request.Method.GET,
-            url,
-            { openProductPage() }, // Si la respuesta de API es correcta, se abre la página web
-            { error ->
-                when (error.networkResponse?.statusCode) {
-                    404 -> Toast.makeText(
-                        context, getString(R.string.product_not_found), Toast.LENGTH_LONG).show()
-                    null -> Toast.makeText(
-                        context, getString(R.string.network_error), Toast.LENGTH_LONG).show()
-                    else -> Toast.makeText(
-                        context, getString(R.string.api_error, error.networkResponse.statusCode), Toast.LENGTH_LONG).show()
-                }
-            }
-        )
-
-        requestQueue.add(stringRequest)
+        result?.contents?.let { viewModel.setBarcode(it) }
     }
 
     /**
      * Abre la página del producto en el sitio web de Open Food Facts en un navegador
      */
     private fun openProductPage() {
-        val prefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val locale = prefs.getString(LANGUAGE_KEY, Locale.getDefault().language)
-        // Formar URL web basada en la configuración regional y el código de barras
-        val productUrl = "https://$locale.openfoodfacts.org/product/$currentBarcode"
-        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(productUrl))
+        val browserIntent = Intent(Intent.ACTION_VIEW, viewModel.getProductUrl().toUri())
         startActivity(browserIntent)
-    }
-
-    companion object {
-        private const val BASE_URL = "https://world.openfoodfacts.org/api/v3/product/"
-
-        private const val PREFS_NAME = "AppPrefs"
-        private const val LANGUAGE_KEY = "language"
     }
 }

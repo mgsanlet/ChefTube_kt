@@ -1,7 +1,7 @@
 <resources>
     <!-- Estilo para EditTexts -->
     <style name="AuthFields">
-        <item name="android:background">@drawable/auth_field_shapes</item>
+        <item name="android:background">@drawable/base_field_shapes</item>
         <item name="android:textColorHint">#AAFFFFFF</item>
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">18sp</item>
@@ -10,7 +10,7 @@
     </style>
 
     <style name="AuthBtns">
-        <item name="android:background">@drawable/auth_btn_shapes</item>
+        <item name="android:background">@drawable/base_btn_shapes</item>
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">16sp</item>
         <item name="android:fontFamily">sans-serif-medium</item>

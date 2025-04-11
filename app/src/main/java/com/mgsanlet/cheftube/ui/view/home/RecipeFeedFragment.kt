@@ -14,6 +14,7 @@ import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentRecipeFeedBinding
 import com.mgsanlet.cheftube.ui.adapter.RecipeFeedAdapter
+import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedViewModel
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedViewModelFactory
 
@@ -23,29 +24,23 @@ import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedViewModelFactory
  *
  * @author MarioG
  */
-class RecipeFeedFragment : Fragment() {
+class RecipeFeedFragment : BaseFragment<FragmentRecipeFeedBinding, RecipeFeedViewModel>() {
 
-    private var _binding: FragmentRecipeFeedBinding? = null
-    private val binding get() = _binding!!
-
-    private val viewModel: RecipeFeedViewModel by viewModels {
+    private val _viewModel: RecipeFeedViewModel by viewModels {
         val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
         RecipeFeedViewModelFactory(app)
     }
 
-    override fun onCreateView(
+    override fun inflateViewBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentRecipeFeedBinding.inflate(inflater, container, false)
+        container: ViewGroup?
+    ): FragmentRecipeFeedBinding =
+        FragmentRecipeFeedBinding.inflate(inflater, container, false)
 
-        binding.recipeFeedRecyclerView.setLayoutManager(LinearLayoutManager(context))
+    override fun defineViewModel(): RecipeFeedViewModel = _viewModel
 
-        // Listeners
-        binding.searchButton.setOnClickListener { setUpSearchBtn() }
-
-        viewModel.recipeList.observe(viewLifecycleOwner){
+    override fun setUpObservers() {
+        viewModel.recipeList.observe(viewLifecycleOwner) {
 //            Toast.makeText(
 //                context, getString(R.string.results) + it.size,
 //                Toast.LENGTH_SHORT
@@ -55,15 +50,22 @@ class RecipeFeedFragment : Fragment() {
             } else {
                 val recipeAdapter = RecipeFeedAdapter(requireContext(), it, parentFragmentManager)
                 binding.recipeFeedRecyclerView.adapter = recipeAdapter
-                binding.noResultsTextView.visibility = View.GONE // Ocultar mensaje de sin resultados
+                binding.noResultsTextView.visibility =
+                    View.GONE // Ocultar mensaje de sin resultados
                 binding.recipeFeedRecyclerView.visibility = View.VISIBLE // Mostrar RecyclerView
             }
         }
+    }
+
+    override fun setUpListeners() {
+        binding.searchButton.setOnClickListener { setUpSearchBtn() }
+    }
+
+    override fun setUpViewProperties() {
+        binding.recipeFeedRecyclerView.setLayoutManager(LinearLayoutManager(context))
 
         binding.noResultsTextView.visibility = View.GONE // Oculta mensaje de sin resultados-
         binding.recipeFeedRecyclerView.visibility = View.VISIBLE // Mostrar RecyclerView
-
-        return binding.root
     }
 
     /**

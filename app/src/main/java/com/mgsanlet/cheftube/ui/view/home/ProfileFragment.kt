@@ -9,7 +9,7 @@ import androidx.fragment.app.viewModels
 import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentProfileBinding
-import com.mgsanlet.cheftube.ui.view.BaseFormFragment
+import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileViewModel
 import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileViewModelFactory
 
@@ -17,32 +17,42 @@ import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileViewModelFactory
  * ProfileFragment permite al usuario ver y modificar los detalles de su perfil,
  * incluyendo nombre de usuario, email y contraseña.
  */
-class ProfileFragment : BaseFormFragment() {
+class ProfileFragment : BaseFormFragment<FragmentProfileBinding, ProfileViewModel>() {
 
-    private var _binding: FragmentProfileBinding? = null
-    private val binding get() = _binding!!
-
-    private val viewModel: ProfileViewModel by viewModels {
+    private val _viewModel: ProfileViewModel by viewModels {
         val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
         ProfileViewModelFactory(app)
     }
 
-    override fun onCreateView(
+    override fun inflateViewBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentProfileBinding.inflate(inflater, container, false)
-        setupObservers()
-        binding.saveButton.setOnClickListener { tryUpdateProfile() }
-        return binding.root
-    }
+        container: ViewGroup?
+    ): FragmentProfileBinding =
+        FragmentProfileBinding.inflate(inflater, container, false)
 
-    private fun setupObservers() {
+    override fun defineViewModel(): ProfileViewModel = _viewModel
+
+    override fun setUpObservers() {
         viewModel.currentUser.observe(viewLifecycleOwner) {
             binding.nameEditText.setText(it.username)
             binding.emailEditText.setText(it.email)
         }
+    }
+
+    override fun setUpListeners() {
+        binding.saveButton.setOnClickListener { tryUpdateProfile() }
+    }
+
+    override fun isValidViewInput(): Boolean{
+        val requiredFields = listOf(
+            binding.nameEditText.text,
+            binding.emailEditText.text,
+            binding.oldPasswordEditText.text
+        )
+
+        return  !areFieldsEmpty(requiredFields) &&
+                isValidEmailPattern(binding.emailEditText) &&
+                isValidNewPassword()
     }
 
     private fun tryUpdateProfile() {
@@ -80,18 +90,6 @@ class ProfileFragment : BaseFormFragment() {
                 Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
             }
         )
-    }
-
-    override fun isValidViewInput(): Boolean{
-        val requiredFields = listOf(
-            binding.nameEditText.text,
-            binding.emailEditText.text,
-            binding.oldPasswordEditText.text
-        )
-
-        return  !areFieldsEmpty(requiredFields) &&
-                isValidEmailPattern(binding.emailEditText) &&
-                isValidNewPassword()
     }
 
     private fun isValidNewPassword(): Boolean{

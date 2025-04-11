@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="white">#FFFFFFFF</color>
-    <color name="secondary_green">#46A467</color>
-    <color name="primary_orange">#FEA421</color>
+    <color name="primary_green">#46A467</color>
+    <color name="dark_green">#2C6640</color>
+    <color name="disabled_grey">#505050</color>
+    <color name="primary_orange">#FB9E27</color>
+    <color name="dark_orange">#A66A16</color>
     <color name="primary_red">#FF4D38</color>
+    <color name="dark_red">#9E3426</color>
     <color name="black">#262626</color>
+    <color name="transparent">#00FFFFFF</color>
 </resources>

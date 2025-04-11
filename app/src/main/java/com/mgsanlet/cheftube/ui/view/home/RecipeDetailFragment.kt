@@ -20,11 +20,11 @@ import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.Recipe
 import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
-import com.mgsanlet.cheftube.ui.state.RecipeState
-import com.mgsanlet.cheftube.ui.state.TimerState
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModel
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModelFactory
 import androidx.core.graphics.toColorInt
+import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeState
+import com.mgsanlet.cheftube.ui.viewmodel.home.TimerState
 
 /**
  * Un fragmento que muestra los detalles de una receta, incluyendo su título, ingredientes,

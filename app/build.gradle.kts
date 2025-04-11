@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.room.ktx)
     implementation(libs.media3.common.ktx)
+    implementation(libs.databinding.runtime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:title=""
-        android:background="@color/secondary_green"
+        android:background="@color/primary_green"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/AppTheme"
 

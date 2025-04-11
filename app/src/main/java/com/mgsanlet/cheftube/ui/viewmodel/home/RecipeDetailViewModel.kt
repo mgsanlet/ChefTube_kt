@@ -9,11 +9,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.data.model.Recipe
-import com.mgsanlet.cheftube.data.repository.RecipeRepository
-import com.mgsanlet.cheftube.ui.state.RecipeState
-import com.mgsanlet.cheftube.ui.state.TimerState
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -45,6 +42,7 @@ class RecipeDetailViewModel(recipeId: String, app: ChefTubeApplication) : ViewMo
         viewModelScope.launch {
             try {
                 recipeState.value = RecipeState.Loading
+                delay(3000L)
                 val result = withContext(Dispatchers.IO) {
                     recipeRepository.getById(_recipeId)
                 }
@@ -116,4 +114,17 @@ class RecipeDetailViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return RecipeDetailViewModel(recipeId, app) as T
     }
+}
+
+sealed class TimerState {
+    data object Running : TimerState()
+    data object Paused : TimerState()
+    data object Finished : TimerState()
+    data object Initial : TimerState()
+}
+
+sealed class RecipeState {
+    data object Loading : RecipeState()
+    data class Success(val recipe: Recipe) : RecipeState()
+    data class Error(val message: String) : RecipeState()
 }

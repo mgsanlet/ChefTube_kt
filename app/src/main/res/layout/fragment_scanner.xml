@@ -1,69 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/primary_orange"
     android:layout_gravity="center"
+    android:background="@drawable/bg_splash"
     android:orientation="vertical">
 
-    <ImageButton
-        android:id="@+id/scanButton"
-        android:layout_width="150dp"
-        android:layout_height="120dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="30dp"
-
-        android:contentDescription="@string/scan_prompt"
-        android:scaleType="fitXY"
-        android:src="@drawable/ic_barcode"
-
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:text="@string/scan_prompt"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold" />
 
     <LinearLayout
+        android:id="@+id/scannerBtnLinearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        android:layout_marginTop="40dp"
         android:background="@drawable/black_bg_box_shape"
-        android:padding="30dp">
+        android:orientation="vertical"
+        android:padding="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/infoLinearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/scanButton"
+            style="@style/AuthBtns"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="3dp"
+            android:backgroundTint="@color/primary_green"
+            android:contentDescription="@string/scan_prompt"
+            android:padding="10dp"
+
+            android:scaleType="fitXY"
+            android:src="@drawable/baseline_photo_camera_24" />
+
+        <TextView
+            android:id="@+id/scanButtonLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/scan_prompt"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/infoLinearLayout"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/black_bg_box_shape"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scannerBtnLinearLayout"
+        app:layout_constraintWidth_max="340dp"
+        app:layout_constraintVertical_chainStyle="spread">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="126dp"
+            android:layout_height="153dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:indeterminate="true"
+            app:layout_constraintBottom_toTopOf="@+id/middleGuide"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="invisible"/>
+
+        <TextView
+
+            android:id="@+id/resultTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:padding="10dp"
+            android:textSize="24sp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:background="@drawable/result_green_shapes"
+            tools:text="Oreo con mucho texto y chocolate y varias cosas c"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toTopOf="@+id/middleGuide"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="visible"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/middleGuide"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5"/>
 
         <Button
             android:id="@+id/infoButton"
             style="@style/AuthBtns"
-            app:backgroundTint="@color/secondary_green"
-            android:text="@string/more_info"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            />
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/more_info"
+            app:backgroundTint="@null"
+            app:layout_constraintBottom_toTopOf="@+id/apiRefTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/middleGuide"
+            android:enabled="false"/>
 
         <TextView
+            android:id="@+id/apiRefTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             android:text="@string/powered_by_open_food_facts_api"
+            android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:textStyle="bold"
+            android:layout_marginHorizontal="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/infoButton" />
 
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 
