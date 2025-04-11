@@ -30,13 +30,13 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding, ScannerViewModel>()
         ScannerViewModelFactory(app)
     }
 
+    override fun defineViewModel(): ScannerViewModel = _viewModel
+
     override fun inflateViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
     ): FragmentScannerBinding =
         FragmentScannerBinding.inflate(inflater, container, false)
-
-    override fun defineViewModel(): ScannerViewModel = _viewModel
 
     override fun setUpObservers() {
         viewModel.scannerState.observe(viewLifecycleOwner) { state ->

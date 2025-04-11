@@ -1,13 +1,11 @@
 package com.mgsanlet.cheftube.ui.view.home
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mgsanlet.cheftube.ChefTubeApplication
@@ -31,13 +29,13 @@ class RecipeFeedFragment : BaseFragment<FragmentRecipeFeedBinding, RecipeFeedVie
         RecipeFeedViewModelFactory(app)
     }
 
+    override fun defineViewModel(): RecipeFeedViewModel = _viewModel
+
     override fun inflateViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
     ): FragmentRecipeFeedBinding =
         FragmentRecipeFeedBinding.inflate(inflater, container, false)
-
-    override fun defineViewModel(): RecipeFeedViewModel = _viewModel
 
     override fun setUpObservers() {
         viewModel.recipeList.observe(viewLifecycleOwner) {

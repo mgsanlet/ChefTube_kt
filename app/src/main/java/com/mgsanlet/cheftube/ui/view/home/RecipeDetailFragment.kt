@@ -14,7 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import androidx.core.graphics.toColorInt
 import androidx.fragment.app.viewModels
 import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
@@ -22,7 +22,7 @@ import com.mgsanlet.cheftube.data.model.Recipe
 import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModel
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModelFactory
-import androidx.core.graphics.toColorInt
+import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeState
 import com.mgsanlet.cheftube.ui.viewmodel.home.TimerState
 
@@ -31,47 +31,31 @@ import com.mgsanlet.cheftube.ui.viewmodel.home.TimerState
  * pasos de preparación y un video incrustado (si está disponible). También incluye un temporizador de cuenta regresiva
  * para el tiempo de cocción o preparación.
  */
-class RecipeDetailFragment : Fragment() {
+class RecipeDetailFragment : BaseFragment<FragmentRecipeDetailBinding, RecipeDetailViewModel>() {
 
-    private var _binding: FragmentRecipeDetailBinding? = null
-    private val binding get() = _binding!!
-
-    private val viewModel: RecipeDetailViewModel by viewModels {
+    private val _viewModel: RecipeDetailViewModel by viewModels {
         val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
         val recipeId = requireArguments().getString(ARG_RECIPE)
             ?: throw IllegalArgumentException("Recipe ID is required")
-            RecipeDetailViewModelFactory(recipeId, app)
+        RecipeDetailViewModelFactory(recipeId, app)
     }
 
-    override fun onCreateView(
+    override fun defineViewModel(): RecipeDetailViewModel {
+        return _viewModel
+    }
+
+    override fun inflateViewBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentRecipeDetailBinding.inflate(inflater, container, false)
-        val color = "#46A467".toColorInt()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            binding.progressBar.indeterminateDrawable.colorFilter =
-                BlendModeColorFilter(color, BlendMode.SRC_IN)
-        }
-        else{
-            @Suppress("DEPRECATION") // Solo para versiones antiguas
-            binding.progressBar.indeterminateDrawable.setColorFilter(
-                color, android.graphics.PorterDuff.Mode.SRC_IN)
-        }
-
-        setupObservers()
-        setupListeners()
-
-        return binding.root
-    }
+        container: ViewGroup?
+    ): FragmentRecipeDetailBinding =
+        FragmentRecipeDetailBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.loadRecipe() // Cargar la receta después de que el fragment esté creado
     }
 
-    private fun setupObservers() {
+    override fun setUpObservers() {
         viewModel.recipeState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is RecipeState.Loading -> {
@@ -116,7 +100,7 @@ class RecipeDetailFragment : Fragment() {
         }
     }
 
-    private fun setupListeners() {
+    override fun setUpListeners() {
         binding.startPauseButton.setOnClickListener {
             when (viewModel.timerState.value) {
                 TimerState.Initial, TimerState.Finished -> {
@@ -136,6 +120,19 @@ class RecipeDetailFragment : Fragment() {
         binding.timerTextView.setOnClickListener {
             if (viewModel.timerState.value == TimerState.Running) viewModel.pauseTimer()
             showSetTimerDialog()
+        }
+    }
+
+    override fun setUpViewProperties() {
+        val color = "#46A467".toColorInt()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            binding.progressBar.indeterminateDrawable.colorFilter =
+                BlendModeColorFilter(color, BlendMode.SRC_IN)
+        }
+        else{
+            @Suppress("DEPRECATION") // Solo para versiones antiguas
+            binding.progressBar.indeterminateDrawable.setColorFilter(
+                color, android.graphics.PorterDuff.Mode.SRC_IN)
         }
     }
 
@@ -251,12 +248,6 @@ class RecipeDetailFragment : Fragment() {
         binding.progressBar.visibility = View.GONE
         binding.recipeContent.visibility = View.VISIBLE
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
 
     companion object {
         private const val ARG_RECIPE = "recipe"

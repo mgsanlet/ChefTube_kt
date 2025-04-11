@@ -1,8 +1,6 @@
 package com.mgsanlet.cheftube.ui.view.home
 
-import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
@@ -24,13 +22,13 @@ class ProfileFragment : BaseFormFragment<FragmentProfileBinding, ProfileViewMode
         ProfileViewModelFactory(app)
     }
 
+    override fun defineViewModel(): ProfileViewModel = _viewModel
+
     override fun inflateViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
     ): FragmentProfileBinding =
         FragmentProfileBinding.inflate(inflater, container, false)
-
-    override fun defineViewModel(): ProfileViewModel = _viewModel
 
     override fun setUpObservers() {
         viewModel.currentUser.observe(viewLifecycleOwner) {
