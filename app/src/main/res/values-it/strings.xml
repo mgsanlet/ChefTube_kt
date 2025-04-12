@@ -138,5 +138,6 @@
     <string name="step_07_03">3. Fai sobbollire nella salsa: Versa la salsa di pomodoro e condisci con paprika, sale e pepe. Fai sobbollire per 15-20 minuti finché i calamari non sono teneri e i sapori non si amalgamano. Servi caldo.</string>
     <string name="unknown_error">" Errore sconosciuto"</string>
     <string name="keep_logged">Mantenere la sessione attiva</string>
+    <string name="account_created">Account creato con successo</string>
 
 </resources>

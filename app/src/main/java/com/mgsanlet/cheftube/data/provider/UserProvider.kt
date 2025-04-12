@@ -75,6 +75,37 @@ class UserProvider(private val dbHelper: DatabaseHelper) {
         }
     }
 
+    fun getUserByName(name: String): User? {
+        return try {
+            val db = dbHelper.readableDatabase
+            val cursor = db.query(
+                TABLE_USERS,
+                arrayOf(COLUMN_ID, COLUMN_USERNAME, COLUMN_EMAIL, COLUMN_PASSWORD_HASH),
+                "$COLUMN_USERNAME = ?",
+                arrayOf(name),
+                null,
+                null,
+                null
+            )
+
+            cursor.use {
+                if (it.moveToFirst()) {
+                    val user = User(
+                        id = it.getString(it.getColumnIndexOrThrow(COLUMN_ID)),
+                        username = it.getString(it.getColumnIndexOrThrow(COLUMN_USERNAME)),
+                        email = it.getString(it.getColumnIndexOrThrow(COLUMN_EMAIL)),
+                        passwordHash = it.getString(it.getColumnIndexOrThrow(COLUMN_PASSWORD_HASH))
+                    )
+                    user
+                } else {
+                    null
+                }
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     fun getUserByEmail(email: String): User? {
         return try {
             val db = dbHelper.readableDatabase

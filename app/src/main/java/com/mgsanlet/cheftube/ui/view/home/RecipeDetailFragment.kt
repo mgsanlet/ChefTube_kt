@@ -124,16 +124,8 @@ class RecipeDetailFragment : BaseFragment<FragmentRecipeDetailBinding, RecipeDet
     }
 
     override fun setUpViewProperties() {
-        val color = "#46A467".toColorInt()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            binding.progressBar.indeterminateDrawable.colorFilter =
-                BlendModeColorFilter(color, BlendMode.SRC_IN)
-        }
-        else{
-            @Suppress("DEPRECATION") // Solo para versiones antiguas
-            binding.progressBar.indeterminateDrawable.setColorFilter(
-                color, android.graphics.PorterDuff.Mode.SRC_IN)
-        }
+        setUpProgressBar(binding.progressBar)
+
     }
 
     @SuppressLint("SetJavaScriptEnabled")

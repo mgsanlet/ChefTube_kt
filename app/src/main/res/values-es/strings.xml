@@ -138,6 +138,7 @@
     <string name="step_07_03">3. Cocina a fuego lento en salsa: Vierte la salsa de tomate y sazona con pimentón, sal y pimienta. Cocina a fuego lento durante 15-20 minutos hasta que los calamares estén tiernos y los sabores se mezclen. Sirve caliente.</string>
     <string name="unknown_error">Error desconocido</string>
     <string name="keep_logged">Mantener sesión iniciada</string>
+    <string name="account_created">Cuenta creada con éxito</string>
 
 
 </resources>

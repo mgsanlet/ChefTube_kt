@@ -1,5 +1,6 @@
 package com.mgsanlet.cheftube.ui.view.auth
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
@@ -7,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.ui.view.home.HomeActivity
 import com.mgsanlet.cheftube.utils.SystemUiHelper
 
 /**
@@ -26,5 +28,11 @@ class AuthActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+     fun navToHomePage() {
+        val mainActIntent = Intent(this, HomeActivity::class.java)
+        startActivity(mainActIntent)
+        this.finish()
     }
 }

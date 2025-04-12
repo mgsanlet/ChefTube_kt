@@ -46,6 +46,7 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding, ScannerViewModel>()
                     binding.resultTextView.visibility = View.GONE
                     binding.infoButton.isEnabled = false
                 }
+
                 is ScannerState.ProductFound -> {
                     binding.progressBar.visibility = View.GONE
                     binding.resultTextView.apply {
@@ -56,12 +57,15 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding, ScannerViewModel>()
                     binding.infoButton.isEnabled = true
                     binding.infoButton.setBackgroundColor("#FB9E27".toColorInt())
                 }
+
                 is ScannerState.ProductNotFound -> {
                     showBadResult(getString(R.string.product_not_found))
                 }
+
                 is ScannerState.NetworkError -> {
-                   showBadResult(getString(R.string.network_error))
+                    showBadResult(getString(R.string.network_error))
                 }
+
                 is ScannerState.Error -> {
                     showBadResult(getString(R.string.api_error, state.code))
                 }
@@ -89,9 +93,10 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding, ScannerViewModel>()
         binding.infoButton.setBackgroundColor("#505050".toColorInt())
         binding.progressBar.visibility = View.GONE
         binding.resultTextView.visibility = View.GONE
+        setUpProgressBar(binding.progressBar)
     }
 
-    override fun onResume(){
+    override fun onResume() {
         super.onResume()
         binding.progressBar.visibility = View.GONE
     }
@@ -106,12 +111,12 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding, ScannerViewModel>()
      */
     private fun startBarcodeScan() {
         IntentIntegrator.forSupportFragment(this)
-        .setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES)
-        .setPrompt(getString(R.string.scan_prompt))
-        .setCameraId(0)
-        .setBeepEnabled(true)
-        .setBarcodeImageEnabled(false)
-        .initiateScan()
+            .setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES)
+            .setPrompt(getString(R.string.scan_prompt))
+            .setCameraId(0)
+            .setBeepEnabled(true)
+            .setBarcodeImageEnabled(false)
+            .initiateScan()
     }
 
     /**

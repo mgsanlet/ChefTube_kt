@@ -1,7 +1,6 @@
 package com.mgsanlet.cheftube.data.repository
 
 import android.content.Context
-import android.util.Log
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.User
 import com.mgsanlet.cheftube.data.provider.UserProvider
@@ -18,10 +17,11 @@ class UserRepository(
 
     fun createUser(username: String, email: String, password: String): Result<User> {
         return try {
-            val existingUser = userProvider.getUserByEmail(email)
-            if (existingUser != null) {
+            if (userProvider.getUserByEmailOrUsername(username) != null) {
+                Result.failure(Exception(context.getString(R.string.username_already)))
+            } else if (userProvider.getUserByEmailOrUsername(email) != null) {
                 Result.failure(Exception(context.getString(R.string.email_already)))
-            } else {
+            }else{
                 val newUser = User.create(username, email, password)
                 if (userProvider.insertUser(newUser)) {
                     Result.success(newUser)
@@ -88,6 +88,19 @@ class UserRepository(
         }
     }
 
+    fun getUserByName(username: String): Result<User> {
+        return try {
+            val user = userProvider.getUserByName(username)
+            if (user != null) {
+                Result.success(user)
+            } else {
+                Result.failure(Exception(context.getString(R.string.user_not_found)))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     fun getUserByEmail(email: String): Result<User> {
         return try {
             val user = userProvider.getUserByEmail(email)
@@ -100,4 +113,6 @@ class UserRepository(
             Result.failure(e)
         }
     }
+
+
 }

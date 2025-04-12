@@ -70,7 +70,12 @@ class ProfileFragment : BaseFormFragment<FragmentProfileBinding, ProfileViewMode
 
         val oldPassword = binding.oldPasswordEditText.text.toString()
 
-        if (viewModel.newEmailAlreadyExists(binding.emailEditText.text.toString())){
+        if( viewModel.newUsernameAlreadyExists(finalUsername)) {
+            binding.emailEditText.error = getString(R.string.username_already)
+            return
+        }
+
+        if (viewModel.newEmailAlreadyExists(finalEmail)){
             binding.emailEditText.error = getString(R.string.email_already)
             return
         }

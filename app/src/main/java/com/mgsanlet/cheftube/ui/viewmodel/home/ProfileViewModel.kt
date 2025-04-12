@@ -39,6 +39,13 @@ class ProfileViewModel(private val app: ChefTubeApplication): ViewModel() {
         return result
     }
 
+    fun newUsernameAlreadyExists(newUsername: String): Boolean {
+        if (newUsername == currentUser.value?.username){
+            return false
+        }
+        return !userRepository.getUserByName(newUsername).isFailure
+    }
+
     fun newEmailAlreadyExists(newEmail: String) : Boolean {
         if (newEmail == currentUser.value?.email){
             return false

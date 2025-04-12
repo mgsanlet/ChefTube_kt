@@ -36,23 +36,21 @@ class LoginViewModel(private val app: ChefTubeApplication) : ViewModel() {
         viewModelScope.launch {
             _loginState.value = LoginState.Loading
             delay(3000L)
-            try {
-                val result = withContext(Dispatchers.IO) {
-                    userRepository.loginUser(identity, password)
-                }
 
-                result.fold(
-                    onSuccess = { user ->
-                        _loginState.value = LoginState.Success(user)
-                        app.setCurrentUser(user)
-                    },
-                    onFailure = { exception ->
-                        _loginState.value = LoginState.Error(exception.message!!)
-                    }
-                )
-            } catch (e: Exception) {
-                _loginState.value = LoginState.Error(e.message!!)
+            val result = withContext(Dispatchers.IO) {
+                userRepository.loginUser(identity, password)
             }
+
+            result.fold(
+                onSuccess = { user ->
+                    _loginState.value = LoginState.Success(user)
+                    app.setCurrentUser(user)
+                },
+                onFailure = { exception ->
+                    _loginState.value = LoginState.Error(exception.message!!)
+                }
+            )
+
         }
     }
 

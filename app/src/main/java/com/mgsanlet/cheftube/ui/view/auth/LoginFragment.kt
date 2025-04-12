@@ -23,6 +23,7 @@ import com.mgsanlet.cheftube.ui.view.home.HomeActivity
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginState
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginViewModel
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginViewModelFactory
+import com.mgsanlet.cheftube.ui.viewmodel.auth.SignUpState
 import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerViewModel
 import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerViewModelFactory
 import com.mgsanlet.cheftube.utils.FragmentNavigator
@@ -56,8 +57,8 @@ class LoginFragment : BaseFormFragment<FragmentLoginBinding, LoginViewModel>() {
         viewModel.loginState.observe(viewLifecycleOwner){ state ->
             when (state) {
                 is LoginState.Initial ->{
-                    binding.identityEditText.setText("")
-                    binding.passwordEditText.setText("")
+                    binding.identityEditText.text.clear()
+                    binding.passwordEditText.text.clear()
                     showLoading(false)
                     cleanErrors()
                 }
@@ -67,14 +68,14 @@ class LoginFragment : BaseFormFragment<FragmentLoginBinding, LoginViewModel>() {
                 }
                 is LoginState.Success ->{
                     showLoading(false)
-                    navToHomePage()
+                    (activity as? AuthActivity)?.navToHomePage()
                 }
                 is LoginState.Error ->{
                     showLoading(false)
                     Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
                 }
                 is LoginState.AlreadyLogged ->{
-                    navToHomePage()
+                    (activity as? AuthActivity)?.navToHomePage()
                 }
             }
         }
@@ -98,16 +99,7 @@ class LoginFragment : BaseFormFragment<FragmentLoginBinding, LoginViewModel>() {
     }
 
     override fun setUpViewProperties() {
-        val color = "#46A467".toColorInt()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            binding.progressBar.indeterminateDrawable.colorFilter =
-                BlendModeColorFilter(color, BlendMode.SRC_IN)
-        }
-        else{
-            @Suppress("DEPRECATION") // Solo para versiones antiguas
-            binding.progressBar.indeterminateDrawable.setColorFilter(
-                color, android.graphics.PorterDuff.Mode.SRC_IN)
-        }
+        setUpProgressBar(binding.progressBar)
     }
 
     override fun isValidViewInput(): Boolean {
@@ -134,14 +126,5 @@ class LoginFragment : BaseFormFragment<FragmentLoginBinding, LoginViewModel>() {
         } else {
             binding.progressBar.visibility = View.GONE
         }
-    }
-
-    /**
-     * Navega a la página de inicio (HomeActivity)
-     */
-    private fun navToHomePage() {
-        val mainActIntent = Intent(activity, HomeActivity::class.java)
-        startActivity(mainActIntent)
-        activity?.finish()
     }
 }
