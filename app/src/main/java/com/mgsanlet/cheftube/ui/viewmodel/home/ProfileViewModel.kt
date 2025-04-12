@@ -6,7 +6,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.data.model.User
 import com.mgsanlet.cheftube.data.repository.UserRepository
-class ProfileViewModel(private val app: ChefTubeApplication): ViewModel() {
+
+class ProfileViewModel(private val app: ChefTubeApplication) : ViewModel() {
     private val userRepository: UserRepository = app.userRepository
     var currentUser: MutableLiveData<User> = MutableLiveData()
 
@@ -19,20 +20,15 @@ class ProfileViewModel(private val app: ChefTubeApplication): ViewModel() {
     }
 
     fun updateUser(
-        finalUsername: String,
-        finalEmail: String,
-        finalPassword: String,
-        oldPassword: String
+        finalUsername: String, finalEmail: String, finalPassword: String, oldPassword: String
     ): Result<User> {
 
         val updatedUser = User.create(
-            username = finalUsername,
-            email = finalEmail,
-            password = finalPassword
+            username = finalUsername, email = finalEmail, password = finalPassword
         ).copy(id = currentUser.value!!.id)
 
         val result = userRepository.updateUser(updatedUser, oldPassword)
-        if (result.isSuccess){
+        if (result.isSuccess) {
             app.setCurrentUser(updatedUser)
             currentUser.value = updatedUser
         }
@@ -40,28 +36,28 @@ class ProfileViewModel(private val app: ChefTubeApplication): ViewModel() {
     }
 
     fun newUsernameAlreadyExists(newUsername: String): Boolean {
-        if (newUsername == currentUser.value?.username){
+        if (newUsername == currentUser.value?.username) {
             return false
         }
         return !userRepository.getUserByName(newUsername).isFailure
     }
 
-    fun newEmailAlreadyExists(newEmail: String) : Boolean {
-        if (newEmail == currentUser.value?.email){
+    fun newEmailAlreadyExists(newEmail: String): Boolean {
+        if (newEmail == currentUser.value?.email) {
             return false
         }
         return !userRepository.getUserByEmail(newEmail).isFailure
     }
 
-    fun alternateKeepLoggedIn(keepLoggedIn: Boolean){
-        if (keepLoggedIn){
+    fun alternateKeepLoggedIn(keepLoggedIn: Boolean) {
+        if (keepLoggedIn) {
             app.setCurrentUserAsSaved()
-        }else{
+        } else {
             app.deleteSavedUser()
         }
     }
 
-    fun isUserBeingKept(): Boolean{
+    fun isUserBeingKept(): Boolean {
         return app.isUserSaved()
     }
 }

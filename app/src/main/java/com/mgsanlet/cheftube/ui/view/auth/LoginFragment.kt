@@ -8,11 +8,11 @@ import androidx.fragment.app.viewModels
 import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentLoginBinding
+import com.mgsanlet.cheftube.ui.utils.FragmentNavigator
 import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginState
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginViewModel
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginViewModelFactory
-import com.mgsanlet.cheftube.utils.FragmentNavigator
 
 /**
  * Fragmento que maneja el proceso de inicio de sesión para la aplicación.
@@ -34,33 +34,35 @@ class LoginFragment : BaseFormFragment<FragmentLoginBinding, LoginViewModel>() {
     }
 
     override fun inflateViewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentLoginBinding =
-        FragmentLoginBinding.inflate(inflater, container, false)
+        inflater: LayoutInflater, container: ViewGroup?
+    ): FragmentLoginBinding = FragmentLoginBinding.inflate(inflater, container, false)
 
     override fun setUpObservers() {
-        viewModel.loginState.observe(viewLifecycleOwner){ state ->
+        viewModel.loginState.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is LoginState.Initial ->{
+                is LoginState.Initial -> {
                     binding.identityEditText.text.clear()
                     binding.passwordEditText.text.clear()
                     showLoading(false)
                     cleanErrors()
                 }
-                is LoginState.Loading ->{
+
+                is LoginState.Loading -> {
                     showLoading(true)
                     cleanErrors()
                 }
-                is LoginState.Success ->{
+
+                is LoginState.Success -> {
                     showLoading(false)
                     (activity as? AuthActivity)?.navToHomePage()
                 }
-                is LoginState.Error ->{
+
+                is LoginState.Error -> {
                     showLoading(false)
                     Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
                 }
-                is LoginState.AlreadyLogged ->{
+
+                is LoginState.AlreadyLogged -> {
                     (activity as? AuthActivity)?.navToHomePage()
                 }
             }
@@ -69,7 +71,7 @@ class LoginFragment : BaseFormFragment<FragmentLoginBinding, LoginViewModel>() {
 
     override fun setUpListeners() {
         binding.signInButton.setOnClickListener {
-            if (isValidViewInput()){
+            if (isValidViewInput()) {
                 viewModel.tryLogin(
                     binding.identityEditText.text.toString(),
                     binding.passwordEditText.text.toString()
@@ -80,7 +82,8 @@ class LoginFragment : BaseFormFragment<FragmentLoginBinding, LoginViewModel>() {
         binding.signUpLink.setOnClickListener {
             cleanErrors()
             FragmentNavigator.loadFragment(
-                null, this, SignUpFragment(), R.id.authFrContainer)
+                null, this, SignUpFragment(), R.id.authFrContainer
+            )
         }
     }
 
@@ -90,8 +93,7 @@ class LoginFragment : BaseFormFragment<FragmentLoginBinding, LoginViewModel>() {
 
     override fun isValidViewInput(): Boolean {
         val requiredFields = listOf(
-            binding.identityEditText,
-            binding.passwordEditText
+            binding.identityEditText, binding.passwordEditText
         )
 
         return !areFieldsEmpty(requiredFields)
@@ -107,7 +109,7 @@ class LoginFragment : BaseFormFragment<FragmentLoginBinding, LoginViewModel>() {
 
     private fun showLoading(show: Boolean) {
         binding.signInButton.isEnabled = !show
-        if(show){
+        if (show) {
             binding.progressBar.visibility = View.VISIBLE
         } else {
             binding.progressBar.visibility = View.GONE

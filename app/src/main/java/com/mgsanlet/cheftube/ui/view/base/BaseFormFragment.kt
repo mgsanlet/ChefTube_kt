@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package com.mgsanlet.cheftube.ui.view.base
 
 import android.util.Patterns
@@ -10,12 +8,11 @@ import androidx.viewbinding.ViewBinding
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.User
 
-@Suppress("unused")
 abstract class BaseFormFragment<T : ViewBinding, VM : ViewModel> : BaseFragment<T, VM>() {
 
-    abstract fun isValidViewInput(): Boolean
+    protected abstract fun isValidViewInput(): Boolean
 
-    fun areFieldsEmpty(fields: List<EditText>): Boolean {
+    protected fun areFieldsEmpty(fields: List<EditText>): Boolean {
         var hasEmptyFields = false
         for (field in fields) {
 
@@ -28,7 +25,7 @@ abstract class BaseFormFragment<T : ViewBinding, VM : ViewModel> : BaseFragment<
         return hasEmptyFields
     }
 
-    fun isValidEmailPattern(email: EditText): Boolean {
+    protected fun isValidEmailPattern(email: EditText): Boolean {
         if (!Patterns.EMAIL_ADDRESS.matcher(email.text).matches()) {
             email.error = getString(R.string.invalid_email)
             return false
@@ -36,7 +33,7 @@ abstract class BaseFormFragment<T : ViewBinding, VM : ViewModel> : BaseFragment<
         return true
     }
 
-    fun isValidPasswordPattern(password: EditText): Boolean {
+    protected fun isValidPasswordPattern(password: EditText): Boolean {
         // Verificar longitud mínima
         if (password.text.trim().length < User.PASSWORD_MIN_LENGTH) {
             password.error = getString(R.string.short_pwd)

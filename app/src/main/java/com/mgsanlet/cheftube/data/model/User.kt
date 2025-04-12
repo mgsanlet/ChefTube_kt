@@ -9,9 +9,7 @@ import java.util.UUID
  */
 data class User(
     val id: String = UUID.randomUUID().toString(), // ID único generado automáticamente
-    val username: String,
-    val email: String,
-    private val passwordHash: String
+    val username: String, val email: String, private val passwordHash: String
 ) : Serializable {
 
     /**
@@ -21,7 +19,6 @@ data class User(
         const val PASSWORD_MIN_LENGTH = 5
 
         fun create(username: String, email: String, password: String): User {
-            require(password.length >= PASSWORD_MIN_LENGTH) { "La contraseña debe tener al menos $PASSWORD_MIN_LENGTH caracteres" }
             val passwordHash = hashPassword(password)
             return User(username = username, email = email, passwordHash = passwordHash)
         }

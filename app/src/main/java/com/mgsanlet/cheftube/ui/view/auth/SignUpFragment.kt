@@ -30,10 +30,8 @@ class SignUpFragment : BaseFormFragment<FragmentSignUpBinding, SignUpViewModel>(
     override fun defineViewModel(): SignUpViewModel = _viewModel
 
     override fun inflateViewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentSignUpBinding =
-        FragmentSignUpBinding.inflate(inflater, container, false)
+        inflater: LayoutInflater, container: ViewGroup?
+    ): FragmentSignUpBinding = FragmentSignUpBinding.inflate(inflater, container, false)
 
     override fun setUpObservers() {
         viewModel.signUpState.observe(viewLifecycleOwner) { state ->
@@ -43,14 +41,17 @@ class SignUpFragment : BaseFormFragment<FragmentSignUpBinding, SignUpViewModel>(
                     cleanErrors()
                     clearFields()
                 }
+
                 is SignUpState.Loading -> {
                     showLoading(true)
                     cleanErrors()
                 }
+
                 is SignUpState.Error -> {
                     showLoading(false)
                     Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
                 }
+
                 is SignUpState.Success -> {
                     showSuccessSnackBar()
                     showLoading(false)
@@ -61,9 +62,7 @@ class SignUpFragment : BaseFormFragment<FragmentSignUpBinding, SignUpViewModel>(
 
     private fun showSuccessSnackBar() {
         val snackbar = Snackbar.make(
-            binding.root,
-            getString(R.string.account_created),
-            Snackbar.LENGTH_INDEFINITE
+            binding.root, getString(R.string.account_created), Snackbar.LENGTH_INDEFINITE
         )
         snackbar.setAction(R.string.action_sign_in) {
             (activity as? AuthActivity)?.navToHomePage()
@@ -89,21 +88,20 @@ class SignUpFragment : BaseFormFragment<FragmentSignUpBinding, SignUpViewModel>(
             binding.password2EditText,
         )
 
-        return !areFieldsEmpty(requiredFields) &&
-                isValidEmailPattern(binding.emailEditText) &&
-                isValidPasswordPattern(binding.password1EditText) &&
-                passwordsMatch()
+        return !areFieldsEmpty(requiredFields) && isValidEmailPattern(binding.emailEditText) && isValidPasswordPattern(
+            binding.password1EditText
+        ) && passwordsMatch()
     }
 
     private fun trySignUp() {
         if (!isValidViewInput()) return
 
-        if( viewModel.newUsernameAlreadyExists(binding.nameEditText.text.toString())) {
-            binding.emailEditText.error = getString(R.string.username_already)
+        if (viewModel.newUsernameAlreadyExists(binding.nameEditText.text.toString())) {
+            binding.nameEditText.error = getString(R.string.username_already)
             return
         }
 
-        if ( viewModel.newEmailAlreadyExists(binding.emailEditText.text.toString()) ) {
+        if (viewModel.newEmailAlreadyExists(binding.emailEditText.text.toString())) {
             binding.emailEditText.error = getString(R.string.email_already)
             return
         }
@@ -128,7 +126,7 @@ class SignUpFragment : BaseFormFragment<FragmentSignUpBinding, SignUpViewModel>(
         }
     }
 
-    private fun clearFields(){
+    private fun clearFields() {
         binding.nameEditText.text.clear()
         binding.emailEditText.text.clear()
         binding.password1EditText.text.clear()
@@ -144,7 +142,7 @@ class SignUpFragment : BaseFormFragment<FragmentSignUpBinding, SignUpViewModel>(
 
     private fun showLoading(show: Boolean) {
         binding.saveButton.isEnabled = !show
-        if(show){
+        if (show) {
             binding.progressBar.visibility = View.VISIBLE
         } else {
             binding.progressBar.visibility = View.GONE

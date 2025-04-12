@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.utils
+package com.mgsanlet.cheftube.ui.utils
 
 import android.os.Build
 import android.view.View

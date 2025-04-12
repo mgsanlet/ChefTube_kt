@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.ui.utils.SystemUiHelper
 import com.mgsanlet.cheftube.ui.view.home.HomeActivity
-import com.mgsanlet.cheftube.utils.SystemUiHelper
 
 /**
  * AuthActivity contiene una imagen de fondo, el logo de la aplicación y las imágenes del título,
@@ -30,7 +30,7 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
-     fun navToHomePage() {
+    fun navToHomePage() {
         val mainActIntent = Intent(this, HomeActivity::class.java)
         startActivity(mainActIntent)
         this.finish()

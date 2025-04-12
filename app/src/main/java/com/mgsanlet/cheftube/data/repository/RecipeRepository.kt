@@ -1,14 +1,11 @@
 package com.mgsanlet.cheftube.data.repository
 
 import android.content.Context
-import com.mgsanlet.cheftube.data.local.RecipeDataStorage
 import com.mgsanlet.cheftube.data.model.Recipe
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.mgsanlet.cheftube.data.source.local.RecipeLocalDataSource
 
 class RecipeRepository {
-    private var recipeDataStorage = RecipeDataStorage
+    private var recipeDataStorage = RecipeLocalDataSource
 
     suspend fun filterRecipesByIngredient(context: Context, query: String): List<Recipe> {
         return recipeDataStorage.filterRecipesByIngredient(context, query)

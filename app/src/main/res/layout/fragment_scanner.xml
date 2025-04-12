@@ -48,7 +48,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/infoLinearLayout"
-        android:layout_width="280dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/black_bg_box_shape"
         android:orientation="vertical"
@@ -120,8 +120,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="15dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
             android:text="@string/powered_by_open_food_facts_api"
             android:textAlignment="center"
             android:textColor="@color/white"

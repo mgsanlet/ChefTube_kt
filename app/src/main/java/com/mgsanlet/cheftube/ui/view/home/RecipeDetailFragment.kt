@@ -18,9 +18,9 @@ import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.Recipe
 import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
+import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModel
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModelFactory
-import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeState
 import com.mgsanlet.cheftube.ui.viewmodel.home.TimerState
 
@@ -43,10 +43,8 @@ class RecipeDetailFragment : BaseFragment<FragmentRecipeDetailBinding, RecipeDet
     }
 
     override fun inflateViewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentRecipeDetailBinding =
-        FragmentRecipeDetailBinding.inflate(inflater, container, false)
+        inflater: LayoutInflater, container: ViewGroup?
+    ): FragmentRecipeDetailBinding = FragmentRecipeDetailBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -61,10 +59,9 @@ class RecipeDetailFragment : BaseFragment<FragmentRecipeDetailBinding, RecipeDet
                 }
 
                 is RecipeState.Success -> {
-                    setRecipeDetails(state.recipe)
-                    /* El progressBar se oculta cuando la webview terminó de cargar,
+                    setRecipeDetails(state.recipe)/* El progressBar se oculta cuando la webview terminó de cargar,
                        pero si no hay, debe ocultarse cuando la petición devuelva éxito */
-                    if (binding.videoWebView.url == null){
+                    if (binding.videoWebView.url == null) {
                         hideLoading()
                     }
                     hideProgressWhenVideoLoaded()
@@ -131,10 +128,10 @@ class RecipeDetailFragment : BaseFragment<FragmentRecipeDetailBinding, RecipeDet
 
     }
 
-    private fun hideProgressWhenVideoLoaded(){
+    private fun hideProgressWhenVideoLoaded() {
         if (binding.videoWebView.progress == 100) {
             hideLoading()
-        }else{
+        } else {
             Handler(Looper.getMainLooper()).postDelayed({
                 hideProgressWhenVideoLoaded()
             }, 200)
@@ -166,8 +163,7 @@ class RecipeDetailFragment : BaseFragment<FragmentRecipeDetailBinding, RecipeDet
             if (context != null) {
                 ingredientTextView.setTextColor(
                     ContextCompat.getColor(
-                        requireContext(),
-                        R.color.white
+                        requireContext(), R.color.white
                     )
                 )
             }
@@ -185,8 +181,7 @@ class RecipeDetailFragment : BaseFragment<FragmentRecipeDetailBinding, RecipeDet
             if (context != null) {
                 stepTextView.setTextColor(
                     ContextCompat.getColor(
-                        requireContext(),
-                        R.color.white
+                        requireContext(), R.color.white
                     )
                 )
             }

@@ -12,7 +12,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.Recipe
 import com.mgsanlet.cheftube.databinding.ItemRecipeBinding
-import com.mgsanlet.cheftube.utils.FragmentNavigator
+import com.mgsanlet.cheftube.ui.utils.FragmentNavigator
 import com.mgsanlet.cheftube.ui.view.home.RecipeDetailFragment
 import com.mgsanlet.cheftube.ui.view.home.RecipeFeedFragment
 
@@ -27,10 +27,12 @@ class RecipeFeedAdapter(
     private val fragmentManager: FragmentManager,
 ) : RecyclerView.Adapter<RecipeFeedAdapter.RecipeViewHolder>() {
 
-    inner class RecipeViewHolder(var binding: ItemRecipeBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class RecipeViewHolder(var binding: ItemRecipeBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
-        val binding = ItemRecipeBinding.inflate(LayoutInflater.from(mContext), parent, false)
+        val binding = ItemRecipeBinding.inflate(
+            LayoutInflater.from(mContext), parent, false)
         return RecipeViewHolder(binding)
     }
 
@@ -40,9 +42,7 @@ class RecipeFeedAdapter(
 
         binding.titleTextView.setText(recipe.ttlRId)
         // Cargar imágenes de recetas con esquinas redondeadas usando Glide
-        Glide.with(mContext)
-            .load(recipe.imgRId)
-            .skipMemoryCache(true)
+        Glide.with(mContext).load(recipe.imgRId).skipMemoryCache(true)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .apply(RequestOptions.bitmapTransform(RoundedCorners(40)))
             .into(binding.imageView)
@@ -61,8 +61,8 @@ class RecipeFeedAdapter(
      */
     private fun navToRecipeDetail(recipe: Recipe) {
         // Obtener el fragmento visible actual
-        val currentFragment = fragmentManager
-            .findFragmentById(R.id.fragmentContainerView) as RecipeFeedFragment?
+        val currentFragment =
+            fragmentManager.findFragmentById(R.id.fragmentContainerView) as RecipeFeedFragment?
 
         if (currentFragment != null && currentFragment.isVisible) {
             val detailFragment = RecipeDetailFragment.newInstance(recipe.id)

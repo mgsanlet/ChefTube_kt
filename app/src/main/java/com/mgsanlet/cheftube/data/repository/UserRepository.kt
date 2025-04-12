@@ -3,7 +3,7 @@ package com.mgsanlet.cheftube.data.repository
 import android.content.Context
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.User
-import com.mgsanlet.cheftube.data.provider.UserProvider
+import com.mgsanlet.cheftube.data.source.local.UserLocalDataSource
 
 /**
  * Repositorio que gestiona las operaciones de usuarios
@@ -11,8 +11,7 @@ import com.mgsanlet.cheftube.data.provider.UserProvider
  * @param userProvider Proveedor de datos de usuarios
  */
 class UserRepository(
-    private val context: Context,
-    private val userProvider: UserProvider
+    private val context: Context, private val userProvider: UserLocalDataSource
 ) {
 
     fun createUser(username: String, email: String, password: String): Result<User> {
@@ -21,7 +20,7 @@ class UserRepository(
                 Result.failure(Exception(context.getString(R.string.username_already)))
             } else if (userProvider.getUserByEmailOrUsername(email) != null) {
                 Result.failure(Exception(context.getString(R.string.email_already)))
-            }else{
+            } else {
                 val newUser = User.create(username, email, password)
                 if (userProvider.insertUser(newUser)) {
                     Result.success(newUser)
@@ -41,9 +40,11 @@ class UserRepository(
                 user == null -> {
                     Result.failure(Exception(context.getString(R.string.invalid_login)))
                 }
+
                 !user.verifyPassword(password) -> {
                     Result.failure(Exception(context.getString(R.string.wrong_pwd)))
                 }
+
                 else -> {
                     Result.success(user)
                 }
@@ -55,10 +56,13 @@ class UserRepository(
 
     fun updateUser(user: User, oldPassword: String): Result<User> {
         return try {
-            
+
             // Obtener usuario actual
-            val currentUser = userProvider.getUserById(user.id)
-                ?: return Result.failure(Exception(context.getString(R.string.user_not_found)))
+            val currentUser = userProvider.getUserById(user.id) ?: return Result.failure(
+                Exception(
+                    context.getString(R.string.user_not_found)
+                )
+            )
 
             // Verificar la contraseña antigua
             if (!currentUser.verifyPassword(oldPassword)) {

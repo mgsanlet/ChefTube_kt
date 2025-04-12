@@ -27,9 +27,7 @@ class SignUpViewModel(private val app: ChefTubeApplication) : ViewModel() {
 
             val result = withContext(Dispatchers.IO) {
                 userRepository.createUser(
-                    username,
-                    email,
-                    password
+                    username, email, password
                 )
             }
 
@@ -37,11 +35,9 @@ class SignUpViewModel(private val app: ChefTubeApplication) : ViewModel() {
                 onSuccess = { user ->
                     _signUpState.value = SignUpState.Success
                     app.setCurrentUser(user)
-                },
-                onFailure = { error ->
+                }, onFailure = { error ->
                     _signUpState.value = SignUpState.Error(error.message)
-                }
-            )
+                })
         }
     }
 

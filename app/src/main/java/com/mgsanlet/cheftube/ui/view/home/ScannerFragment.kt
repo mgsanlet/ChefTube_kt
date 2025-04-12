@@ -7,16 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.toColorInt
+import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import com.google.zxing.integration.android.IntentIntegrator
 import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentScannerBinding
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
+import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerState
 import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerViewModel
 import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerViewModelFactory
-import androidx.core.net.toUri
-import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerState
 
 /**
  * Un fragmento que proporciona funcionalidad para escanear códigos de barras de productos y mostrar
@@ -33,10 +33,8 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding, ScannerViewModel>()
     override fun defineViewModel(): ScannerViewModel = _viewModel
 
     override fun inflateViewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentScannerBinding =
-        FragmentScannerBinding.inflate(inflater, container, false)
+        inflater: LayoutInflater, container: ViewGroup?
+    ): FragmentScannerBinding = FragmentScannerBinding.inflate(inflater, container, false)
 
     override fun setUpObservers() {
         viewModel.scannerState.observe(viewLifecycleOwner) { state ->
@@ -112,11 +110,8 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding, ScannerViewModel>()
     private fun startBarcodeScan() {
         IntentIntegrator.forSupportFragment(this)
             .setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES)
-            .setPrompt(getString(R.string.scan_prompt))
-            .setCameraId(0)
-            .setBeepEnabled(true)
-            .setBarcodeImageEnabled(false)
-            .initiateScan()
+            .setPrompt(getString(R.string.scan_prompt)).setCameraId(0).setBeepEnabled(true)
+            .setBarcodeImageEnabled(false).initiateScan()
     }
 
     /**

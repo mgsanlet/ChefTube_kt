@@ -21,9 +21,7 @@ abstract class BaseFragment<T : ViewBinding, VM : ViewModel> : Fragment() {
     protected lateinit var viewModel: VM
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         _binding = inflateViewBinding(inflater, container)
         viewModel = defineViewModel()
@@ -38,9 +36,9 @@ abstract class BaseFragment<T : ViewBinding, VM : ViewModel> : Fragment() {
         _binding = null
     }
 
-    abstract fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?): T
+    protected abstract fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?): T
 
-    abstract fun defineViewModel(): VM
+    protected abstract fun defineViewModel(): VM
 
     protected open fun setUpObservers() {}
 
@@ -50,16 +48,14 @@ abstract class BaseFragment<T : ViewBinding, VM : ViewModel> : Fragment() {
 
     protected fun setUpProgressBar(progressBar: ProgressBar) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            progressBar.indeterminateDrawable.colorFilter =
-                BlendModeColorFilter(
-                    ContextCompat.getColor(requireContext(), R.color.primary_green),
-                    BlendMode.SRC_IN
-                )
+            progressBar.indeterminateDrawable.colorFilter = BlendModeColorFilter(
+                ContextCompat.getColor(requireContext(), R.color.primary_green), BlendMode.SRC_IN
+            )
         } else {
             @Suppress("DEPRECATION") // Solo para versiones antiguas
             progressBar.indeterminateDrawable.setColorFilter(
-                ContextCompat.getColor(requireContext(), R.color.primary_green)
-                , android.graphics.PorterDuff.Mode.SRC_IN
+                ContextCompat.getColor(requireContext(), R.color.primary_green),
+                android.graphics.PorterDuff.Mode.SRC_IN
             )
         }
     }

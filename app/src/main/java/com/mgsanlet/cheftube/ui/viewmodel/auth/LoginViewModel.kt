@@ -42,11 +42,9 @@ class LoginViewModel(private val app: ChefTubeApplication) : ViewModel() {
                 onSuccess = { user ->
                     _loginState.value = LoginState.Success
                     app.setCurrentUser(user)
-                },
-                onFailure = { exception ->
+                }, onFailure = { exception ->
                     _loginState.value = LoginState.Error(exception.message!!)
-                }
-            )
+                })
 
         }
     }

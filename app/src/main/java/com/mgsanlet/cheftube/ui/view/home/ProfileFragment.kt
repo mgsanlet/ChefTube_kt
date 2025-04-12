@@ -25,10 +25,8 @@ class ProfileFragment : BaseFormFragment<FragmentProfileBinding, ProfileViewMode
     override fun defineViewModel(): ProfileViewModel = _viewModel
 
     override fun inflateViewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentProfileBinding =
-        FragmentProfileBinding.inflate(inflater, container, false)
+        inflater: LayoutInflater, container: ViewGroup?
+    ): FragmentProfileBinding = FragmentProfileBinding.inflate(inflater, container, false)
 
     override fun setUpObservers() {
         viewModel.currentUser.observe(viewLifecycleOwner) {
@@ -39,8 +37,8 @@ class ProfileFragment : BaseFormFragment<FragmentProfileBinding, ProfileViewMode
 
     override fun setUpListeners() {
         binding.saveButton.setOnClickListener { tryUpdateProfile() }
-        binding.keepLoggedCheckBox.setOnCheckedChangeListener{
-            _, isChecked -> viewModel.alternateKeepLoggedIn(isChecked)
+        binding.keepLoggedCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.alternateKeepLoggedIn(isChecked)
         }
     }
 
@@ -48,16 +46,12 @@ class ProfileFragment : BaseFormFragment<FragmentProfileBinding, ProfileViewMode
         binding.keepLoggedCheckBox.isChecked = viewModel.isUserBeingKept()
     }
 
-    override fun isValidViewInput(): Boolean{
+    override fun isValidViewInput(): Boolean {
         val requiredFields = listOf(
-            binding.nameEditText,
-            binding.emailEditText,
-            binding.oldPasswordEditText
+            binding.nameEditText, binding.emailEditText, binding.oldPasswordEditText
         )
 
-        return  !areFieldsEmpty(requiredFields) &&
-                isValidEmailPattern(binding.emailEditText) &&
-                isValidNewPassword()
+        return !areFieldsEmpty(requiredFields) && isValidEmailPattern(binding.emailEditText) && isValidNewPassword()
     }
 
     private fun tryUpdateProfile() {
@@ -70,12 +64,12 @@ class ProfileFragment : BaseFormFragment<FragmentProfileBinding, ProfileViewMode
 
         val oldPassword = binding.oldPasswordEditText.text.toString()
 
-        if( viewModel.newUsernameAlreadyExists(finalUsername)) {
+        if (viewModel.newUsernameAlreadyExists(finalUsername)) {
             binding.emailEditText.error = getString(R.string.username_already)
             return
         }
 
-        if (viewModel.newEmailAlreadyExists(finalEmail)){
+        if (viewModel.newEmailAlreadyExists(finalEmail)) {
             binding.emailEditText.error = getString(R.string.email_already)
             return
         }
@@ -90,19 +84,16 @@ class ProfileFragment : BaseFormFragment<FragmentProfileBinding, ProfileViewMode
             oldPassword // Si no hay nueva contraseña, mantenemos la antigua
         }
 
-        viewModel.updateUser(finalUsername, finalEmail,finalPassword, oldPassword).fold(
-            onSuccess = {
-                Toast.makeText(context, getString(R.string.data_saved), Toast.LENGTH_SHORT)
-                    .show()
+        viewModel.updateUser(finalUsername, finalEmail, finalPassword, oldPassword)
+            .fold(onSuccess = {
+                Toast.makeText(context, getString(R.string.data_saved), Toast.LENGTH_SHORT).show()
                 clearPasswordFields()
-            },
-            onFailure = { error ->
+            }, onFailure = { error ->
                 Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
-            }
-        )
+            })
     }
 
-    private fun isValidNewPassword(): Boolean{
+    private fun isValidNewPassword(): Boolean {
         val newPassword1 = binding.newPassword1EditText.text.toString()
         val newPassword2 = binding.newPassword2EditText.text.toString()
 

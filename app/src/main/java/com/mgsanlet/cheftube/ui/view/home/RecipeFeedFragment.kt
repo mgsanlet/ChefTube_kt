@@ -32,10 +32,8 @@ class RecipeFeedFragment : BaseFragment<FragmentRecipeFeedBinding, RecipeFeedVie
     override fun defineViewModel(): RecipeFeedViewModel = _viewModel
 
     override fun inflateViewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentRecipeFeedBinding =
-        FragmentRecipeFeedBinding.inflate(inflater, container, false)
+        inflater: LayoutInflater, container: ViewGroup?
+    ): FragmentRecipeFeedBinding = FragmentRecipeFeedBinding.inflate(inflater, container, false)
 
     override fun setUpObservers() {
         viewModel.recipeList.observe(viewLifecycleOwner) {

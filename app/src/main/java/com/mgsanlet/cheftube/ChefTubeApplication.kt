@@ -2,14 +2,14 @@ package com.mgsanlet.cheftube
 
 import android.app.Application
 import android.content.Context
-import com.mgsanlet.cheftube.chore.DatabaseHelper
+import androidx.core.content.edit
 import com.mgsanlet.cheftube.data.model.User
-import com.mgsanlet.cheftube.data.provider.UserProvider
 import com.mgsanlet.cheftube.data.repository.RecipeRepository
 import com.mgsanlet.cheftube.data.repository.UserRepository
+import com.mgsanlet.cheftube.data.source.local.DatabaseHelper
+import com.mgsanlet.cheftube.data.source.local.UserLocalDataSource
 import com.yariksoffice.lingver.Lingver
 import java.util.Locale
-import androidx.core.content.edit
 
 class ChefTubeApplication : Application() {
     lateinit var userRepository: UserRepository
@@ -40,41 +40,39 @@ class ChefTubeApplication : Application() {
 
     private fun initializeRepositories() {
         val dbHelper = DatabaseHelper(this)
-        val userProvider = UserProvider(dbHelper)
+        val userProvider = UserLocalDataSource(dbHelper)
         userRepository = UserRepository(this, userProvider)
         recipeRepository = RecipeRepository()
     }
 
-    fun setCurrentUserAsSaved(){
+    fun setCurrentUserAsSaved() {
         val preferences = this.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        currentUser?.let{
+        currentUser?.let {
             preferences.edit(commit = true) { putString(SAVED_USER_ID, it.id) }
         }
     }
 
-    fun deleteSavedUser(){
+    fun deleteSavedUser() {
         val preferences = this.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         preferences.edit(commit = true) { remove(SAVED_USER_ID) }
     }
 
-    fun isUserSaved(): Boolean{
+    fun isUserSaved(): Boolean {
         val preferences = this.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        return preferences.getString(SAVED_USER_ID, null) != null &&
-               preferences.getString(SAVED_USER_ID, null).equals(currentUser?.id)
+        return preferences.getString(SAVED_USER_ID, null) != null && preferences.getString(
+            SAVED_USER_ID, null
+        ).equals(currentUser?.id)
     }
 
-    private fun trySetSavedUserAsCurrent(){
+    private fun trySetSavedUserAsCurrent() {
         val preferences = this.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val savedUserId = preferences.getString(SAVED_USER_ID, null)
-        savedUserId?.let{
-            userRepository.getUserById(it).fold(
-                onSuccess = { user ->
-                    currentUser = user
-                },
-                onFailure = {
-                    currentUser = null
-                }
-            )
+        savedUserId?.let {
+            userRepository.getUserById(it).fold(onSuccess = { user ->
+                currentUser = user
+            }, onFailure = {
+                currentUser = null
+            })
         }
     }
 

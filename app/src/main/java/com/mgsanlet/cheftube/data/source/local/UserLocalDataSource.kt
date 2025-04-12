@@ -1,15 +1,16 @@
-package com.mgsanlet.cheftube.data.provider
+package com.mgsanlet.cheftube.data.source.local
 
 import android.content.ContentValues
-import android.util.Log
-import com.mgsanlet.cheftube.chore.DatabaseHelper
+import android.content.Context
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
 import com.mgsanlet.cheftube.data.model.User
 
 /**
  * Proveedor de datos para la gestión de usuarios en la base de datos local
  */
-class UserProvider(private val dbHelper: DatabaseHelper) {
-    
+class UserLocalDataSource(private val dbHelper: DatabaseHelper) {
+
     companion object {
         const val TABLE_USERS = "users"
         const val COLUMN_ID = "id"
@@ -36,7 +37,7 @@ class UserProvider(private val dbHelper: DatabaseHelper) {
                 put(COLUMN_EMAIL, user.email)
                 put(COLUMN_PASSWORD_HASH, user.getPasswordHash())
             }
-            
+
             val result = db.insert(TABLE_USERS, null, values)
             result != -1L
         } catch (e: Exception) {
@@ -178,14 +179,31 @@ class UserProvider(private val dbHelper: DatabaseHelper) {
             }
 
             val result = db.update(
-                TABLE_USERS,
-                values,
-                "$COLUMN_ID = ?",
-                arrayOf(user.id)
+                TABLE_USERS, values, "$COLUMN_ID = ?", arrayOf(user.id)
             )
             result > 0
         } catch (e: Exception) {
             false
         }
+    }
+}
+
+class DatabaseHelper(context: Context?) :
+    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+
+    override fun onCreate(db: SQLiteDatabase) {
+        // Crear tabla de usuarios
+        db.execSQL(UserLocalDataSource.CREATE_TABLE)
+    }
+
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        // En caso de actualización, eliminar tablas existentes y recrear
+        db.execSQL("DROP TABLE IF EXISTS ${UserLocalDataSource.TABLE_USERS}")
+        onCreate(db)
+    }
+
+    companion object {
+        private const val DATABASE_NAME = "cheftube.db"
+        private const val DATABASE_VERSION = 1
     }
 }

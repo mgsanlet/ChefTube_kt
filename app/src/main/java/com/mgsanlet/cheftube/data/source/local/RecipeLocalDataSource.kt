@@ -1,7 +1,6 @@
-package com.mgsanlet.cheftube.data.local
+package com.mgsanlet.cheftube.data.source.local
 
 import android.content.Context
-import androidx.media3.common.util.Log
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.Recipe
 import kotlinx.coroutines.CoroutineScope
@@ -14,11 +13,11 @@ import kotlinx.coroutines.withContext
  * Provides methods to initialize, register, and filter recipes.
  * @author MarioG
  */
-object RecipeDataStorage {
+object RecipeLocalDataSource {
     private val recipeList = ArrayList<Recipe>()
     private val recipeMap = mutableMapOf<String, Recipe>()
 
-    init{
+    init {
         CoroutineScope(Dispatchers.Main).launch {
             addRecipesToList()
         }
@@ -27,7 +26,8 @@ object RecipeDataStorage {
     private suspend fun addRecipesToList(): List<Recipe> = withContext(Dispatchers.IO) {
         val recipe1 = Recipe(
             "1",
-            R.string.recipe_01, R.drawable.recipe_01,
+            R.string.recipe_01,
+            R.drawable.recipe_01,
             "https://www.youtube.com/embed/Lor3PbTSAho"
         )
         recipe1.addIngredient(R.string.ingredient_01_01)
@@ -41,7 +41,8 @@ object RecipeDataStorage {
 
         val recipe2 = Recipe(
             "2",
-            R.string.recipe_02, R.drawable.recipe_02,
+            R.string.recipe_02,
+            R.drawable.recipe_02,
             "https://www.youtube.com/embed/NBjsqZZ2Tc4"
         )
         recipe2.addIngredient(R.string.ingredient_02_01)
@@ -55,7 +56,8 @@ object RecipeDataStorage {
 
         val recipe3 = Recipe(
             "3",
-            R.string.recipe_03, R.drawable.recipe_03,
+            R.string.recipe_03,
+            R.drawable.recipe_03,
             "https://www.youtube.com/embed/E0n2ZhOw-MI"
         )
         recipe3.addIngredient(R.string.ingredient_03_01)
@@ -68,7 +70,8 @@ object RecipeDataStorage {
 
         val recipe4 = Recipe(
             "4",
-            R.string.recipe_04, R.drawable.recipe_04,
+            R.string.recipe_04,
+            R.drawable.recipe_04,
             "https://www.youtube.com/embed/VDX-YXCARpM"
         )
         recipe4.addIngredient(R.string.ingredient_04_01)
@@ -81,7 +84,8 @@ object RecipeDataStorage {
 
         val recipe5 = Recipe(
             "5",
-            R.string.recipe_05, R.drawable.recipe_05,
+            R.string.recipe_05,
+            R.drawable.recipe_05,
             "https://www.youtube.com/embed/OG4pJdxxmj4"
         )
         recipe5.addIngredient(R.string.ingredient_05_01)
@@ -94,7 +98,8 @@ object RecipeDataStorage {
 
         val recipe6 = Recipe(
             "6",
-            R.string.recipe_06, R.drawable.recipe_06,
+            R.string.recipe_06,
+            R.drawable.recipe_06,
             "https://www.youtube.com/embed/168HrdzakaA"
         )
         recipe6.addIngredient(R.string.ingredient_06_01)
@@ -107,7 +112,8 @@ object RecipeDataStorage {
 
         val recipe7 = Recipe(
             "7",
-            R.string.recipe_07, R.drawable.recipe_07,
+            R.string.recipe_07,
+            R.drawable.recipe_07,
             "https://www.youtube.com/embed/Sjx3J6du-gI"
         )
         recipe7.addIngredient(R.string.ingredient_07_01)
@@ -141,17 +147,18 @@ object RecipeDataStorage {
      * @param query   the search query
      * @return a list of recipes that match the query
      */
-    suspend fun filterRecipesByIngredient(context: Context, query: String) : List<Recipe> = withContext(Dispatchers.IO) {
-        val filteredRecipes: MutableList<Recipe> = ArrayList()
+    suspend fun filterRecipesByIngredient(context: Context, query: String): List<Recipe> =
+        withContext(Dispatchers.IO) {
+            val filteredRecipes: MutableList<Recipe> = ArrayList()
 
-        // -Checking for matching recipes-
-        for (recipe in recipeList) {
-            if (recipe.matchesIngredientQuery(context, query)) {
-                filteredRecipes.add(recipe)
+            // -Checking for matching recipes-
+            for (recipe in recipeList) {
+                if (recipe.matchesIngredientQuery(context, query)) {
+                    filteredRecipes.add(recipe)
+                }
             }
+            return@withContext filteredRecipes
         }
-        return@withContext filteredRecipes
-    }
 
     suspend fun getById(recipeId: String): Recipe? = withContext(Dispatchers.IO) {
         return@withContext recipeMap[recipeId]

@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.mgsanlet.cheftube.ChefTubeApplication
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.mgsanlet.cheftube.ChefTubeApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -34,20 +34,15 @@ class ScannerViewModel(private val app: ChefTubeApplication) : ViewModel() {
         val url = BASE_URL + barcode
         val requestQueue = Volley.newRequestQueue(app.applicationContext)
 
-        val stringRequest = StringRequest(
-            Request.Method.GET,
-            url,
-            {
-                _scannerState.value = ScannerState.ProductFound
-            },
-            { error ->
-                _scannerState.value = when (error.networkResponse?.statusCode) {
-                    404 -> ScannerState.ProductNotFound
-                    null -> ScannerState.NetworkError
-                    else -> ScannerState.Error(error.networkResponse.statusCode)
-                }
+        val stringRequest = StringRequest(Request.Method.GET, url, {
+            _scannerState.value = ScannerState.ProductFound
+        }, { error ->
+            _scannerState.value = when (error.networkResponse?.statusCode) {
+                404 -> ScannerState.ProductNotFound
+                null -> ScannerState.NetworkError
+                else -> ScannerState.Error(error.networkResponse.statusCode)
             }
-        )
+        })
         requestQueue.add(stringRequest)
     }
 

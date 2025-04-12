@@ -6,11 +6,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.mgsanlet.cheftube.databinding.ActivitySplashBinding
-import com.mgsanlet.cheftube.utils.SystemUiHelper
+import com.mgsanlet.cheftube.ui.utils.SystemUiHelper
 
 /**
  * SplashActivity es la pantalla introductoria que aparece cuando la aplicación se inicia.
@@ -19,8 +18,7 @@ import com.mgsanlet.cheftube.utils.SystemUiHelper
  * las animaciones finalizan, la actividad transiciona a la siguiente pantalla, `AuthActivity`.
  * @author MarioG
  */
-@SuppressLint("CustomSplashScreen")
-/* No se usará la SplashScreenAPI de Android disponible desde API 31 ya que se necesita asegurar
+@SuppressLint("CustomSplashScreen")/* No se usará la SplashScreenAPI de Android disponible desde API 31 ya que se necesita asegurar
 la compatibilidad con versiones desde la API 26 y se prefiere centralizar la logica de la
 pantalla de presentación en esta clase para que sea más mantenible*/
 class SplashActivity : AppCompatActivity() {
@@ -33,11 +31,10 @@ class SplashActivity : AppCompatActivity() {
         this.enableEdgeToEdge()
         SystemUiHelper.hideSystemBars(window.decorView)
         setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.main) {
-            v: View, insets: WindowInsetsCompat ->
-                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-                insets
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v: View, insets: WindowInsetsCompat ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
         }
 
         binding.logoImageView.alpha = 0f
@@ -47,23 +44,15 @@ class SplashActivity : AppCompatActivity() {
         binding.logoImageView.scaleX = 0.5f // Comienza más pequeño
         binding.logoImageView.scaleY = 0.5f // Comienza más pequeño
 
-        binding.logoImageView.animate()
-            .alpha(1f)
-            .scaleX(1.5f)
-            .scaleY(1.5f)
-            .rotation(360f)
+        binding.logoImageView.animate().alpha(1f).scaleX(1.5f).scaleY(1.5f).rotation(360f)
             .setDuration(ANIMATION_DURATION)
 
         binding.titleImageView.alpha = 0f // Comienza completamente transparente
         binding.titleImageView.scaleX = 0.5f // Comienza más pequeño
         binding.titleImageView.scaleY = 0.5f // Comienza más pequeño
 
-        binding.titleImageView.animate()
-            .alpha(1f)
-            .scaleX(1f)
-            .scaleY(1f)
-            .setDuration(ANIMATION_DURATION)
-            .withEndAction {
+        binding.titleImageView.animate().alpha(1f).scaleX(1f).scaleY(1f)
+            .setDuration(ANIMATION_DURATION).withEndAction {
                 // Iniciar AuthActivity después de que finalice la animación del título
                 startActivity(Intent(this@SplashActivity, AuthActivity::class.java))
                 finish()
