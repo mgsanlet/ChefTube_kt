@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.data.model.Recipe
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -88,13 +87,6 @@ class RecipeDetailViewModel(recipeId: String, app: ChefTubeApplication) : ViewMo
         timer = null
 
         timerState.value = TimerState.Paused
-    }
-
-    fun resetTimer() {
-        timer?.cancel()
-        timer = null
-        timeLeftInMillis = 0
-        timerState.value = TimerState.Initial
     }
 
     @SuppressLint("DefaultLocale")
