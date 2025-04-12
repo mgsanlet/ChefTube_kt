@@ -1,15 +1,16 @@
+@file:Suppress("unused")
+
 package com.mgsanlet.cheftube.ui.view.base
 
-import android.text.Editable
 import android.util.Patterns
 import android.widget.EditText
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
 
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.User
 
+@Suppress("unused")
 abstract class BaseFormFragment<T : ViewBinding, VM : ViewModel> : BaseFragment<T, VM>() {
 
     abstract fun isValidViewInput(): Boolean

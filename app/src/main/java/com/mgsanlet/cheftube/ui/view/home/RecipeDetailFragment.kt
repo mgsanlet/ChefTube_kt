@@ -6,9 +6,13 @@ import android.graphics.BlendModeColorFilter
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -63,8 +67,13 @@ class RecipeDetailFragment : BaseFragment<FragmentRecipeDetailBinding, RecipeDet
                 }
 
                 is RecipeState.Success -> {
-                    hideLoading()
                     setRecipeDetails(state.recipe)
+                    /* El progressBar se oculta cuando la webview terminó de cargar,
+                       pero si no hay, debe ocultarse cuando la petición devuelva éxito */
+                    if (binding.videoWebView.url == null){
+                        hideLoading()
+                    }
+                    hideProgressWhenVideoLoaded()
                 }
 
                 is RecipeState.Error -> {
@@ -126,6 +135,16 @@ class RecipeDetailFragment : BaseFragment<FragmentRecipeDetailBinding, RecipeDet
     override fun setUpViewProperties() {
         setUpProgressBar(binding.progressBar)
 
+    }
+
+    private fun hideProgressWhenVideoLoaded(){
+        if (binding.videoWebView.progress == 100) {
+            hideLoading()
+        }else{
+            Handler(Looper.getMainLooper()).postDelayed({
+                hideProgressWhenVideoLoaded()
+            }, 200)
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")

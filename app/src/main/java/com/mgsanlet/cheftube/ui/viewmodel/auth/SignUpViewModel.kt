@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.mgsanlet.cheftube.ChefTubeApplication
-import com.mgsanlet.cheftube.data.model.User
 import com.mgsanlet.cheftube.data.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -36,7 +35,7 @@ class SignUpViewModel(private val app: ChefTubeApplication) : ViewModel() {
 
             result.fold(
                 onSuccess = { user ->
-                    _signUpState.value = SignUpState.Success(user)
+                    _signUpState.value = SignUpState.Success
                     app.setCurrentUser(user)
                 },
                 onFailure = { error ->
@@ -54,7 +53,7 @@ class SignUpViewModel(private val app: ChefTubeApplication) : ViewModel() {
         return !userRepository.getUserByEmail(newEmail).isFailure
     }
 
-    fun resetState() {
+    private fun resetState() {
         _signUpState.value = SignUpState.Initial
     }
 
@@ -62,8 +61,6 @@ class SignUpViewModel(private val app: ChefTubeApplication) : ViewModel() {
         super.onCleared()
         resetState()
     }
-
-
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -78,6 +75,6 @@ class SignUpViewModelFactory(
 sealed class SignUpState {
     data object Initial : SignUpState()
     data object Loading : SignUpState()
-    data class Success(val user: User) : SignUpState()
+    data object Success : SignUpState()
     data class Error(val message: String?) : SignUpState()
 }

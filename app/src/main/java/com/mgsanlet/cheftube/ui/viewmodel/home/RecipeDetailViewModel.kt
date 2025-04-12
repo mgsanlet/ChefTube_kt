@@ -42,7 +42,6 @@ class RecipeDetailViewModel(recipeId: String, app: ChefTubeApplication) : ViewMo
         viewModelScope.launch {
             try {
                 recipeState.value = RecipeState.Loading
-                delay(3000L)
                 val result = withContext(Dispatchers.IO) {
                     recipeRepository.getById(_recipeId)
                 }

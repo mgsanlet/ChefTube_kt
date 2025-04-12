@@ -1,31 +1,17 @@
 package com.mgsanlet.cheftube.ui.view.auth
 
-import android.content.Intent
-import android.graphics.BlendMode
-import android.graphics.BlendModeColorFilter
-import android.os.Build
-import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.graphics.toColorInt
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.transition.Visibility
 import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentLoginBinding
-import com.mgsanlet.cheftube.databinding.FragmentScannerBinding
 import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
-import com.mgsanlet.cheftube.ui.view.home.HomeActivity
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginState
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginViewModel
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginViewModelFactory
-import com.mgsanlet.cheftube.ui.viewmodel.auth.SignUpState
-import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerViewModel
-import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerViewModelFactory
 import com.mgsanlet.cheftube.utils.FragmentNavigator
 
 /**

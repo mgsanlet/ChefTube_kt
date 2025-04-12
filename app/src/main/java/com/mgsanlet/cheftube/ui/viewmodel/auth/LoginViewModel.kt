@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.mgsanlet.cheftube.ChefTubeApplication
-import com.mgsanlet.cheftube.data.model.User
 import com.mgsanlet.cheftube.data.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -26,9 +25,7 @@ class LoginViewModel(private val app: ChefTubeApplication) : ViewModel() {
     }
 
     private fun LoginViewModel.checkCurrentUser() {
-        app.getCurrentUser()?.let { user ->
-            _loginState.value = LoginState.AlreadyLogged(user)
-        }
+        app.getCurrentUser()?.let { _loginState.value = LoginState.AlreadyLogged }
     }
 
     fun tryLogin(identity: String, password: String) {
@@ -43,7 +40,7 @@ class LoginViewModel(private val app: ChefTubeApplication) : ViewModel() {
 
             result.fold(
                 onSuccess = { user ->
-                    _loginState.value = LoginState.Success(user)
+                    _loginState.value = LoginState.Success
                     app.setCurrentUser(user)
                 },
                 onFailure = { exception ->
@@ -77,7 +74,7 @@ class LoginViewModelFactory(
 sealed class LoginState {
     data object Initial : LoginState()
     data object Loading : LoginState()
-    data class AlreadyLogged(val user: User) : LoginState()
-    data class Success(val user: User) : LoginState()
+    data object AlreadyLogged : LoginState()
+    data object Success : LoginState()
     data class Error(val message: String) : LoginState()
 }
