@@ -46,7 +46,17 @@ class ProfileViewModel(private val app: ChefTubeApplication): ViewModel() {
         return !userRepository.getUserByEmail(newEmail).isFailure
     }
 
+    fun alternateKeepLoggedIn(keepLoggedIn: Boolean){
+        if (keepLoggedIn){
+            app.setCurrentUserAsSaved()
+        }else{
+            app.deleteSavedUser()
+        }
+    }
 
+    fun isUserBeingKept(): Boolean{
+        return app.isUserSaved()
+    }
 }
 
 @Suppress("UNCHECKED_CAST")

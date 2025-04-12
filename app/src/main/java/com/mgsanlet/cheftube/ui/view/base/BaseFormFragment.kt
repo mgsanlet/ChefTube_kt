@@ -10,24 +10,24 @@ import androidx.viewbinding.ViewBinding
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.User
 
-abstract class BaseFormFragment<T: ViewBinding, VM : ViewModel> : BaseFragment<T, VM>() {
+abstract class BaseFormFragment<T : ViewBinding, VM : ViewModel> : BaseFragment<T, VM>() {
 
     abstract fun isValidViewInput(): Boolean
 
-    fun areFieldsEmpty(fields: List<Editable>):Boolean{
+    fun areFieldsEmpty(fields: List<EditText>): Boolean {
         var hasEmptyFields = false
-        for (field in fields){
-            if (field is EditText){
-                if (field.text.trim().isEmpty()){
-                    field.error = getString(R.string.required)
-                    hasEmptyFields = true
-                }
+        for (field in fields) {
+
+            if (field.text.trim().isEmpty()) {
+                field.error = getString(R.string.required)
+                hasEmptyFields = true
             }
+
         }
         return hasEmptyFields
     }
 
-    fun isValidEmailPattern(email: EditText): Boolean{
+    fun isValidEmailPattern(email: EditText): Boolean {
         if (!Patterns.EMAIL_ADDRESS.matcher(email.text).matches()) {
             email.error = getString(R.string.invalid_email)
             return false
@@ -35,7 +35,7 @@ abstract class BaseFormFragment<T: ViewBinding, VM : ViewModel> : BaseFragment<T
         return true
     }
 
-    fun isValidPasswordPattern(password: EditText): Boolean{
+    fun isValidPasswordPattern(password: EditText): Boolean {
         // Verificar longitud mínima
         if (password.text.trim().length < User.PASSWORD_MIN_LENGTH) {
             password.error = getString(R.string.short_pwd)

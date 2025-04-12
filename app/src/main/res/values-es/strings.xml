@@ -136,6 +136,8 @@
     <string name="step_07_01">1. Saltea las verduras: En una sartén, calienta aceite y saltea el pimiento rojo y la cebolla picados hasta que estén tiernos.</string>
     <string name="step_07_02">2. Cocina los calamares: Añade los calamares rebanados a la sartén y cocina durante 3–5 minutos hasta que estén ligeramente tiernos.</string>
     <string name="step_07_03">3. Cocina a fuego lento en salsa: Vierte la salsa de tomate y sazona con pimentón, sal y pimienta. Cocina a fuego lento durante 15-20 minutos hasta que los calamares estén tiernos y los sabores se mezclen. Sirve caliente.</string>
+    <string name="unknown_error">Error desconocido</string>
+    <string name="keep_logged">Mantener sesión iniciada</string>
 
 
 </resources>

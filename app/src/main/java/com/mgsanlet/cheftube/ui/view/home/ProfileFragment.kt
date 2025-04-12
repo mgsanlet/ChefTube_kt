@@ -39,13 +39,20 @@ class ProfileFragment : BaseFormFragment<FragmentProfileBinding, ProfileViewMode
 
     override fun setUpListeners() {
         binding.saveButton.setOnClickListener { tryUpdateProfile() }
+        binding.keepLoggedCheckBox.setOnCheckedChangeListener{
+            _, isChecked -> viewModel.alternateKeepLoggedIn(isChecked)
+        }
+    }
+
+    override fun setUpViewProperties() {
+        binding.keepLoggedCheckBox.isChecked = viewModel.isUserBeingKept()
     }
 
     override fun isValidViewInput(): Boolean{
         val requiredFields = listOf(
-            binding.nameEditText.text,
-            binding.emailEditText.text,
-            binding.oldPasswordEditText.text
+            binding.nameEditText,
+            binding.emailEditText,
+            binding.oldPasswordEditText
         )
 
         return  !areFieldsEmpty(requiredFields) &&

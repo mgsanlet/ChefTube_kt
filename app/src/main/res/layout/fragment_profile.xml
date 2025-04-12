@@ -128,24 +128,55 @@
 
         tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
 
+
+    <LinearLayout
+        android:id="@+id/keepLoggedContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/black_bg_box_shape"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newPassword2EditText">
+
+        <CheckBox
+            android:id="@+id/keepLoggedCheckBox"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_margin="15dp"
+            android:background="@color/white"
+            android:buttonTint="#46A367"
+            android:checked="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/keep_logged"
+            android:textColor="@color/white"
+            android:labelFor="@+id/keepLoggedCheckBox"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/saveButton"
         style="@style/AuthBtns"
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="48dp"
         android:text="@string/save"
         app:backgroundTint="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newPassword2EditText"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@+id/keepLoggedContainer"
+        app:layout_constraintVertical_bias="0.050000012"
 
         tools:ignore="TextContrastCheck" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

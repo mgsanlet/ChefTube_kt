@@ -11,7 +11,6 @@ import com.mgsanlet.cheftube.data.model.User
 class UserProvider(private val dbHelper: DatabaseHelper) {
     
     companion object {
-        private const val TAG = "UserProvider"
         const val TABLE_USERS = "users"
         const val COLUMN_ID = "id"
         const val COLUMN_USERNAME = "username"
@@ -30,7 +29,6 @@ class UserProvider(private val dbHelper: DatabaseHelper) {
 
     fun insertUser(user: User): Boolean {
         return try {
-            Log.d(TAG, "Intentando insertar usuario: ${user.username}")
             val db = dbHelper.writableDatabase
             val values = ContentValues().apply {
                 put(COLUMN_ID, user.id)
@@ -40,17 +38,14 @@ class UserProvider(private val dbHelper: DatabaseHelper) {
             }
             
             val result = db.insert(TABLE_USERS, null, values)
-            Log.d(TAG, "Resultado de inserción: $result")
             result != -1L
         } catch (e: Exception) {
-            Log.e(TAG, "Error al insertar usuario", e)
             false
         }
     }
 
     fun getUserById(id: String): User? {
         return try {
-            Log.d(TAG, "Buscando usuario por id: $id")
             val db = dbHelper.readableDatabase
             val cursor = db.query(
                 TABLE_USERS,
@@ -70,22 +65,18 @@ class UserProvider(private val dbHelper: DatabaseHelper) {
                         email = it.getString(it.getColumnIndexOrThrow(COLUMN_EMAIL)),
                         passwordHash = it.getString(it.getColumnIndexOrThrow(COLUMN_PASSWORD_HASH))
                     )
-                    Log.d(TAG, "Usuario encontrado: ${user.username}")
                     user
                 } else {
-                    Log.d(TAG, "No se encontró usuario con id: $id")
                     null
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error al buscar usuario por id", e)
             null
         }
     }
 
     fun getUserByEmail(email: String): User? {
         return try {
-            Log.d(TAG, "Buscando usuario por email: $email")
             val db = dbHelper.readableDatabase
             val cursor = db.query(
                 TABLE_USERS,
@@ -105,22 +96,18 @@ class UserProvider(private val dbHelper: DatabaseHelper) {
                         email = it.getString(it.getColumnIndexOrThrow(COLUMN_EMAIL)),
                         passwordHash = it.getString(it.getColumnIndexOrThrow(COLUMN_PASSWORD_HASH))
                     )
-                    Log.d(TAG, "Usuario encontrado: ${user.username}")
                     user
                 } else {
-                    Log.d(TAG, "No se encontró usuario con email: $email")
                     null
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error al buscar usuario por email", e)
             null
         }
     }
 
     fun getUserByEmailOrUsername(identity: String): User? {
         return try {
-            Log.d(TAG, "Buscando usuario por email o username: $identity")
             val db = dbHelper.readableDatabase
             val cursor = db.query(
                 TABLE_USERS,
@@ -140,22 +127,18 @@ class UserProvider(private val dbHelper: DatabaseHelper) {
                         email = it.getString(it.getColumnIndexOrThrow(COLUMN_EMAIL)),
                         passwordHash = it.getString(it.getColumnIndexOrThrow(COLUMN_PASSWORD_HASH))
                     )
-                    Log.d(TAG, "Usuario encontrado: ${user.username}")
                     user
                 } else {
-                    Log.d(TAG, "No se encontró usuario con email o username: $identity")
                     null
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error al buscar usuario por email o username", e)
             null
         }
     }
 
     fun updateUser(user: User): Boolean {
         return try {
-            Log.d(TAG, "Intentando actualizar usuario: ${user.username}")
             val db = dbHelper.writableDatabase
             val values = ContentValues().apply {
                 put(COLUMN_USERNAME, user.username)
@@ -169,10 +152,8 @@ class UserProvider(private val dbHelper: DatabaseHelper) {
                 "$COLUMN_ID = ?",
                 arrayOf(user.id)
             )
-            Log.d(TAG, "Resultado de actualización: $result")
             result > 0
         } catch (e: Exception) {
-            Log.e(TAG, "Error al actualizar usuario", e)
             false
         }
     }
