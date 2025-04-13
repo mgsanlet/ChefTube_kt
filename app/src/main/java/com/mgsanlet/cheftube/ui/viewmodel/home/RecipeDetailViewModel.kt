@@ -5,18 +5,21 @@ import android.os.CountDownTimer
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.data.model.Recipe
+import com.mgsanlet.cheftube.domain.repository.RecipeRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class RecipeDetailViewModel(recipeId: String, app: ChefTubeApplication) : ViewModel() {
-    private var recipeRepository = app.recipeRepository
+@HiltViewModel
+class RecipeDetailViewModel @Inject constructor(
+    private val recipeRepository: RecipeRepository
+) : ViewModel() {
+
     var recipeState = MutableLiveData<RecipeState>()
-    private val _recipeId: String = recipeId
 
     // Estado del cronómetro
     private var timer: CountDownTimer? = null
@@ -26,14 +29,13 @@ class RecipeDetailViewModel(recipeId: String, app: ChefTubeApplication) : ViewMo
     val timeLeft = MutableLiveData<String>()
 
     init {
-        loadRecipe()
+
         timerState.value = TimerState.Initial
     }
 
-    fun loadRecipe() {
-        val currentRecipeId = _recipeId
-        Log.i("DETAIL", _recipeId)
-        if (currentRecipeId.isEmpty()) {
+    fun loadRecipe(recipeId: String) {
+        Log.i("DETAIL", recipeId)
+        if (recipeId.isEmpty()) {
             recipeState.value = RecipeState.Error("Invalid recipe ID")
             return
         }
@@ -42,7 +44,7 @@ class RecipeDetailViewModel(recipeId: String, app: ChefTubeApplication) : ViewMo
             try {
                 recipeState.value = RecipeState.Loading
                 val result = withContext(Dispatchers.IO) {
-                    recipeRepository.getById(_recipeId)
+                    recipeRepository.getById(recipeId)
                 }
                 if (result != null) {
                     recipeState.value = RecipeState.Success(result)
@@ -95,15 +97,9 @@ class RecipeDetailViewModel(recipeId: String, app: ChefTubeApplication) : ViewMo
         val seconds = (millis / 1000).toInt() % 60
         return String.format("%02d:%02d", minutes, seconds)
     }
-}
 
-@Suppress("UNCHECKED_CAST")
-class RecipeDetailViewModelFactory(
-    private val recipeId: String,
-    private val app: ChefTubeApplication
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return RecipeDetailViewModel(recipeId, app) as T
+    companion object{
+        const val ARG_RECIPE = "recipeId"
     }
 }
 

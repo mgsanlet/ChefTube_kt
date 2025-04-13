@@ -7,27 +7,23 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
-import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentSignUpBinding
 import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
 import com.mgsanlet.cheftube.ui.viewmodel.auth.SignUpState
 import com.mgsanlet.cheftube.ui.viewmodel.auth.SignUpViewModel
-import com.mgsanlet.cheftube.ui.viewmodel.auth.SignUpViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * Un fragmento responsable de manejar el proceso de registro de usuario.
  * Este fragmento permite al usuario registrarse proporcionando un nombre,
  * correo electrónico y contraseña.
  */
-class SignUpFragment : BaseFormFragment<FragmentSignUpBinding, SignUpViewModel>() {
+@AndroidEntryPoint
+class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBinding>() {
 
-    private val _viewModel: SignUpViewModel by viewModels {
-        val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
-        SignUpViewModelFactory(app)
-    }
-
-    override fun defineViewModel(): SignUpViewModel = _viewModel
+    private val viewModel: SignUpViewModel by viewModels()
 
     override fun inflateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?

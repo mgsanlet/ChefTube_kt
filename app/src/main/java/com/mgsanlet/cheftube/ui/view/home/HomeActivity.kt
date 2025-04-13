@@ -17,21 +17,25 @@ import androidx.core.view.WindowInsetsCompat
 import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.ActivityHomeBinding
-import com.mgsanlet.cheftube.ui.utils.FragmentNavigator
+import com.mgsanlet.cheftube.utils.ui.FragmentNavigator
 import com.mgsanlet.cheftube.ui.view.auth.AuthActivity
+import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModel
+import com.mgsanlet.cheftube.utils.UserManager
 import com.yariksoffice.lingver.Lingver
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
+import javax.inject.Inject
 
 /**
  * HomeActivity contiene la vista principal de la aplicación desde la que el usuario
  * puede navegar entre las diferentes secciones a través del menú de navegación inferior y
  * el menú contextual superior.
  */
+@AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
 
+    @Inject lateinit var userManager: UserManager
     private lateinit var binding: ActivityHomeBinding
-
-    private val app by lazy { ChefTubeApplication.getInstance(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,7 +104,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun onLogout() {
-        app.setCurrentUser(null)
+        userManager.setCurrentUser(null)
         startActivity(Intent(this, AuthActivity::class.java))
         finish()
     }

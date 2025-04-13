@@ -5,28 +5,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentLoginBinding
-import com.mgsanlet.cheftube.ui.utils.FragmentNavigator
+import com.mgsanlet.cheftube.utils.ui.FragmentNavigator
 import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginState
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginViewModel
-import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * Fragmento que maneja el proceso de inicio de sesión para la aplicación.
  * Permite a los usuarios ingresar sus credenciales (email y contraseña) y
  * los autentica en la aplicación.
  */
-class LoginFragment : BaseFormFragment<FragmentLoginBinding, LoginViewModel>() {
+@AndroidEntryPoint
+class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBinding>() {
 
-    private val _viewModel: LoginViewModel by viewModels {
-        val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
-        LoginViewModelFactory(app)
-    }
-
-    override fun defineViewModel(): LoginViewModel = _viewModel
+    private val viewModel: LoginViewModel by viewModels()
 
     override fun onResume() {
         super.onResume()

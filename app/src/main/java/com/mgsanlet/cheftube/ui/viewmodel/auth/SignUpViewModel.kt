@@ -3,17 +3,21 @@ package com.mgsanlet.cheftube.ui.viewmodel.auth
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.mgsanlet.cheftube.ChefTubeApplication
-import com.mgsanlet.cheftube.data.repository.UserRepository
+import com.mgsanlet.cheftube.domain.repository.UserRepository
+import com.mgsanlet.cheftube.utils.UserManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class SignUpViewModel(private val app: ChefTubeApplication) : ViewModel() {
-    private val userRepository: UserRepository = app.userRepository
+@HiltViewModel
+class SignUpViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+    private val userManager: UserManager
+) : ViewModel() {
 
     private val _signUpState = MutableLiveData<SignUpState>().apply {
         value = SignUpState.Initial
@@ -34,7 +38,7 @@ class SignUpViewModel(private val app: ChefTubeApplication) : ViewModel() {
             result.fold(
                 onSuccess = { user ->
                     _signUpState.value = SignUpState.Success
-                    app.setCurrentUser(user)
+                    userManager.setCurrentUser(user)
                 }, onFailure = { error ->
                     _signUpState.value = SignUpState.Error(error.message)
                 })
@@ -56,15 +60,6 @@ class SignUpViewModel(private val app: ChefTubeApplication) : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         resetState()
-    }
-}
-
-@Suppress("UNCHECKED_CAST")
-class SignUpViewModelFactory(
-    private val app: ChefTubeApplication
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SignUpViewModel(app) as T
     }
 }
 

@@ -8,14 +8,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.mgsanlet.cheftube.R
-import com.mgsanlet.cheftube.ui.utils.SystemUiHelper
+import com.mgsanlet.cheftube.utils.ui.SystemUiHelper
 import com.mgsanlet.cheftube.ui.view.home.HomeActivity
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * AuthActivity contiene una imagen de fondo, el logo de la aplicación y las imágenes del título,
  * así como un contenedor de fragmentos en el que se cargan el fragmento de inicio de sesión y el fragmento de registro.
  * @autor MarioG
  */
+@AndroidEntryPoint
 class AuthActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

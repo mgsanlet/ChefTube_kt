@@ -8,7 +8,7 @@ import androidx.viewbinding.ViewBinding
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.User
 
-abstract class BaseFormFragment<T : ViewBinding, VM : ViewModel> : BaseFragment<T, VM>() {
+abstract class BaseFormFragment<T : ViewBinding> : BaseFragment<T>() {
 
     protected abstract fun isValidViewInput(): Boolean
 

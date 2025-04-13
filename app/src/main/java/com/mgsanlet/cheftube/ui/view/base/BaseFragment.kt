@@ -14,17 +14,15 @@ import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
 import com.mgsanlet.cheftube.R
 
-abstract class BaseFragment<T : ViewBinding, VM : ViewModel> : Fragment() {
+abstract class BaseFragment<T : ViewBinding> : Fragment() {
 
     private var _binding: T? = null
     protected val binding get() = _binding!!
-    protected lateinit var viewModel: VM
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         _binding = inflateViewBinding(inflater, container)
-        viewModel = defineViewModel()
         setUpObservers()
         setUpListeners()
         setUpViewProperties()
@@ -37,8 +35,6 @@ abstract class BaseFragment<T : ViewBinding, VM : ViewModel> : Fragment() {
     }
 
     protected abstract fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?): T
-
-    protected abstract fun defineViewModel(): VM
 
     protected open fun setUpObservers() {}
 

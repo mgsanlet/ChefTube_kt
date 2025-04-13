@@ -10,27 +10,23 @@ import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import com.google.zxing.integration.android.IntentIntegrator
-import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentScannerBinding
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerState
 import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerViewModel
-import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * Un fragmento que proporciona funcionalidad para escanear códigos de barras de productos y mostrar
  * información nutricional utilizando la API de Open Food Facts.
  * @author MarioG
  */
-class ScannerFragment : BaseFragment<FragmentScannerBinding, ScannerViewModel>() {
+@AndroidEntryPoint
+class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBinding>() {
 
-    private val _viewModel: ScannerViewModel by viewModels {
-        val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
-        ScannerViewModelFactory(app)
-    }
-
-    override fun defineViewModel(): ScannerViewModel = _viewModel
+    private val viewModel: ScannerViewModel by viewModels ()
 
     override fun inflateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?

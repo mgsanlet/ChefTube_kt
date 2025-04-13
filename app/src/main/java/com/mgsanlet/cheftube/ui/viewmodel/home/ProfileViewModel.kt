@@ -1,18 +1,38 @@
 package com.mgsanlet.cheftube.ui.viewmodel.home
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.mgsanlet.cheftube.ChefTubeApplication
+import androidx.lifecycle.viewModelScope
 import com.mgsanlet.cheftube.data.model.User
-import com.mgsanlet.cheftube.data.repository.UserRepository
+import com.mgsanlet.cheftube.domain.repository.UserRepository
+import com.mgsanlet.cheftube.utils.UserManager
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class ProfileViewModel(private val app: ChefTubeApplication) : ViewModel() {
-    private val userRepository: UserRepository = app.userRepository
-    var currentUser: MutableLiveData<User> = MutableLiveData()
+
+@HiltViewModel
+class ProfileViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+    private val userManager: UserManager
+) : ViewModel() {
+    private val _currentUser = MutableLiveData<User?>()
+    val currentUser: LiveData<User?> = _currentUser
 
     init {
-        app.getCurrentUser()?.let { currentUser.value = it }
+        loadCurrentUser()
+    }
+
+    private fun loadCurrentUser() {
+        viewModelScope.launch {
+            val user = withContext(Dispatchers.IO) {
+                userManager.getCurrentUser()
+            }
+            _currentUser.value = user
+        }
     }
 
     fun verifyPassword(password: String): Boolean {
@@ -29,8 +49,8 @@ class ProfileViewModel(private val app: ChefTubeApplication) : ViewModel() {
 
         val result = userRepository.updateUser(updatedUser, oldPassword)
         if (result.isSuccess) {
-            app.setCurrentUser(updatedUser)
-            currentUser.value = updatedUser
+            userManager.setCurrentUser(updatedUser)
+            _currentUser.value = updatedUser
         }
         return result
     }
@@ -51,22 +71,13 @@ class ProfileViewModel(private val app: ChefTubeApplication) : ViewModel() {
 
     fun alternateKeepLoggedIn(keepLoggedIn: Boolean) {
         if (keepLoggedIn) {
-            app.setCurrentUserAsSaved()
+            userManager.setCurrentUserAsSaved()
         } else {
-            app.deleteSavedUser()
+            userManager.deleteSavedUser()
         }
     }
 
     fun isUserBeingKept(): Boolean {
-        return app.isUserSaved()
-    }
-}
-
-@Suppress("UNCHECKED_CAST")
-class ProfileViewModelFactory(
-    private val app: ChefTubeApplication
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ProfileViewModel(app) as T
+        return userManager.isUserSaved()
     }
 }

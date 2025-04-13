@@ -4,25 +4,21 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentProfileBinding
 import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileViewModel
-import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * ProfileFragment permite al usuario ver y modificar los detalles de su perfil,
  * incluyendo nombre de usuario, email y contraseña.
  */
-class ProfileFragment : BaseFormFragment<FragmentProfileBinding, ProfileViewModel>() {
+@AndroidEntryPoint
+class ProfileFragment @Inject constructor() : BaseFormFragment<FragmentProfileBinding>() {
 
-    private val _viewModel: ProfileViewModel by viewModels {
-        val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
-        ProfileViewModelFactory(app)
-    }
-
-    override fun defineViewModel(): ProfileViewModel = _viewModel
+    private val viewModel: ProfileViewModel by viewModels ()
 
     override fun inflateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -30,6 +26,9 @@ class ProfileFragment : BaseFormFragment<FragmentProfileBinding, ProfileViewMode
 
     override fun setUpObservers() {
         viewModel.currentUser.observe(viewLifecycleOwner) {
+            if (it == null) {
+                return@observe
+            }
             binding.nameEditText.setText(it.username)
             binding.emailEditText.setText(it.email)
         }

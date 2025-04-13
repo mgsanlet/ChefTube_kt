@@ -6,14 +6,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.mgsanlet.cheftube.ChefTubeApplication
-import com.mgsanlet.cheftube.data.repository.UserRepository
+import com.mgsanlet.cheftube.data.repository.UserRepositoryImpl
+import com.mgsanlet.cheftube.domain.repository.UserRepository
+import com.mgsanlet.cheftube.utils.UserManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-class LoginViewModel(private val app: ChefTubeApplication) : ViewModel() {
-    private val userRepository: UserRepository = app.userRepository
+import javax.inject.Inject
+@HiltViewModel
+class LoginViewModel@Inject constructor(
+    private val userRepository: UserRepository,
+    private val userManager: UserManager
+) : ViewModel() {
 
     private val _loginState = MutableLiveData<LoginState>().apply {
         value = LoginState.Initial
@@ -25,7 +31,7 @@ class LoginViewModel(private val app: ChefTubeApplication) : ViewModel() {
     }
 
     private fun LoginViewModel.checkCurrentUser() {
-        app.getCurrentUser()?.let { _loginState.value = LoginState.AlreadyLogged }
+        userManager.getCurrentUser()?.let { _loginState.value = LoginState.AlreadyLogged }
     }
 
     fun tryLogin(identity: String, password: String) {
@@ -41,7 +47,7 @@ class LoginViewModel(private val app: ChefTubeApplication) : ViewModel() {
             result.fold(
                 onSuccess = { user ->
                     _loginState.value = LoginState.Success
-                    app.setCurrentUser(user)
+                    userManager.setCurrentUser(user)
                 }, onFailure = { exception ->
                     _loginState.value = LoginState.Error(exception.message!!)
                 })
@@ -58,15 +64,6 @@ class LoginViewModel(private val app: ChefTubeApplication) : ViewModel() {
         resetState()
     }
 
-}
-
-@Suppress("UNCHECKED_CAST")
-class LoginViewModelFactory(
-    private val app: ChefTubeApplication
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return LoginViewModel(app) as T
-    }
 }
 
 sealed class LoginState {

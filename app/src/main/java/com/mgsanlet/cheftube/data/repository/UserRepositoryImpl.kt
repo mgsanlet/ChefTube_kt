@@ -4,25 +4,26 @@ import android.content.Context
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.User
 import com.mgsanlet.cheftube.data.source.local.UserLocalDataSource
+import com.mgsanlet.cheftube.domain.repository.UserRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-/**
- * Repositorio que gestiona las operaciones de usuarios
- * @param context Contexto de la aplicación para acceder a los recursos
- * @param userProvider Proveedor de datos de usuarios
- */
-class UserRepository(
-    private val context: Context, private val userProvider: UserLocalDataSource
-) {
+@Singleton
+class UserRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val userLocalDataSource: UserLocalDataSource
+) : UserRepository {
 
-    fun createUser(username: String, email: String, password: String): Result<User> {
+    override fun createUser(username: String, email: String, password: String): Result<User> {
         return try {
-            if (userProvider.getUserByEmailOrUsername(username) != null) {
+            if (userLocalDataSource.getUserByEmailOrUsername(username) != null) {
                 Result.failure(Exception(context.getString(R.string.username_already)))
-            } else if (userProvider.getUserByEmailOrUsername(email) != null) {
+            } else if (userLocalDataSource.getUserByEmailOrUsername(email) != null) {
                 Result.failure(Exception(context.getString(R.string.email_already)))
             } else {
                 val newUser = User.create(username, email, password)
-                if (userProvider.insertUser(newUser)) {
+                if (userLocalDataSource.insertUser(newUser)) {
                     Result.success(newUser)
                 } else {
                     Result.failure(Exception(context.getString(R.string.network_error)))
@@ -33,9 +34,9 @@ class UserRepository(
         }
     }
 
-    fun loginUser(identity: String, password: String): Result<User> {
+    override fun loginUser(emailOrUsername: String, password: String): Result<User> {
         return try {
-            val user = userProvider.getUserByEmailOrUsername(identity)
+            val user = userLocalDataSource.getUserByEmailOrUsername(emailOrUsername)
             when {
                 user == null -> {
                     Result.failure(Exception(context.getString(R.string.invalid_login)))
@@ -54,11 +55,11 @@ class UserRepository(
         }
     }
 
-    fun updateUser(user: User, oldPassword: String): Result<User> {
+    override fun updateUser(user: User, oldPassword: String): Result<User> {
         return try {
 
             // Obtener usuario actual
-            val currentUser = userProvider.getUserById(user.id) ?: return Result.failure(
+            val currentUser = userLocalDataSource.getUserById(user.id) ?: return Result.failure(
                 Exception(
                     context.getString(R.string.user_not_found)
                 )
@@ -69,7 +70,7 @@ class UserRepository(
                 return Result.failure(Exception(context.getString(R.string.wrong_pwd)))
             }
 
-            if (userProvider.updateUser(user)) {
+            if (userLocalDataSource.updateUser(user)) {
                 Result.success(user)
             } else {
                 Result.failure(Exception(context.getString(R.string.network_error)))
@@ -79,9 +80,9 @@ class UserRepository(
         }
     }
 
-    fun getUserById(id: String): Result<User> {
+    override fun getUserById(userId: String): Result<User> {
         return try {
-            val user = userProvider.getUserById(id)
+            val user = userLocalDataSource.getUserById(userId)
             if (user != null) {
                 Result.success(user)
             } else {
@@ -92,9 +93,9 @@ class UserRepository(
         }
     }
 
-    fun getUserByName(username: String): Result<User> {
+    override fun getUserByName(username: String): Result<User> {
         return try {
-            val user = userProvider.getUserByName(username)
+            val user = userLocalDataSource.getUserByName(username)
             if (user != null) {
                 Result.success(user)
             } else {
@@ -105,9 +106,9 @@ class UserRepository(
         }
     }
 
-    fun getUserByEmail(email: String): Result<User> {
+    override fun getUserByEmail(userEmail: String): Result<User> {
         return try {
-            val user = userProvider.getUserByEmail(email)
+            val user = userLocalDataSource.getUserByEmail(userEmail)
             if (user != null) {
                 Result.success(user)
             } else {
@@ -117,6 +118,4 @@ class UserRepository(
             Result.failure(e)
         }
     }
-
-
 }

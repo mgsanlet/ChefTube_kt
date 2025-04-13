@@ -5,11 +5,14 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.mgsanlet.cheftube.data.model.User
+import javax.inject.Inject
 
 /**
  * Proveedor de datos para la gestión de usuarios en la base de datos local
  */
-class UserLocalDataSource(private val dbHelper: DatabaseHelper) {
+class UserLocalDataSource @Inject constructor(
+    private val dbHelper: DatabaseHelper
+) {
 
     companion object {
         const val TABLE_USERS = "users"
@@ -188,7 +191,9 @@ class UserLocalDataSource(private val dbHelper: DatabaseHelper) {
     }
 }
 
-class DatabaseHelper(context: Context?) :
+class DatabaseHelper @Inject constructor(
+    context: Context
+) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {

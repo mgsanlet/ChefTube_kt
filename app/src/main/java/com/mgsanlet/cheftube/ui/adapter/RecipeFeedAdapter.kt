@@ -9,10 +9,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.mgsanlet.cheftube.databinding.ItemRecipeBinding
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.Recipe
-import com.mgsanlet.cheftube.databinding.ItemRecipeBinding
-import com.mgsanlet.cheftube.ui.utils.FragmentNavigator
+import com.mgsanlet.cheftube.utils.ui.FragmentNavigator
 import com.mgsanlet.cheftube.ui.view.home.RecipeDetailFragment
 import com.mgsanlet.cheftube.ui.view.home.RecipeFeedFragment
 

@@ -14,33 +14,26 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.Recipe
 import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModel
-import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModelFactory
+import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModel.Companion.ARG_RECIPE
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeState
 import com.mgsanlet.cheftube.ui.viewmodel.home.TimerState
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * Un fragmento que muestra los detalles de una receta, incluyendo su título, ingredientes,
  * pasos de preparación y un video incrustado (si está disponible). También incluye un temporizador de cuenta regresiva
  * para el tiempo de cocción o preparación.
  */
-class RecipeDetailFragment : BaseFragment<FragmentRecipeDetailBinding, RecipeDetailViewModel>() {
+@AndroidEntryPoint
+class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDetailBinding>() {
 
-    private val _viewModel: RecipeDetailViewModel by viewModels {
-        val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
-        val recipeId = requireArguments().getString(ARG_RECIPE)
-            ?: throw IllegalArgumentException("Recipe ID is required")
-        RecipeDetailViewModelFactory(recipeId, app)
-    }
-
-    override fun defineViewModel(): RecipeDetailViewModel {
-        return _viewModel
-    }
+    private val viewModel: RecipeDetailViewModel by viewModels ()
 
     override fun inflateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -48,7 +41,7 @@ class RecipeDetailFragment : BaseFragment<FragmentRecipeDetailBinding, RecipeDet
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.loadRecipe() // Cargar la receta después de que el fragment esté creado
+        viewModel.loadRecipe( arguments?.getString(ARG_RECIPE) ?: "") // Cargar la receta después de que el fragment esté creado
     }
 
     override fun setUpObservers() {
@@ -250,7 +243,6 @@ class RecipeDetailFragment : BaseFragment<FragmentRecipeDetailBinding, RecipeDet
     }
 
     companion object {
-        private const val ARG_RECIPE = "recipe"
 
         fun newInstance(recipeId: String): RecipeDetailFragment {
             val fragment = RecipeDetailFragment()

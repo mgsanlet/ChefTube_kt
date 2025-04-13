@@ -8,18 +8,30 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.mgsanlet.cheftube.ChefTubeApplication
+import com.mgsanlet.cheftube.domain.repository.ProductRepository
+import com.mgsanlet.cheftube.utils.LocaleManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ScannerViewModel(private val app: ChefTubeApplication) : ViewModel() {
+@HiltViewModel
+class ScannerViewModel @Inject constructor(
+    private val productRepository: ProductRepository,
+    private val localeManager: LocaleManager
+) : ViewModel() {
 
     private val _currentBarcode = MutableLiveData<String>()
     val currentBarcode: LiveData<String> = _currentBarcode
 
     private val _scannerState = MutableLiveData<ScannerState>()
     val scannerState: LiveData<ScannerState> = _scannerState
+
+    private val _productName = MutableLiveData<String>()
+    val productName: LiveData<String> = _productName
+
 
     fun setBarcode(barcode: String) {
         _currentBarcode.value = barcode
@@ -30,39 +42,28 @@ class ScannerViewModel(private val app: ChefTubeApplication) : ViewModel() {
 
     private suspend fun fetchProductData(barcode: String) {
         _scannerState.value = ScannerState.Loading
-        delay(2000L)
-        val url = BASE_URL + barcode
-        val requestQueue = Volley.newRequestQueue(app.applicationContext)
 
-        val stringRequest = StringRequest(Request.Method.GET, url, {
-            _scannerState.value = ScannerState.ProductFound
-        }, { error ->
-            _scannerState.value = when (error.networkResponse?.statusCode) {
-                404 -> ScannerState.ProductNotFound
-                null -> ScannerState.NetworkError
-                else -> ScannerState.Error(error.networkResponse.statusCode)
+
+        productRepository.getProductByBarcode(barcode).fold(
+            onSuccess = { product ->
+                _productName.value = product.name
+                _scannerState.value = ScannerState.ProductFound
+            },
+            onFailure = { error ->
+                _scannerState.value = when {
+                    error.message?.contains("404") == true -> ScannerState.ProductNotFound
+                    error is java.net.UnknownHostException -> ScannerState.NetworkError
+                    else -> ScannerState.Error(0)
+                }
             }
-        })
-        requestQueue.add(stringRequest)
+        )
     }
 
     fun getProductUrl(): String {
-        val locale = app.resources.configuration.locales[0]
+        val locale = localeManager.getCurrentLocale()
         return "https://${locale.language}.openfoodfacts.org/product/${_currentBarcode.value}"
     }
 
-    companion object {
-        private const val BASE_URL = "https://world.openfoodfacts.org/api/v0/product/"
-    }
-}
-
-@Suppress("UNCHECKED_CAST")
-class ScannerViewModelFactory(
-    private val app: ChefTubeApplication
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ScannerViewModel(app) as T
-    }
 }
 
 sealed class ScannerState {

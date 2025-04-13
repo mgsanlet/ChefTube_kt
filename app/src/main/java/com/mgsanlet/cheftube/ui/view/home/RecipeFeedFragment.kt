@@ -8,13 +8,13 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mgsanlet.cheftube.ChefTubeApplication
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentRecipeFeedBinding
 import com.mgsanlet.cheftube.ui.adapter.RecipeFeedAdapter
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedViewModel
-import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * Un fragmento que muestra una lista de recetas. Cada receta se muestra con su título y una imagen.
@@ -22,14 +22,10 @@ import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedViewModelFactory
  *
  * @author MarioG
  */
-class RecipeFeedFragment : BaseFragment<FragmentRecipeFeedBinding, RecipeFeedViewModel>() {
+@AndroidEntryPoint
+class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeedBinding>() {
 
-    private val _viewModel: RecipeFeedViewModel by viewModels {
-        val app by lazy { ChefTubeApplication.getInstance(requireContext()) }
-        RecipeFeedViewModelFactory(app)
-    }
-
-    override fun defineViewModel(): RecipeFeedViewModel = _viewModel
+    private val viewModel: RecipeFeedViewModel by viewModels ()
 
     override fun inflateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?

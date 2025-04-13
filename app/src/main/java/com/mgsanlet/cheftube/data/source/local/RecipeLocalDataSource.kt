@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
  * Provides methods to initialize, register, and filter recipes.
  * @author MarioG
  */
-object RecipeLocalDataSource {
+class RecipeLocalDataSource {
     private val recipeList = ArrayList<Recipe>()
     private val recipeMap = mutableMapOf<String, Recipe>()
 

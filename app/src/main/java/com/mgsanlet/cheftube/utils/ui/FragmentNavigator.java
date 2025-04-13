@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.ui.utils;
+package com.mgsanlet.cheftube.utils.ui;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
