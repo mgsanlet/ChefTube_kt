@@ -3,10 +3,7 @@ package com.mgsanlet.cheftube.ui.viewmodel.auth
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.mgsanlet.cheftube.ChefTubeApplication
-import com.mgsanlet.cheftube.data.repository.UserRepositoryImpl
 import com.mgsanlet.cheftube.domain.repository.UserRepository
 import com.mgsanlet.cheftube.utils.UserManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +28,8 @@ class LoginViewModel@Inject constructor(
     }
 
     private fun LoginViewModel.checkCurrentUser() {
-        userManager.getCurrentUser()?.let { _loginState.value = LoginState.AlreadyLogged }
+        userManager.trySetPersistentUserAsCurrent()
+        userManager.currentUser?.let { _loginState.value = LoginState.AlreadyLogged }
     }
 
     fun tryLogin(identity: String, password: String) {
@@ -47,7 +45,7 @@ class LoginViewModel@Inject constructor(
             result.fold(
                 onSuccess = { user ->
                     _loginState.value = LoginState.Success
-                    userManager.setCurrentUser(user)
+                    userManager.currentUser = user
                 }, onFailure = { exception ->
                     _loginState.value = LoginState.Error(exception.message!!)
                 })

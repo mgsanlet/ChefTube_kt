@@ -104,7 +104,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun onLogout() {
-        userManager.setCurrentUser(null)
+        userManager.currentUser = null
         startActivity(Intent(this, AuthActivity::class.java))
         finish()
     }

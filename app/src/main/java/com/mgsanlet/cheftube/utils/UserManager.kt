@@ -14,33 +14,33 @@ class UserManager @Inject constructor(
     private val userRepository: UserRepository
 ) {
 
-    private var currentUser: User? = null
+    var currentUser: User? = null
 
     companion object {
         private const val PREFS_NAME = "AppPrefs"
         private const val SAVED_USER_ID = "savedUserId"
     }
 
-    fun setCurrentUserAsSaved() {
+    fun persistCurrentUser() {
         val preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         currentUser?.let {
             preferences.edit(commit = true) { putString(SAVED_USER_ID, it.id) }
         }
     }
 
-    fun deleteSavedUser() {
+    fun deletePersistentUser() {
         val preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         preferences.edit(commit = true) { remove(SAVED_USER_ID) }
     }
 
-    fun isUserSaved(): Boolean {
+    fun isUserPersistent(): Boolean {
         val preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         return preferences.getString(SAVED_USER_ID, null) != null && preferences.getString(
             SAVED_USER_ID, null
         ).equals(currentUser?.id)
     }
 
-    private fun trySetSavedUserAsCurrent() {
+    fun trySetPersistentUserAsCurrent() {
         val preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val savedUserId = preferences.getString(SAVED_USER_ID, null)
         savedUserId?.let {
@@ -51,10 +51,4 @@ class UserManager @Inject constructor(
             })
         }
     }
-
-    fun setCurrentUser(user: User?) {
-        currentUser = user
-    }
-
-    fun getCurrentUser(): User? = currentUser
 }

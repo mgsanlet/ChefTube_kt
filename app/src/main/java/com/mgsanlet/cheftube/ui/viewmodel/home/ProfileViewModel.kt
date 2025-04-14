@@ -29,7 +29,7 @@ class ProfileViewModel @Inject constructor(
     private fun loadCurrentUser() {
         viewModelScope.launch {
             val user = withContext(Dispatchers.IO) {
-                userManager.getCurrentUser()
+                userManager.currentUser
             }
             _currentUser.value = user
         }
@@ -49,7 +49,7 @@ class ProfileViewModel @Inject constructor(
 
         val result = userRepository.updateUser(updatedUser, oldPassword)
         if (result.isSuccess) {
-            userManager.setCurrentUser(updatedUser)
+            userManager.currentUser = updatedUser
             _currentUser.value = updatedUser
         }
         return result
@@ -71,13 +71,13 @@ class ProfileViewModel @Inject constructor(
 
     fun alternateKeepLoggedIn(keepLoggedIn: Boolean) {
         if (keepLoggedIn) {
-            userManager.setCurrentUserAsSaved()
+            userManager.persistCurrentUser()
         } else {
-            userManager.deleteSavedUser()
+            userManager.deletePersistentUser()
         }
     }
 
-    fun isUserBeingKept(): Boolean {
-        return userManager.isUserSaved()
+    fun isUserPersistent(): Boolean {
+        return userManager.isUserPersistent()
     }
 }

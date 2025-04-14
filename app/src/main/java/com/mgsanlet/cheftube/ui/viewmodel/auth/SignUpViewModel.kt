@@ -38,7 +38,7 @@ class SignUpViewModel @Inject constructor(
             result.fold(
                 onSuccess = { user ->
                     _signUpState.value = SignUpState.Success
-                    userManager.setCurrentUser(user)
+                    userManager.currentUser = user
                 }, onFailure = { error ->
                     _signUpState.value = SignUpState.Error(error.message)
                 })

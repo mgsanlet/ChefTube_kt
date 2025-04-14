@@ -42,7 +42,7 @@ class ProfileFragment @Inject constructor() : BaseFormFragment<FragmentProfileBi
     }
 
     override fun setUpViewProperties() {
-        binding.keepLoggedCheckBox.isChecked = viewModel.isUserBeingKept()
+        binding.keepLoggedCheckBox.isChecked = viewModel.isUserPersistent()
     }
 
     override fun isValidViewInput(): Boolean {
@@ -64,7 +64,7 @@ class ProfileFragment @Inject constructor() : BaseFormFragment<FragmentProfileBi
         val oldPassword = binding.oldPasswordEditText.text.toString()
 
         if (viewModel.newUsernameAlreadyExists(finalUsername)) {
-            binding.emailEditText.error = getString(R.string.username_already)
+            binding.nameEditText.error = getString(R.string.username_already)
             return
         }
 
