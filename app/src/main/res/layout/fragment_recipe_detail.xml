@@ -15,7 +15,6 @@
         />
 
     <ScrollView
-        android:id="@+id/recipe_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="top"
@@ -23,6 +22,7 @@
         android:layout_marginBottom="55dp">
 
         <LinearLayout
+            android:id="@+id/recipeContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"

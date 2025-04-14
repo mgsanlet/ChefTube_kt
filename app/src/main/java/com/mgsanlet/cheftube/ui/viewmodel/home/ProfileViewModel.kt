@@ -36,7 +36,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun verifyPassword(password: String): Boolean {
-        return currentUser.value?.verifyPassword(password) ?: false
+        return currentUser.value?.verifyPassword(password) == true
     }
 
     fun updateUser(

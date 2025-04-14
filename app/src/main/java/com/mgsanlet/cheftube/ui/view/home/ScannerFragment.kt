@@ -15,6 +15,7 @@ import com.mgsanlet.cheftube.databinding.FragmentScannerBinding
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerState
 import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerViewModel
+import com.mgsanlet.cheftube.utils.LocaleManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -45,7 +46,7 @@ class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBindin
                     binding.progressBar.visibility = View.GONE
                     binding.resultTextView.apply {
                         visibility = View.VISIBLE
-                        text = "Nombre del producto"
+                        text = state.product.name
                         setBackgroundResource(R.drawable.result_green_shapes)
                     }
                     binding.infoButton.isEnabled = true

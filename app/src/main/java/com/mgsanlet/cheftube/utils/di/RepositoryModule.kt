@@ -6,7 +6,7 @@ import com.mgsanlet.cheftube.data.repository.RecipeRepositoryImpl
 import com.mgsanlet.cheftube.data.repository.UserRepositoryImpl
 import com.mgsanlet.cheftube.data.source.local.RecipeLocalDataSource
 import com.mgsanlet.cheftube.data.source.local.UserLocalDataSource
-import com.mgsanlet.cheftube.data.source.remote.ProductRemoteDataSource
+import com.mgsanlet.cheftube.data.source.remote.ProductApi
 import com.mgsanlet.cheftube.domain.repository.ProductRepository
 import com.mgsanlet.cheftube.domain.repository.RecipeRepository
 import com.mgsanlet.cheftube.domain.repository.UserRepository
@@ -40,8 +40,8 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideProductRepository(
-        productRemoteDataSource: ProductRemoteDataSource
+        productApi: ProductApi
     ): ProductRepository {
-        return ProductRepositoryImpl(productRemoteDataSource)
+        return ProductRepositoryImpl(productApi)
     }
 }

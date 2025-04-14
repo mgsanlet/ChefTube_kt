@@ -23,7 +23,6 @@
     <string name="email_or_username">Email or Username</string>
 
     <!-- BUTTON TEXTS -->
-    <string name="results">Results: </string>
     <string name="data_saved">Data saved</string>
     <string name="ok">OK</string>
     <string name="save">Save</string>
@@ -47,12 +46,11 @@
     <!-- PLAIN TEXTS -->
     <string name="dialog_title">Select Language</string>
     <string name="no_results">No results</string>
+    <string name="results">Results: </string>
     <string name="search_recipe">Search recipe:</string>
     <string name="ingredients">Ingredients</string>
     <string name="steps">Recipe steps</string>
     <string name="scan_prompt">Scan barcode</string>
-    <string name="product_name">Product name:</string>
-    <string name="ecoscore" translatable="false">EcoScore:</string>
     <string name="product_not_found">Product not found</string>
     <string name="set_timer">Set Timer</string>
     <string name="minutes">Minutes</string>

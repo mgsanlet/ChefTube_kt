@@ -15,17 +15,37 @@ import javax.inject.Inject
 class RecipeFeedViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository
 ) : ViewModel() {
-    var recipeList = MutableLiveData<List<Recipe>>()
+    var recipeFeedState = MutableLiveData<RecipeFeedState>()
 
     init{
+        recipeFeedState.value = RecipeFeedState.Loading
+
         CoroutineScope(Dispatchers.Main).launch {
-            recipeList.value = recipeRepository.getAll()
+            val recipeList = recipeRepository.getAll()
+            if (recipeList.isEmpty()) {
+                recipeFeedState.value = RecipeFeedState.NoResults
+            } else {
+                recipeFeedState.value = RecipeFeedState.InitialLoad(recipeList)
+            }
         }
     }
 
     fun filterRecipesByIngredient(context: Context, query: String) {
+        recipeFeedState.value = RecipeFeedState.Loading
         CoroutineScope(Dispatchers.Main).launch {
-            recipeList.value = recipeRepository.filterRecipesByIngredient(context, query)
+            val recipeList = recipeRepository.filterRecipesByIngredient(context, query)
+            if (recipeList.isEmpty()) {
+                recipeFeedState.value = RecipeFeedState.NoResults
+            } else {
+                recipeFeedState.value = RecipeFeedState.SomeResults(recipeList)
+            }
         }
     }
+}
+
+sealed class RecipeFeedState {
+    data class InitialLoad(val recipeList: List<Recipe>) : RecipeFeedState()
+    data object Loading : RecipeFeedState()
+    data object NoResults : RecipeFeedState()
+    data class SomeResults(val recipeList: List<Recipe>) : RecipeFeedState()
 }

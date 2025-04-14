@@ -5,13 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.data.model.Recipe
 import com.mgsanlet.cheftube.databinding.FragmentRecipeFeedBinding
 import com.mgsanlet.cheftube.ui.adapter.RecipeFeedAdapter
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
+import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedState
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -25,50 +28,77 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeedBinding>() {
 
-    private val viewModel: RecipeFeedViewModel by viewModels ()
+    private val viewModel: RecipeFeedViewModel by viewModels()
 
     override fun inflateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
     ): FragmentRecipeFeedBinding = FragmentRecipeFeedBinding.inflate(inflater, container, false)
 
     override fun setUpObservers() {
-        viewModel.recipeList.observe(viewLifecycleOwner) {
-//            Toast.makeText(
-//                context, getString(R.string.results) + it.size,
-//                Toast.LENGTH_SHORT
-//            ).show()
-            if (it.isEmpty()) {
-                displayNoResults() // Mostrar mensaje de sin resultados
-            } else {
-                val recipeAdapter = RecipeFeedAdapter(requireContext(), it, parentFragmentManager)
-                binding.recipeFeedRecyclerView.adapter = recipeAdapter
-                binding.noResultsTextView.visibility =
-                    View.GONE // Ocultar mensaje de sin resultados
-                binding.recipeFeedRecyclerView.visibility = View.VISIBLE // Mostrar RecyclerView
+        viewModel.recipeFeedState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is RecipeFeedState.InitialLoad -> {
+                    showLoading(false)
+                    loadRecycler(state.recipeList)
+                }
+
+                is RecipeFeedState.Loading -> showLoading(true)
+
+                is RecipeFeedState.NoResults -> {
+                    showLoading(false)
+                    showNoResults()
+                }
+
+                is RecipeFeedState.SomeResults -> {
+                    showLoading(false)
+                    loadRecycler(state.recipeList)
+                    showResultNumber(state.recipeList.size)
+                }
             }
         }
     }
 
     override fun setUpListeners() {
-        binding.searchButton.setOnClickListener { setUpSearchBtn() }
+        binding.searchButton.setOnClickListener { showSearchDialog() }
     }
 
     override fun setUpViewProperties() {
+        setUpProgressBar(binding.progressBar)
         binding.recipeFeedRecyclerView.setLayoutManager(LinearLayoutManager(context))
 
         binding.noResultsTextView.visibility = View.GONE // Oculta mensaje de sin resultados-
         binding.recipeFeedRecyclerView.visibility = View.VISIBLE // Mostrar RecyclerView
     }
 
-    /**
-     * Muestra un mensaje indicando que no se encontraron resultados.
-     */
-    private fun displayNoResults() {
-        binding.noResultsTextView.visibility = View.VISIBLE // Mostra el mensaje de sin resultados
-        binding.recipeFeedRecyclerView.visibility = View.GONE // Ocultar el RecyclerView
+    private fun loadRecycler(recipeList: List<Recipe>) {
+        val recipeAdapter = RecipeFeedAdapter(
+            requireContext(), recipeList, parentFragmentManager
+        )
+        binding.recipeFeedRecyclerView.adapter = recipeAdapter
+        binding.noResultsTextView.visibility = View.GONE
+        binding.recipeFeedRecyclerView.visibility = View.VISIBLE
     }
 
-    private fun setUpSearchBtn() {
+    private fun showNoResults() {
+        binding.noResultsTextView.visibility = View.VISIBLE
+        binding.recipeFeedRecyclerView.visibility = View.GONE
+    }
+
+    private fun showResultNumber(size: Int) {
+        Toast.makeText(context, getString(R.string.results) + " $size", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showLoading(show: Boolean) {
+        if (show) {
+            binding.progressBar.visibility = View.VISIBLE
+            binding.recipeFeedRecyclerView.visibility = View.GONE
+            binding.noResultsTextView.visibility = View.GONE
+        } else {
+            binding.progressBar.visibility = View.GONE
+        }
+    }
+
+    private fun showSearchDialog() {
         val searchDialogBuilder = AlertDialog.Builder(requireContext())
 
         // Inflar un diseño personalizado para el diálogo de búsqueda
@@ -87,6 +117,7 @@ class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeed
             // Filtrar las recetas según la consulta de entrada
             viewModel.filterRecipesByIngredient(requireContext(), query)
             searchDialog.dismiss() // Descartar el diálogo después de la búsqueda
+
         }
     }
 }

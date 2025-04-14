@@ -7,5 +7,5 @@ import retrofit2.http.Path
 
 interface ProductApi {
     @GET("product/{barcode}")
-    suspend fun getProduct(@Path("barcode") barcode: String): Response<ProductResponse>
+    suspend fun getProductByBarcode(@Path("barcode") barcode: String): Response<ProductResponse>
 }
