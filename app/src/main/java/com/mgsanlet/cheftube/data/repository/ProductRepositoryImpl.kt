@@ -6,6 +6,7 @@ import com.mgsanlet.cheftube.domain.model.DomainProduct
 import com.mgsanlet.cheftube.domain.repository.ProductRepository
 import com.mgsanlet.cheftube.utils.exception.ChefTubeException
 import com.mgsanlet.cheftube.utils.exception.ProductException
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 class ProductRepositoryImpl @Inject constructor(
@@ -30,8 +31,10 @@ class ProductRepositoryImpl @Inject constructor(
                 }
             }
 
+        } catch (offline: UnknownHostException) {
+            Result.failure(ChefTubeException.NoInternet)
         } catch (e: Exception) {
-            Result.failure(ChefTubeException.UnknownError)
+            Result.failure(ChefTubeException.UnknownError(e.message))
         }
     }
 }

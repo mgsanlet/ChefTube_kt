@@ -9,13 +9,15 @@ open class ChefTubeException(
     @StringRes open val messageRes: Int
 ) : Exception() {
 
-    class ApiError(val statusCode: Int) : ProductException(R.string.api_error)
-    object UnknownError : ProductException(R.string.unknown_error)
+    class ApiError(val statusCode: Int) : ChefTubeException(R.string.api_error)
+    class UnknownError(message: String?) : ChefTubeException(R.string.unknown_error)
+    object NoInternet : ChefTubeException(R.string.no_internet)
 
     fun getLocalizedMessage(context: Context): String {
         return try {
             when (this) {
                 is ApiError -> context.getString(R.string.api_error, statusCode)
+                is UnknownError -> context.getString(R.string.unknown_error, message)
                 else -> context.getString(messageRes)
             }
 
