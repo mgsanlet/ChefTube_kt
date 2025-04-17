@@ -6,6 +6,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
@@ -15,7 +16,6 @@ import com.mgsanlet.cheftube.databinding.FragmentScannerBinding
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerState
 import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerViewModel
-import com.mgsanlet.cheftube.utils.LocaleManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -27,7 +27,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBinding>() {
 
-    private val viewModel: ScannerViewModel by viewModels ()
+    private val viewModel: ScannerViewModel by viewModels()
 
     override fun inflateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -46,23 +46,20 @@ class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBindin
                     binding.progressBar.visibility = View.GONE
                     binding.resultTextView.apply {
                         visibility = View.VISIBLE
-                        text = state.product.name
+                        text = viewModel.getLocalizedProductName()
                         setBackgroundResource(R.drawable.result_green_shapes)
                     }
                     binding.infoButton.isEnabled = true
-                    binding.infoButton.setBackgroundColor("#FB9E27".toColorInt())
-                }
-
-                is ScannerState.ProductNotFound -> {
-                    showBadResult(getString(R.string.product_not_found))
-                }
-
-                is ScannerState.NetworkError -> {
-                    showBadResult(getString(R.string.network_error))
+                    binding.infoButton.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.primary_green
+                        )
+                    )
                 }
 
                 is ScannerState.Error -> {
-                    showBadResult(getString(R.string.api_error, state.code))
+                    showBadResult(state.error.getLocalizedMessage(requireContext()))
                 }
             }
         }
@@ -73,7 +70,7 @@ class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBindin
         binding.resultTextView.apply {
             visibility = View.VISIBLE
             text = message
-            setBackgroundResource(R.drawable.result_red_shapes)
+            this.setBackgroundResource(R.drawable.result_red_shapes)
         }
         binding.infoButton.isEnabled = false
     }

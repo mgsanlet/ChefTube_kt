@@ -56,7 +56,7 @@
     <string name="steps">Fasi della ricetta</string>
     <string name="scan_prompt">Scansiona il codice a barre</string>
     <string name="product_name">Nome del prodotto:</string>
-    <string name="product_not_found">Prodotto non trovato</string>
+    <string name="product_not_found_error">Prodotto non trovato</string>
     <string name="powered_by_open_food_facts_api">Risorse di Open Food Facts API</string>
 
     <!-- ALTERNATIVE IMMAGINI -->
@@ -139,5 +139,7 @@
     <string name="unknown_error">" Errore sconosciuto"</string>
     <string name="keep_logged">Mantenere la sessione attiva</string>
     <string name="account_created">Account creato con successo</string>
+    <string name="empty_product_response_error">Risposta di prodotto vuota</string>
+    <string name="non_translated_error">Errore non tradotto</string>
 
 </resources>

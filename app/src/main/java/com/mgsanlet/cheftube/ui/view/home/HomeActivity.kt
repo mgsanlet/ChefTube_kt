@@ -20,6 +20,7 @@ import com.mgsanlet.cheftube.databinding.ActivityHomeBinding
 import com.mgsanlet.cheftube.utils.ui.FragmentNavigator
 import com.mgsanlet.cheftube.ui.view.auth.AuthActivity
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModel
+import com.mgsanlet.cheftube.utils.LocaleManager
 import com.mgsanlet.cheftube.utils.UserManager
 import com.yariksoffice.lingver.Lingver
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,6 +36,7 @@ import javax.inject.Inject
 class HomeActivity : AppCompatActivity() {
 
     @Inject lateinit var userManager: UserManager
+    @Inject lateinit var localeManager: LocaleManager
     private lateinit var binding: ActivityHomeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,16 +93,9 @@ class HomeActivity : AppCompatActivity() {
         AlertDialog.Builder(this).setTitle(getString(R.string.dialog_title))
             .setItems(languages) { _: DialogInterface?, indexOfSelected: Int ->
                 val selectedLanguage = languageCodes[indexOfSelected]
-                Lingver.getInstance().setLocale(this, Locale(selectedLanguage))
+                localeManager.setLocale(Locale(selectedLanguage))
                 recreate()
-                saveLanguage(selectedLanguage)
             }.show()
-    }
-
-    private fun saveLanguage(languageCode: String) {
-        getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit {
-                putString(LANGUAGE_KEY, languageCode)
-            }
     }
 
     private fun onLogout() {

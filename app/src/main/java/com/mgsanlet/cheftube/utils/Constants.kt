@@ -7,7 +7,7 @@ object Constants {
     const val SAVED_USER_ID = "saved_user_id"
 
     object Api {
-        const val OFF_API_BASE_URL = "https://world.openfoodfacts.org/api/v0/product/"
+        const val OFF_API_BASE_URL = "https://world.openfoodfacts.org/api/v3/"
     }
 
     object Database {

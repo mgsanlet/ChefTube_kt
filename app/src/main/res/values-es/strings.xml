@@ -53,7 +53,7 @@
     <string name="steps">Pasos de la receta</string>
     <string name="scan_prompt">Escanea el código de barras</string>
     <string name="product_name">Nombre del producto:</string>
-    <string name="product_not_found">Producto no encontrado</string>
+    <string name="product_not_found_error">Producto no encontrado</string>
     <string name="set_timer">Indicar tiempo</string>
     <string name="minutes">Minutos</string>
     <string name="seconds">Segundos</string>
@@ -139,6 +139,8 @@
     <string name="unknown_error">Error desconocido</string>
     <string name="keep_logged">Mantener sesión iniciada</string>
     <string name="account_created">Cuenta creada con éxito</string>
+    <string name="empty_product_response_error">Respuesta de producto vacía</string>
+    <string name="non_translated_error">Error no traducido</string>
 
 
 </resources>

@@ -51,7 +51,7 @@
     <string name="ingredients">Ingredients</string>
     <string name="steps">Recipe steps</string>
     <string name="scan_prompt">Scan barcode</string>
-    <string name="product_not_found">Product not found</string>
+    <string name="product_not_found_error">Product not found</string>
     <string name="set_timer">Set Timer</string>
     <string name="minutes">Minutes</string>
     <string name="seconds">Seconds</string>
@@ -141,5 +141,8 @@
     <string name="unknown_error">Unknown error</string>
     <string name="keep_logged">Keep me logged in</string>
     <string name="account_created">Account created successfully</string>
+    <string name="empty_product_response_error">Empty product response</string>
+    <string name="product_name">Product name:</string>
+    <string name="non_translated_error">Non translated error\n</string>
 
 </resources>

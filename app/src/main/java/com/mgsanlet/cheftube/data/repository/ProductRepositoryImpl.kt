@@ -1,9 +1,11 @@
 package com.mgsanlet.cheftube.data.repository
 
+import com.mgsanlet.cheftube.data.model.toDomainProduct
 import com.mgsanlet.cheftube.data.source.remote.ProductApi
 import com.mgsanlet.cheftube.domain.model.DomainProduct
 import com.mgsanlet.cheftube.domain.repository.ProductRepository
-import java.util.Locale
+import com.mgsanlet.cheftube.utils.exception.ChefTubeException
+import com.mgsanlet.cheftube.utils.exception.ProductException
 import javax.inject.Inject
 
 class ProductRepositoryImpl @Inject constructor(
@@ -12,23 +14,24 @@ class ProductRepositoryImpl @Inject constructor(
     override suspend fun getProductByBarcode(barcode: String): Result<DomainProduct> {
         return try {
             val response = api.getProductByBarcode(barcode)
+
             if (response.isSuccessful) {
                 response.body()?.let { productResponse ->
-                    val currentLocale = Locale.getDefault().language
-                    val name = when (currentLocale) {
-                        "en" -> productResponse.product.product_name_en
-                        "it" -> productResponse.product.product_name_it
-                        "es" -> productResponse.product.product_name_es
-                        else -> productResponse.product.product_name
-                    } ?: productResponse.product.product_name ?: "Unknown Product"
 
-                    Result.success(DomainProduct(barcode, name))
-                } ?: Result.failure(Exception("Empty response"))
+                    Result.success(productResponse.toDomainProduct())
+
+                } ?: Result.failure(ProductException.EmptyResponse)
+
             } else {
-                Result.failure(Exception("Error: ${response.code()}"))
+                if (response.code() == 404) {
+                    Result.failure(ProductException.NotFound)
+                }else{
+                    Result.failure(ChefTubeException.ApiError(response.code()))
+                }
             }
+
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.failure(ChefTubeException.UnknownError)
         }
     }
 }
