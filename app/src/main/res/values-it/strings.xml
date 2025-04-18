@@ -2,8 +2,8 @@
     <!-- ERRORI DI VALIDAZIONE -->
     <string name="required">Obbligatorio</string>
     <string name="invalid_email">Email non valida</string>
-    <string name="email_already">Email già esistente</string>
-    <string name="username_already">Username già esistente</string>
+    <string name="email_already">Email già in uso</string>
+    <string name="username_already">Nome utente già in uso</string>
     <string name="short_pwd">Password troppo corta</string>
     <string name="pwd_d_match">Le password non corrispondono</string>
     <string name="no_email_app">Nessuna app per email trovata</string>

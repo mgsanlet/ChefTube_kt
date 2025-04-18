@@ -3,23 +3,20 @@ package com.mgsanlet.cheftube.utils
 import android.content.Context
 import androidx.core.content.edit
 import com.mgsanlet.cheftube.data.model.User
+import com.mgsanlet.cheftube.domain.model.DomainUser
 import com.mgsanlet.cheftube.domain.repository.UserRepository
+import com.mgsanlet.cheftube.utils.Constants.PREFS_NAME
+import com.mgsanlet.cheftube.utils.Constants.SAVED_USER_ID
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class UserManager @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val userRepository: UserRepository
+    @ApplicationContext private val context: Context
 ) {
 
-    var currentUser: User? = null
-
-    companion object {
-        private const val PREFS_NAME = "AppPrefs"
-        private const val SAVED_USER_ID = "savedUserId"
-    }
+    var currentUser: DomainUser? = null
 
     fun persistCurrentUser() {
         val preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -40,15 +37,8 @@ class UserManager @Inject constructor(
         ).equals(currentUser?.id)
     }
 
-    fun trySetPersistentUserAsCurrent() {
+    fun getPersistentUserId(): String? {
         val preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val savedUserId = preferences.getString(SAVED_USER_ID, null)
-        savedUserId?.let {
-            userRepository.getUserById(it).fold(onSuccess = { user ->
-                currentUser = user
-            }, onFailure = {
-                currentUser = null
-            })
-        }
+        return preferences.getString(SAVED_USER_ID, null)
     }
 }

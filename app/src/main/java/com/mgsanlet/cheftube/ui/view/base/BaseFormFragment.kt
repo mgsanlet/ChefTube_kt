@@ -7,6 +7,7 @@ import androidx.viewbinding.ViewBinding
 
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.User
+import com.mgsanlet.cheftube.utils.isEmpty
 
 abstract class BaseFormFragment<T : ViewBinding> : BaseFragment<T>() {
 
@@ -16,7 +17,7 @@ abstract class BaseFormFragment<T : ViewBinding> : BaseFragment<T>() {
         var hasEmptyFields = false
         for (field in fields) {
 
-            if (field.text.trim().isEmpty()) {
+            if (field.isEmpty()) {
                 field.error = getString(R.string.required)
                 hasEmptyFields = true
             }

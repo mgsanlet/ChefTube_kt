@@ -7,10 +7,12 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentLoginBinding
-import com.mgsanlet.cheftube.utils.ui.FragmentNavigator
 import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
-import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginState
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginViewModel
+import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginState
+import com.mgsanlet.cheftube.utils.error.UserError
+import com.mgsanlet.cheftube.utils.setCustomStyle
+import com.mgsanlet.cheftube.utils.ui.FragmentNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -34,7 +36,7 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
     ): FragmentLoginBinding = FragmentLoginBinding.inflate(inflater, container, false)
 
     override fun setUpObservers() {
-        viewModel.loginState.observe(viewLifecycleOwner) { state ->
+        viewModel.uiState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is LoginState.Initial -> {
                     binding.identityEditText.text.clear()
@@ -55,7 +57,17 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
 
                 is LoginState.Error -> {
                     showLoading(false)
-                    Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
+                    when (state.error) {
+                        is UserError.UserNotFound -> binding.identityEditText.error =
+                            state.error.getLocalizedMessage(requireContext())
+                        is UserError.WrongPassword -> binding.passwordEditText.error =
+                            state.error.getLocalizedMessage(requireContext())
+                        else -> Toast.makeText(
+                            context,
+                            state.error.getLocalizedMessage(requireContext()),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
 
                 is LoginState.AlreadyLogged -> {
@@ -84,7 +96,7 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
     }
 
     override fun setUpViewProperties() {
-        setUpProgressBar(binding.progressBar)
+        binding.progressBar.setCustomStyle(requireContext())
     }
 
     override fun isValidViewInput(): Boolean {

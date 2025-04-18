@@ -38,7 +38,7 @@ class UserLocalDataSource @Inject constructor(
                 put(COLUMN_ID, user.id)
                 put(COLUMN_USERNAME, user.username)
                 put(COLUMN_EMAIL, user.email)
-                put(COLUMN_PASSWORD_HASH, user.getPasswordHash())
+                put(COLUMN_PASSWORD_HASH, user.passwordHash)
             }
 
             val result = db.insert(TABLE_USERS, null, values)
@@ -178,7 +178,7 @@ class UserLocalDataSource @Inject constructor(
             val values = ContentValues().apply {
                 put(COLUMN_USERNAME, user.username)
                 put(COLUMN_EMAIL, user.email)
-                put(COLUMN_PASSWORD_HASH, user.getPasswordHash())
+                put(COLUMN_PASSWORD_HASH, user.passwordHash)
             }
 
             val result = db.update(

@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mgsanlet.cheftube.domain.repository.ProductRepository
 import com.mgsanlet.cheftube.utils.LocaleManager
-import com.mgsanlet.cheftube.utils.exception.ChefTubeException
+import com.mgsanlet.cheftube.utils.error.ChefTubeError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +40,7 @@ class ScannerViewModel @Inject constructor(
                 _scannerState.value = ScannerState.ProductFound(product)
             },
             onFailure = { exception ->
-                _scannerState.value = ScannerState.Error(exception as ChefTubeException)
+                _scannerState.value = ScannerState.Error(exception as ChefTubeError)
             }
         )
     }
@@ -73,5 +73,5 @@ sealed class ScannerState {
         }
     }
 
-    data class Error(val error: ChefTubeException) : ScannerState()
+    data class Error(val error: ChefTubeError) : ScannerState()
 }

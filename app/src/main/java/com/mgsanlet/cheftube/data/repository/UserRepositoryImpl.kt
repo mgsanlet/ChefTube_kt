@@ -1,121 +1,128 @@
 package com.mgsanlet.cheftube.data.repository
 
-import android.content.Context
-import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.User
+import com.mgsanlet.cheftube.data.model.toDomainUser
 import com.mgsanlet.cheftube.data.source.local.UserLocalDataSource
+import com.mgsanlet.cheftube.domain.model.DomainUser
 import com.mgsanlet.cheftube.domain.repository.UserRepository
-import dagger.hilt.android.qualifiers.ApplicationContext
+import com.mgsanlet.cheftube.utils.error.ChefTubeError
+import com.mgsanlet.cheftube.utils.error.UserError
+import com.mgsanlet.cheftube.utils.Constants.Tag
+import com.mgsanlet.cheftube.utils.Resource
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class UserRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val userLocalDataSource: UserLocalDataSource
 ) : UserRepository {
 
-    override fun createUser(username: String, email: String, password: String): Result<User> {
+    override suspend fun createUser(
+        username: String,
+        email: String,
+        password: String
+    ): Resource<DomainUser> {
         return try {
-            if (userLocalDataSource.getUserByEmailOrUsername(username) != null) {
-                Result.failure(Exception(context.getString(R.string.username_already)))
-            } else if (userLocalDataSource.getUserByEmailOrUsername(email) != null) {
-                Result.failure(Exception(context.getString(R.string.email_already)))
+            if (userLocalDataSource.getUserByName(username) != null) {
+                Resource.Error(UserError.UsernameAlreadyInUse)
+
+            } else if (userLocalDataSource.getUserByEmail(email) != null) {
+                Resource.Error(UserError.EmailAlreadyInUse)
+
             } else {
                 val newUser = User.create(username, email, password)
+
                 if (userLocalDataSource.insertUser(newUser)) {
-                    Result.success(newUser)
+                    Resource.Success(newUser.toDomainUser())
                 } else {
-                    Result.failure(Exception(context.getString(R.string.network_error)))
+                    Resource.Error(ChefTubeError.UnknownError(Tag.SIGN_UP))
                 }
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            Resource.Error(ChefTubeError.UnknownError(e.message))
         }
     }
 
-    override fun loginUser(emailOrUsername: String, password: String): Result<User> {
+    override suspend fun loginUser(emailOrUsername: String, password: String): Resource<DomainUser> {
         return try {
             val user = userLocalDataSource.getUserByEmailOrUsername(emailOrUsername)
             when {
                 user == null -> {
-                    Result.failure(Exception(context.getString(R.string.invalid_login)))
+                    Resource.Error(UserError.UserNotFound)
                 }
 
                 !user.verifyPassword(password) -> {
-                    Result.failure(Exception(context.getString(R.string.wrong_pwd)))
+                    Resource.Error(UserError.WrongPassword)
                 }
 
                 else -> {
-                    Result.success(user)
+                    Resource.Success(user.toDomainUser())
                 }
             }
         } catch (e: Exception) {
-            Result.failure(Exception(context.getString(R.string.unknown_error)))
+            Resource.Error(ChefTubeError.UnknownError(e.message))
         }
     }
 
-    override fun updateUser(user: User, oldPassword: String): Result<User> {
+    override suspend fun updateUser(user: User, oldPassword: String): Resource<DomainUser> {
         return try {
 
             // Obtener usuario actual
-            val currentUser = userLocalDataSource.getUserById(user.id) ?: return Result.failure(
-                Exception(
-                    context.getString(R.string.user_not_found)
-                )
+            val currentUser = userLocalDataSource.getUserById(user.id) ?: return Resource.Error(
+                UserError.UserNotFound
             )
 
             // Verificar la contraseña antigua
             if (!currentUser.verifyPassword(oldPassword)) {
-                return Result.failure(Exception(context.getString(R.string.wrong_pwd)))
+                return Resource.Error(UserError.WrongPassword)
             }
 
             if (userLocalDataSource.updateUser(user)) {
-                Result.success(user)
+                Resource.Success(user.toDomainUser())
             } else {
-                Result.failure(Exception(context.getString(R.string.network_error)))
+                Resource.Error(ChefTubeError.UnknownError(Tag.PROFILE))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            Resource.Error(ChefTubeError.UnknownError(e.message))
         }
     }
 
-    override fun getUserById(userId: String): Result<User> {
+    override suspend fun getUserById(userId: String): Resource<DomainUser> {
         return try {
             val user = userLocalDataSource.getUserById(userId)
             if (user != null) {
-                Result.success(user)
+                Resource.Success(user.toDomainUser())
             } else {
-                Result.failure(Exception(context.getString(R.string.user_not_found)))
+                Resource.Error(UserError.UserNotFound)
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            Resource.Error(ChefTubeError.UnknownError(e.message))
         }
     }
 
-    override fun getUserByName(username: String): Result<User> {
+    override suspend fun getUserByName(username: String): Resource<DomainUser> {
         return try {
             val user = userLocalDataSource.getUserByName(username)
             if (user != null) {
-                Result.success(user)
+                Resource.Success(user.toDomainUser())
             } else {
-                Result.failure(Exception(context.getString(R.string.user_not_found)))
+                Resource.Error(UserError.UserNotFound)
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            Resource.Error(ChefTubeError.UnknownError(e.message))
         }
     }
 
-    override fun getUserByEmail(userEmail: String): Result<User> {
+    override suspend fun getUserByEmail(userEmail: String): Resource<DomainUser> {
         return try {
             val user = userLocalDataSource.getUserByEmail(userEmail)
             if (user != null) {
-                Result.success(user)
+                Resource.Success(user.toDomainUser())
             } else {
-                Result.failure(Exception(context.getString(R.string.user_not_found)))
+                Resource.Error(UserError.UserNotFound)
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            Resource.Error(ChefTubeError.UnknownError(e.message))
         }
     }
 }

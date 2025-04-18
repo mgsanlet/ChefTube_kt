@@ -41,20 +41,4 @@ abstract class BaseFragment<T : ViewBinding> : Fragment() {
     protected open fun setUpListeners() {}
 
     protected open fun setUpViewProperties() {}
-
-    protected fun setUpProgressBar(progressBar: ProgressBar) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            progressBar.indeterminateDrawable.colorFilter = BlendModeColorFilter(
-                ContextCompat.getColor(requireContext(), R.color.primary_green), BlendMode.SRC_IN
-            )
-        } else {
-            @Suppress("DEPRECATION") // Solo para versiones antiguas
-            progressBar.indeterminateDrawable.setColorFilter(
-                ContextCompat.getColor(requireContext(), R.color.primary_green),
-                android.graphics.PorterDuff.Mode.SRC_IN
-            )
-        }
-    }
-
-
 }

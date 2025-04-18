@@ -1,7 +1,6 @@
 package com.mgsanlet.cheftube.data.model
 
 import org.mindrot.jbcrypt.BCrypt
-import java.io.Serializable
 import java.util.UUID
 
 /**
@@ -9,14 +8,13 @@ import java.util.UUID
  */
 data class User(
     val id: String = UUID.randomUUID().toString(), // ID único generado automáticamente
-    val username: String, val email: String, private val passwordHash: String
-) : Serializable {
+    val username: String, val email: String, val passwordHash: String
+) {
 
     /**
      * Crea un nuevo usuario con un hash de contraseña.
      */
     companion object {
-        const val PASSWORD_MIN_LENGTH = 5
 
         fun create(username: String, email: String, password: String): User {
             val passwordHash = hashPassword(password)
@@ -28,11 +26,9 @@ data class User(
         }
     }
 
-    // Método para obtener el hash de la contraseña (usado por UserProvider)
-    internal fun getPasswordHash(): String = passwordHash
-
     // Método para verificar la contraseña ingresada
     fun verifyPassword(rawPassword: String): Boolean {
         return BCrypt.checkpw(rawPassword, passwordHash)
+
     }
 }

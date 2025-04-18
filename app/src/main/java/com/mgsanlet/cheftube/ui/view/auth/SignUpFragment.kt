@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
 import com.mgsanlet.cheftube.R
@@ -12,6 +11,9 @@ import com.mgsanlet.cheftube.databinding.FragmentSignUpBinding
 import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
 import com.mgsanlet.cheftube.ui.viewmodel.auth.SignUpState
 import com.mgsanlet.cheftube.ui.viewmodel.auth.SignUpViewModel
+import com.mgsanlet.cheftube.utils.matches
+import com.mgsanlet.cheftube.utils.setCustomStyle
+import com.mgsanlet.cheftube.utils.showWithCustomStyle
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -30,7 +32,7 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
     ): FragmentSignUpBinding = FragmentSignUpBinding.inflate(inflater, container, false)
 
     override fun setUpObservers() {
-        viewModel.signUpState.observe(viewLifecycleOwner) { state ->
+        viewModel.uiState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is SignUpState.Initial -> {
                     showLoading(false)
@@ -63,9 +65,7 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
         snackbar.setAction(R.string.action_sign_in) {
             (activity as? AuthActivity)?.navToHomePage()
         }
-        snackbar.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.dark_green))
-        snackbar.setActionTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        snackbar.show()
+        snackbar.showWithCustomStyle(requireContext())
     }
 
     override fun setUpListeners() {
@@ -73,7 +73,7 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
     }
 
     override fun setUpViewProperties() {
-        setUpProgressBar(binding.progressBar)
+        binding.progressBar.setCustomStyle(requireContext())
     }
 
     override fun isValidViewInput(): Boolean {
@@ -84,9 +84,11 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
             binding.password2EditText,
         )
 
-        return !areFieldsEmpty(requiredFields) && isValidEmailPattern(binding.emailEditText) && isValidPasswordPattern(
-            binding.password1EditText
-        ) && passwordsMatch()
+        return !areFieldsEmpty(requiredFields) &&
+                isValidEmailPattern(binding.emailEditText) &&
+                isValidPasswordPattern(
+                    binding.password1EditText
+                ) && passwordsMatch()
     }
 
     private fun trySignUp() {
@@ -113,13 +115,9 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
      * Verifica que las contraseñas coincidan
      */
     private fun passwordsMatch(): Boolean {
-        return when {
-            binding.password1EditText.text.toString() == binding.password2EditText.text.toString() -> true
-            else -> {
-                binding.password2EditText.error = getString(R.string.pwd_d_match)
-                false
-            }
-        }
+        var isMatch = binding.password1EditText.matches(binding.password2EditText)
+        if (isMatch) binding.password2EditText.error = getString(R.string.pwd_d_match)
+        return isMatch
     }
 
     private fun clearFields() {

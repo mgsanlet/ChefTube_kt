@@ -2,8 +2,8 @@
     <!-- VALIDATION ERRORS-->
     <string name="required">Required</string>
     <string name="invalid_email">Invalid email</string>
-    <string name="email_already">Email already exists</string>
-    <string name="username_already">Username already exists</string>
+    <string name="email_already">Email already in use</string>
+    <string name="username_already">Username already in use</string>
     <string name="short_pwd">Password too short</string>
     <string name="pwd_d_match">Passwords don\'t match</string>
     <string name="no_email_app">No email app found</string>
