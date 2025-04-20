@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.mgsanlet.cheftube.databinding.ActivitySplashBinding
-import com.mgsanlet.cheftube.utils.ui.SystemUiHelper
 
 /**
  * SplashActivity es la pantalla introductoria que aparece cuando la aplicación se inicia.

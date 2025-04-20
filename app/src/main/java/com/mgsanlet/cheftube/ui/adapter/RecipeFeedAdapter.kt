@@ -11,8 +11,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.mgsanlet.cheftube.databinding.ItemRecipeBinding
 import com.mgsanlet.cheftube.R
-import com.mgsanlet.cheftube.data.model.Recipe
-import com.mgsanlet.cheftube.utils.ui.FragmentNavigator
+import com.mgsanlet.cheftube.data.model.RecipeDto
+import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.view.home.RecipeDetailFragment
 import com.mgsanlet.cheftube.ui.view.home.RecipeFeedFragment
 
@@ -23,7 +23,7 @@ import com.mgsanlet.cheftube.ui.view.home.RecipeFeedFragment
  */
 class RecipeFeedAdapter(
     private val mContext: Context,
-    private val recipeList: List<Recipe>,
+    private val recipeList: List<RecipeDto>,
     private val fragmentManager: FragmentManager,
 ) : RecyclerView.Adapter<RecipeFeedAdapter.RecipeViewHolder>() {
 
@@ -59,7 +59,7 @@ class RecipeFeedAdapter(
      *
      * @param recipe La receta cuyos detalles se mostrarán.
      */
-    private fun navToRecipeDetail(recipe: Recipe) {
+    private fun navToRecipeDetail(recipe: RecipeDto) {
         // Obtener el fragmento visible actual
         val currentFragment =
             fragmentManager.findFragmentById(R.id.fragmentContainerView) as RecipeFeedFragment?

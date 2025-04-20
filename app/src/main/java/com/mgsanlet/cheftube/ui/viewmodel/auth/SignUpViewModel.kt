@@ -4,8 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mgsanlet.cheftube.domain.usecase.CreateUserUseCase
-import com.mgsanlet.cheftube.utils.error.ChefTubeError
+import com.mgsanlet.cheftube.domain.usecase.user.CreateUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

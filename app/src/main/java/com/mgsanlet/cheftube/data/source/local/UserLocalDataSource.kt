@@ -4,7 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.mgsanlet.cheftube.data.model.User
+import com.mgsanlet.cheftube.data.model.UserDto
 import javax.inject.Inject
 
 /**
@@ -31,7 +31,7 @@ class UserLocalDataSource @Inject constructor(
         """.trimIndent()
     }
 
-    fun insertUser(user: User): Boolean {
+    fun insertUser(user: UserDto): Boolean {
         return try {
             val db = dbHelper.writableDatabase
             val values = ContentValues().apply {
@@ -48,7 +48,7 @@ class UserLocalDataSource @Inject constructor(
         }
     }
 
-    fun getUserById(id: String): User? {
+    fun getUserById(id: String): UserDto? {
         return try {
             val db = dbHelper.readableDatabase
             val cursor = db.query(
@@ -63,7 +63,7 @@ class UserLocalDataSource @Inject constructor(
 
             cursor.use {
                 if (it.moveToFirst()) {
-                    val user = User(
+                    val user = UserDto(
                         id = it.getString(it.getColumnIndexOrThrow(COLUMN_ID)),
                         username = it.getString(it.getColumnIndexOrThrow(COLUMN_USERNAME)),
                         email = it.getString(it.getColumnIndexOrThrow(COLUMN_EMAIL)),
@@ -79,7 +79,7 @@ class UserLocalDataSource @Inject constructor(
         }
     }
 
-    fun getUserByName(name: String): User? {
+    fun getUserByName(name: String): UserDto? {
         return try {
             val db = dbHelper.readableDatabase
             val cursor = db.query(
@@ -94,7 +94,7 @@ class UserLocalDataSource @Inject constructor(
 
             cursor.use {
                 if (it.moveToFirst()) {
-                    val user = User(
+                    val user = UserDto(
                         id = it.getString(it.getColumnIndexOrThrow(COLUMN_ID)),
                         username = it.getString(it.getColumnIndexOrThrow(COLUMN_USERNAME)),
                         email = it.getString(it.getColumnIndexOrThrow(COLUMN_EMAIL)),
@@ -110,7 +110,7 @@ class UserLocalDataSource @Inject constructor(
         }
     }
 
-    fun getUserByEmail(email: String): User? {
+    fun getUserByEmail(email: String): UserDto? {
         return try {
             val db = dbHelper.readableDatabase
             val cursor = db.query(
@@ -125,7 +125,7 @@ class UserLocalDataSource @Inject constructor(
 
             cursor.use {
                 if (it.moveToFirst()) {
-                    val user = User(
+                    val user = UserDto(
                         id = it.getString(it.getColumnIndexOrThrow(COLUMN_ID)),
                         username = it.getString(it.getColumnIndexOrThrow(COLUMN_USERNAME)),
                         email = it.getString(it.getColumnIndexOrThrow(COLUMN_EMAIL)),
@@ -141,7 +141,7 @@ class UserLocalDataSource @Inject constructor(
         }
     }
 
-    fun getUserByEmailOrUsername(identity: String): User? {
+    fun getUserByEmailOrUsername(identity: String): UserDto? {
         return try {
             val db = dbHelper.readableDatabase
             val cursor = db.query(
@@ -156,7 +156,7 @@ class UserLocalDataSource @Inject constructor(
 
             cursor.use {
                 if (it.moveToFirst()) {
-                    val user = User(
+                    val user = UserDto(
                         id = it.getString(it.getColumnIndexOrThrow(COLUMN_ID)),
                         username = it.getString(it.getColumnIndexOrThrow(COLUMN_USERNAME)),
                         email = it.getString(it.getColumnIndexOrThrow(COLUMN_EMAIL)),
@@ -172,7 +172,7 @@ class UserLocalDataSource @Inject constructor(
         }
     }
 
-    fun updateUser(user: User): Boolean {
+    fun updateUser(user: UserDto): Boolean {
         return try {
             val db = dbHelper.writableDatabase
             val values = ContentValues().apply {

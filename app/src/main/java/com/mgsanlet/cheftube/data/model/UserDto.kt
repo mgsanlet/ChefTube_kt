@@ -6,7 +6,7 @@ import java.util.UUID
 /**
  * Representa un usuario con ID universal, nombre de usuario, email y hash de contraseña.
  */
-data class User(
+data class UserDto(
     val id: String = UUID.randomUUID().toString(), // ID único generado automáticamente
     val username: String, val email: String, val passwordHash: String
 ) {
@@ -16,9 +16,9 @@ data class User(
      */
     companion object {
 
-        fun create(username: String, email: String, password: String): User {
+        fun create(username: String, email: String, password: String): UserDto {
             val passwordHash = hashPassword(password)
-            return User(username = username, email = email, passwordHash = passwordHash)
+            return UserDto(username = username, email = email, passwordHash = passwordHash)
         }
 
         private fun hashPassword(rawPassword: String): String {

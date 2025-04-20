@@ -7,7 +7,7 @@
     <string name="short_pwd">Password too short</string>
     <string name="pwd_d_match">Passwords don\'t match</string>
     <string name="no_email_app">No email app found</string>
-    <string name="wrong_pwd">Wrong password</string>
+    <string name="wrong_password">Wrong password</string>
     <string name="invalid_login">Invalid Login</string>
     <string name="user_not_found">User not found</string>
 
@@ -136,7 +136,7 @@
     <string name="step_07_02">2. Cook the Squid: Add the sliced squid to the pan and cook for 3–5 minutes until slightly tender.</string>
     <string name="step_07_03">3. Simmer in Sauce: Pour in the tomato sauce and season with paprika, salt, and pepper. Simmer for 15–20 minutes until the squid is tender and the flavors meld. Serve hot.</string>
     <string name="_00_00" translatable="false">00:00</string>
-    <string name="api_error" translatable="false">API: Error %1$d</string>
+    <string name="api_error" translatable="false">API Error</string>
     <string name="network_error">Network error</string>
     <string name="unknown_error">Unknown error: %1$s</string>
     <string name="keep_logged">Keep me logged in</string>

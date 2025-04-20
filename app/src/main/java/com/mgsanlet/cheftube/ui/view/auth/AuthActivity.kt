@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.mgsanlet.cheftube.R
-import com.mgsanlet.cheftube.utils.ui.SystemUiHelper
 import com.mgsanlet.cheftube.ui.view.home.HomeActivity
 import dagger.hilt.android.AndroidEntryPoint
 

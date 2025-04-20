@@ -1,7 +1,7 @@
-package com.mgsanlet.cheftube.utils.di
+package com.mgsanlet.cheftube.data.di
 
 import com.mgsanlet.cheftube.data.source.remote.ProductApi
-import com.mgsanlet.cheftube.utils.Constants.Api.OFF_API_BASE_URL
+import com.mgsanlet.cheftube.domain.Constants.Api.OFF_API_BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

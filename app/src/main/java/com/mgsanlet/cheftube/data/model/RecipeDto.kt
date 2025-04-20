@@ -8,7 +8,7 @@ import java.util.Locale
  * pasos de preparación, y una URL de video.
  * @author MarioG
  */
-data class Recipe(val id: String, val ttlRId: Int, val imgRId: Int, val videoUrl: String) {
+data class RecipeDto(val id: String, val ttlRId: Int, val imgRId: Int, val videoUrl: String) {
 
     private val ingredientsResIds: MutableList<Int> = ArrayList()
     private val stepsResIds: MutableList<Int> = ArrayList()

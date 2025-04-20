@@ -3,7 +3,7 @@ package com.mgsanlet.cheftube.ui.viewmodel.home
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mgsanlet.cheftube.data.model.Recipe
+import com.mgsanlet.cheftube.data.model.RecipeDto
 import com.mgsanlet.cheftube.domain.repository.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -44,8 +44,8 @@ class RecipeFeedViewModel @Inject constructor(
 }
 
 sealed class RecipeFeedState {
-    data class InitialLoad(val recipeList: List<Recipe>) : RecipeFeedState()
+    data class InitialLoad(val recipeList: List<RecipeDto>) : RecipeFeedState()
     data object Loading : RecipeFeedState()
     data object NoResults : RecipeFeedState()
-    data class SomeResults(val recipeList: List<Recipe>) : RecipeFeedState()
+    data class SomeResults(val recipeList: List<RecipeDto>) : RecipeFeedState()
 }

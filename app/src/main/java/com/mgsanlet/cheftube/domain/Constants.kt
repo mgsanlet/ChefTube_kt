@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.utils
+package com.mgsanlet.cheftube.domain
 
 object Constants {
     // Shared Preferences

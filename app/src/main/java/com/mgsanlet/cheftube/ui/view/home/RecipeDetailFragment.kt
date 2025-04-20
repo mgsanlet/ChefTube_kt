@@ -15,7 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.mgsanlet.cheftube.R
-import com.mgsanlet.cheftube.data.model.Recipe
+import com.mgsanlet.cheftube.data.model.RecipeDto
 import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModel
@@ -132,7 +132,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private fun setRecipeDetails(recipe: Recipe?) {
+    private fun setRecipeDetails(recipe: RecipeDto?) {
         if (recipe != null) {
             binding.titleTextView.text = getString(recipe.ttlRId)
             // Configurar vídeo
@@ -148,7 +148,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
     }
 
-    private fun fillIngredients(recipe: Recipe) {
+    private fun fillIngredients(recipe: RecipeDto) {
         binding.ingredientsLinearLayout.removeAllViews()
         for (ingredientId in recipe.getIngredientsResIds()) {
             val ingredientTextView = TextView(context)
@@ -165,7 +165,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
     }
 
-    private fun fillSteps(recipe: Recipe) {
+    private fun fillSteps(recipe: RecipeDto) {
         binding.stepsLinearLayout.removeAllViews()
         for (stepId in recipe.getStepsResIds()) {
             val stepTextView = TextView(context)

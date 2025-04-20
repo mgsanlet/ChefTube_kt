@@ -7,7 +7,7 @@
     <string name="short_pwd">Contraseña demasiado corta</string>
     <string name="pwd_d_match">Las contraseñas no coinciden</string>
     <string name="no_email_app">No se encontró aplicación de email</string>
-    <string name="wrong_pwd">Contraseña incorrecta</string>
+    <string name="wrong_password">Contraseña incorrecta</string>
     <string name="invalid_login">Login inválido</string>
     <string name="user_not_found">Usuario no encontrado</string>
     <string name="network_error">Error de red</string>

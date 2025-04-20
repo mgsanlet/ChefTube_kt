@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.utils.di
+package com.mgsanlet.cheftube.data.di
 
 import android.content.Context
 import com.mgsanlet.cheftube.domain.repository.UserRepository

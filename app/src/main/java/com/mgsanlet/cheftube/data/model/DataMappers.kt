@@ -14,11 +14,20 @@ fun ProductResponse.toDomainProduct(): DomainProduct {
     )
 }
 
-fun User.toDomainUser(): DomainUser {
+fun UserDto.toDomainUser(): DomainUser {
     return DomainUser(
         id = id,
         username = username,
         email = email,
         password = passwordHash
+    )
+}
+
+fun DomainUser.toUserDto(): UserDto {
+    return UserDto(
+        id = id,
+        username = username,
+        email = email,
+        passwordHash = password
     )
 }

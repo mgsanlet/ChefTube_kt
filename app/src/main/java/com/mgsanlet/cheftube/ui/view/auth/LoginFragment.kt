@@ -10,9 +10,8 @@ import com.mgsanlet.cheftube.databinding.FragmentLoginBinding
 import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginViewModel
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginState
-import com.mgsanlet.cheftube.utils.error.UserError
-import com.mgsanlet.cheftube.utils.setCustomStyle
-import com.mgsanlet.cheftube.utils.ui.FragmentNavigator
+import com.mgsanlet.cheftube.ui.util.setCustomStyle
+import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

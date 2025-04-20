@@ -4,8 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mgsanlet.cheftube.domain.repository.ProductRepository
-import com.mgsanlet.cheftube.utils.LocaleManager
-import com.mgsanlet.cheftube.utils.error.ChefTubeError
+import com.mgsanlet.cheftube.ui.util.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

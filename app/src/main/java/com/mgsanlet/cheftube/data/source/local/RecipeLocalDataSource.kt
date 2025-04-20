@@ -2,20 +2,20 @@ package com.mgsanlet.cheftube.data.source.local
 
 import android.content.Context
 import com.mgsanlet.cheftube.R
-import com.mgsanlet.cheftube.data.model.Recipe
+import com.mgsanlet.cheftube.data.model.RecipeDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Singleton class that manages a collection of [Recipe] objects.
+ * Singleton class that manages a collection of [RecipeDto] objects.
  * Provides methods to initialize, register, and filter recipes.
  * @author MarioG
  */
 class RecipeLocalDataSource {
-    private val recipeList = ArrayList<Recipe>()
-    private val recipeMap = mutableMapOf<String, Recipe>()
+    private val recipeList = ArrayList<RecipeDto>()
+    private val recipeMap = mutableMapOf<String, RecipeDto>()
 
     init {
         CoroutineScope(Dispatchers.Main).launch {
@@ -23,8 +23,8 @@ class RecipeLocalDataSource {
         }
     }
 
-    private suspend fun addRecipesToList(): List<Recipe> = withContext(Dispatchers.IO) {
-        val recipe1 = Recipe(
+    private suspend fun addRecipesToList(): List<RecipeDto> = withContext(Dispatchers.IO) {
+        val recipe1 = RecipeDto(
             "1",
             R.string.recipe_01,
             R.drawable.recipe_01,
@@ -39,7 +39,7 @@ class RecipeLocalDataSource {
         recipe1.addStep(R.string.step_01_03)
         register(recipe1)
 
-        val recipe2 = Recipe(
+        val recipe2 = RecipeDto(
             "2",
             R.string.recipe_02,
             R.drawable.recipe_02,
@@ -54,7 +54,7 @@ class RecipeLocalDataSource {
         recipe2.addStep(R.string.step_02_03)
         register(recipe2)
 
-        val recipe3 = Recipe(
+        val recipe3 = RecipeDto(
             "3",
             R.string.recipe_03,
             R.drawable.recipe_03,
@@ -68,7 +68,7 @@ class RecipeLocalDataSource {
         recipe3.addStep(R.string.step_03_03)
         register(recipe3)
 
-        val recipe4 = Recipe(
+        val recipe4 = RecipeDto(
             "4",
             R.string.recipe_04,
             R.drawable.recipe_04,
@@ -82,7 +82,7 @@ class RecipeLocalDataSource {
         recipe4.addStep(R.string.step_04_03)
         register(recipe4)
 
-        val recipe5 = Recipe(
+        val recipe5 = RecipeDto(
             "5",
             R.string.recipe_05,
             R.drawable.recipe_05,
@@ -96,7 +96,7 @@ class RecipeLocalDataSource {
         recipe5.addStep(R.string.step_05_03)
         register(recipe5)
 
-        val recipe6 = Recipe(
+        val recipe6 = RecipeDto(
             "6",
             R.string.recipe_06,
             R.drawable.recipe_06,
@@ -110,7 +110,7 @@ class RecipeLocalDataSource {
         recipe6.addStep(R.string.step_06_03)
         register(recipe6)
 
-        val recipe7 = Recipe(
+        val recipe7 = RecipeDto(
             "7",
             R.string.recipe_07,
             R.drawable.recipe_07,
@@ -132,7 +132,7 @@ class RecipeLocalDataSource {
      *
      * @param recipe the recipe to be added
      */
-    private fun register(recipe: Recipe?) {
+    private fun register(recipe: RecipeDto?) {
         if (recipe != null) {
             recipeList.add(recipe)
             recipeMap[recipe.id] = recipe
@@ -147,9 +147,9 @@ class RecipeLocalDataSource {
      * @param query   the search query
      * @return a list of recipes that match the query
      */
-    suspend fun filterRecipesByIngredient(context: Context, query: String): List<Recipe> =
+    suspend fun filterRecipesByIngredient(context: Context, query: String): List<RecipeDto> =
         withContext(Dispatchers.IO) {
-            val filteredRecipes: MutableList<Recipe> = ArrayList()
+            val filteredRecipes: MutableList<RecipeDto> = ArrayList()
 
             // -Checking for matching recipes-
             for (recipe in recipeList) {
@@ -160,11 +160,11 @@ class RecipeLocalDataSource {
             return@withContext filteredRecipes
         }
 
-    suspend fun getById(recipeId: String): Recipe? = withContext(Dispatchers.IO) {
+    suspend fun getById(recipeId: String): RecipeDto? = withContext(Dispatchers.IO) {
         return@withContext recipeMap[recipeId]
     }
 
-    suspend fun getAll(): List<Recipe> = withContext(Dispatchers.IO) {
+    suspend fun getAll(): List<RecipeDto> = withContext(Dispatchers.IO) {
         return@withContext recipeList
     }
 }

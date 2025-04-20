@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.utils.di
+package com.mgsanlet.cheftube.data.di
 
 import com.mgsanlet.cheftube.data.source.local.DatabaseHelper
 import com.mgsanlet.cheftube.data.source.local.RecipeLocalDataSource

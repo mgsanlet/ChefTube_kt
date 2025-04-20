@@ -75,7 +75,7 @@ class ProfileFragment @Inject constructor() : BaseFormFragment<FragmentProfileBi
 
         // Verificar contraseña antigua
         if (!viewModel.verifyPassword(oldPassword)) {
-            binding.oldPasswordEditText.error = getString(R.string.wrong_pwd)
+            binding.oldPasswordEditText.error = getString(R.string.wrong_password)
             return
         }
         // Determinar qué contraseña usar (la nueva o la antigua)

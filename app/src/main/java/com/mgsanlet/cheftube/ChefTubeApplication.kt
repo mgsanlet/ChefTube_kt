@@ -1,7 +1,7 @@
 package com.mgsanlet.cheftube
 
 import android.app.Application
-import com.mgsanlet.cheftube.utils.LocaleManager
+import com.mgsanlet.cheftube.ui.util.LocaleManager
 import com.yariksoffice.lingver.Lingver
 import dagger.hilt.android.HiltAndroidApp
 import java.util.Locale

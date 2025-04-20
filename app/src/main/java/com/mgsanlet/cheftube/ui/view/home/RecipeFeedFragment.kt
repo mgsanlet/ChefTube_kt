@@ -10,7 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mgsanlet.cheftube.R
-import com.mgsanlet.cheftube.data.model.Recipe
+import com.mgsanlet.cheftube.data.model.RecipeDto
 import com.mgsanlet.cheftube.databinding.FragmentRecipeFeedBinding
 import com.mgsanlet.cheftube.ui.adapter.RecipeFeedAdapter
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
@@ -70,7 +70,7 @@ class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeed
         binding.recipeFeedRecyclerView.visibility = View.VISIBLE // Mostrar RecyclerView
     }
 
-    private fun loadRecycler(recipeList: List<Recipe>) {
+    private fun loadRecycler(recipeList: List<RecipeDto>) {
         val recipeAdapter = RecipeFeedAdapter(
             requireContext(), recipeList, parentFragmentManager
         )

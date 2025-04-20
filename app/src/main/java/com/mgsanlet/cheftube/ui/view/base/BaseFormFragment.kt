@@ -2,12 +2,11 @@ package com.mgsanlet.cheftube.ui.view.base
 
 import android.util.Patterns
 import android.widget.EditText
-import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
 
 import com.mgsanlet.cheftube.R
-import com.mgsanlet.cheftube.data.model.User
-import com.mgsanlet.cheftube.utils.isEmpty
+import com.mgsanlet.cheftube.data.model.UserDto
+import com.mgsanlet.cheftube.ui.util.isEmpty
 
 abstract class BaseFormFragment<T : ViewBinding> : BaseFragment<T>() {
 
@@ -36,7 +35,7 @@ abstract class BaseFormFragment<T : ViewBinding> : BaseFragment<T>() {
 
     protected fun isValidPasswordPattern(password: EditText): Boolean {
         // Verificar longitud mínima
-        if (password.text.trim().length < User.PASSWORD_MIN_LENGTH) {
+        if (password.text.trim().length < UserDto.PASSWORD_MIN_LENGTH) {
             password.error = getString(R.string.short_pwd)
             return false
         }

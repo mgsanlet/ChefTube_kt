@@ -11,9 +11,9 @@ import com.mgsanlet.cheftube.databinding.FragmentSignUpBinding
 import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
 import com.mgsanlet.cheftube.ui.viewmodel.auth.SignUpState
 import com.mgsanlet.cheftube.ui.viewmodel.auth.SignUpViewModel
-import com.mgsanlet.cheftube.utils.matches
-import com.mgsanlet.cheftube.utils.setCustomStyle
-import com.mgsanlet.cheftube.utils.showWithCustomStyle
+import com.mgsanlet.cheftube.ui.util.matches
+import com.mgsanlet.cheftube.ui.util.setCustomStyle
+import com.mgsanlet.cheftube.ui.util.showWithCustomStyle
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

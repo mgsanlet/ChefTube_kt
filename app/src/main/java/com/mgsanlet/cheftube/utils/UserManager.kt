@@ -2,11 +2,9 @@ package com.mgsanlet.cheftube.utils
 
 import android.content.Context
 import androidx.core.content.edit
-import com.mgsanlet.cheftube.data.model.User
 import com.mgsanlet.cheftube.domain.model.DomainUser
-import com.mgsanlet.cheftube.domain.repository.UserRepository
-import com.mgsanlet.cheftube.utils.Constants.PREFS_NAME
-import com.mgsanlet.cheftube.utils.Constants.SAVED_USER_ID
+import com.mgsanlet.cheftube.domain.Constants.PREFS_NAME
+import com.mgsanlet.cheftube.domain.Constants.SAVED_USER_ID
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -35,10 +33,5 @@ class UserManager @Inject constructor(
         return preferences.getString(SAVED_USER_ID, null) != null && preferences.getString(
             SAVED_USER_ID, null
         ).equals(currentUser?.id)
-    }
-
-    fun getPersistentUserId(): String? {
-        val preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        return preferences.getString(SAVED_USER_ID, null)
     }
 }

@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mgsanlet.cheftube.data.model.User
+import com.mgsanlet.cheftube.data.model.UserDto
 import com.mgsanlet.cheftube.domain.repository.UserRepository
 import com.mgsanlet.cheftube.utils.UserManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,8 +19,8 @@ class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val userManager: UserManager
 ) : ViewModel() {
-    private val _currentUser = MutableLiveData<User?>()
-    val currentUser: LiveData<User?> = _currentUser
+    private val _currentUser = MutableLiveData<UserDto?>()
+    val currentUser: LiveData<UserDto?> = _currentUser
 
     init {
         loadCurrentUser()
@@ -41,9 +41,9 @@ class ProfileViewModel @Inject constructor(
 
     fun updateUser(
         finalUsername: String, finalEmail: String, finalPassword: String, oldPassword: String
-    ): Result<User> {
+    ): Result<UserDto> {
 
-        val updatedUser = User.create(
+        val updatedUser = UserDto.create(
             username = finalUsername, email = finalEmail, password = finalPassword
         ).copy(id = currentUser.value!!.id)
 

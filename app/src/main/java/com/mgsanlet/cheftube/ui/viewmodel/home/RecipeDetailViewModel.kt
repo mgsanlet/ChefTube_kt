@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mgsanlet.cheftube.data.model.Recipe
+import com.mgsanlet.cheftube.data.model.RecipeDto
 import com.mgsanlet.cheftube.domain.repository.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -112,6 +112,6 @@ sealed class TimerState {
 
 sealed class RecipeState {
     data object Loading : RecipeState()
-    data class Success(val recipe: Recipe) : RecipeState()
+    data class Success(val recipe: RecipeDto) : RecipeState()
     data class Error(val message: String) : RecipeState()
 }
