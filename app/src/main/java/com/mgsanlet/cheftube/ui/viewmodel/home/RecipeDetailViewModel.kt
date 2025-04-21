@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mgsanlet.cheftube.data.model.RecipeDto
-import com.mgsanlet.cheftube.domain.repository.RecipeRepository
+import com.mgsanlet.cheftube.domain.repository.RecipesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecipeDetailViewModel @Inject constructor(
-    private val recipeRepository: RecipeRepository
+    private val recipesRepository: RecipesRepository
 ) : ViewModel() {
 
     var recipeState = MutableLiveData<RecipeState>()
@@ -44,7 +44,7 @@ class RecipeDetailViewModel @Inject constructor(
             try {
                 recipeState.value = RecipeState.Loading
                 val result = withContext(Dispatchers.IO) {
-                    recipeRepository.getById(recipeId)
+                    recipesRepository.getById(recipeId)
                 }
                 if (result != null) {
                     recipeState.value = RecipeState.Success(result)

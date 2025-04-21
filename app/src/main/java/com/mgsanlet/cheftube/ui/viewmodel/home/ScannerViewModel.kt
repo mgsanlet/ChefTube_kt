@@ -3,7 +3,7 @@ package com.mgsanlet.cheftube.ui.viewmodel.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mgsanlet.cheftube.domain.repository.ProductRepository
+import com.mgsanlet.cheftube.domain.repository.ProductsRepository
 import com.mgsanlet.cheftube.ui.util.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -14,7 +14,7 @@ import com.mgsanlet.cheftube.domain.model.DomainProduct as Product
 
 @HiltViewModel
 class ScannerViewModel @Inject constructor(
-    private val productRepository: ProductRepository,
+    private val productRepository: ProductsRepository,
     private val localeManager: LocaleManager
 ) : ViewModel() {
 

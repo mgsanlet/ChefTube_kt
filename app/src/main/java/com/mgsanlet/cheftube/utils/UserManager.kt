@@ -3,8 +3,8 @@ package com.mgsanlet.cheftube.utils
 import android.content.Context
 import androidx.core.content.edit
 import com.mgsanlet.cheftube.domain.model.DomainUser
-import com.mgsanlet.cheftube.domain.Constants.PREFS_NAME
-import com.mgsanlet.cheftube.domain.Constants.SAVED_USER_ID
+import com.mgsanlet.cheftube.domain.util.Constants.PREFS_NAME
+import com.mgsanlet.cheftube.domain.util.Constants.SAVED_USER_ID
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton

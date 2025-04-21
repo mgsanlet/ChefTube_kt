@@ -25,7 +25,7 @@ class ProfileFragment @Inject constructor() : BaseFormFragment<FragmentProfileBi
     ): FragmentProfileBinding = FragmentProfileBinding.inflate(inflater, container, false)
 
     override fun setUpObservers() {
-        viewModel.currentUser.observe(viewLifecycleOwner) {
+        viewModel.uiState.observe(viewLifecycleOwner) {
             if (it == null) {
                 return@observe
             }

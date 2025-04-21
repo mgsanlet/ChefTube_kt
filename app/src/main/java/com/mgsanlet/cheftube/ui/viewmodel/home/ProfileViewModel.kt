@@ -4,69 +4,57 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mgsanlet.cheftube.data.model.UserDto
-import com.mgsanlet.cheftube.domain.repository.UserRepository
+import com.mgsanlet.cheftube.domain.model.DomainUser
+import com.mgsanlet.cheftube.domain.repository.UsersRepository
+import com.mgsanlet.cheftube.domain.repository.UsersRepository.UserError
 import com.mgsanlet.cheftube.utils.UserManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+sealed class ProfileState {
+    data object Initial : ProfileState()
+    data object Loading : ProfileState()
+    data class Success(val user: DomainUser) : ProfileState()
+    data class Error(val error: UserError) : ProfileState()
+}
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val userRepository: UserRepository,
+    private val usersRepository: UsersRepository,
     private val userManager: UserManager
 ) : ViewModel() {
-    private val _currentUser = MutableLiveData<UserDto?>()
-    val currentUser: LiveData<UserDto?> = _currentUser
+    private val _uiState = MutableLiveData<ProfileState>(ProfileState.Initial)
+    val uiState: LiveData<ProfileState> = _uiState
 
     init {
         loadCurrentUser()
     }
 
     private fun loadCurrentUser() {
-        viewModelScope.launch {
-            val user = withContext(Dispatchers.IO) {
-                userManager.currentUser
-            }
-            _currentUser.value = user
-        }
-    }
-
-    fun verifyPassword(password: String): Boolean {
-        return currentUser.value?.verifyPassword(password) == true
+        usersRepository.getCurrentUserCopy().fold(
+            onSuccess = { user -> _uiState.value = ProfileState.Success(user) },
+            onError = { error -> _uiState.value = ProfileState.Error(error) }
+        )
     }
 
     fun updateUser(
         finalUsername: String, finalEmail: String, finalPassword: String, oldPassword: String
-    ): Result<UserDto> {
-
-        val updatedUser = UserDto.create(
-            username = finalUsername, email = finalEmail, password = finalPassword
-        ).copy(id = currentUser.value!!.id)
-
-        val result = userRepository.updateUser(updatedUser, oldPassword)
-        if (result.isSuccess) {
-            userManager.currentUser = updatedUser
-            _currentUser.value = updatedUser
+    ) {
+        if (uiState.value !is ProfileState.Success) {
+            _uiState.value = ProfileState.Error(UserError.UNKNOWN)
+            return
         }
-        return result
-    }
-
-    fun newUsernameAlreadyExists(newUsername: String): Boolean {
-        if (newUsername == currentUser.value?.username) {
-            return false
+        val currentUser = (uiState.value as ProfileState.Success).user
+        val updatedUser = DomainUser(
+            currentUser.id, finalUsername, finalEmail, finalPassword
+        )
+        viewModelScope.launch{
+            usersRepository.updateUser(updatedUser, oldPassword).fold(
+                onSuccess = { user -> _uiState.value = ProfileState.Success(user) },
+                onError = { error -> _uiState.value = ProfileState.Error(error) }
+            )
         }
-        return !userRepository.getUserByName(newUsername).isFailure
-    }
-
-    fun newEmailAlreadyExists(newEmail: String): Boolean {
-        if (newEmail == currentUser.value?.email) {
-            return false
-        }
-        return !userRepository.getUserByEmail(newEmail).isFailure
     }
 
     fun alternateKeepLoggedIn(keepLoggedIn: Boolean) {

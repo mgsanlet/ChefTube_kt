@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mgsanlet.cheftube.domain.repository.UsersRepository.UserError
 import com.mgsanlet.cheftube.domain.usecase.user.CreateUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,7 @@ sealed class SignUpState {
     data object Initial : SignUpState()
     data object Loading : SignUpState()
     data object Success : SignUpState()
-    data class  Error(val error: ChefTubeError) : SignUpState()
+    data class  Error(val error: UserError) : SignUpState()
 }
 
 @HiltViewModel
@@ -39,8 +40,8 @@ class SignUpViewModel @Inject constructor(
             result.fold(
                 onSuccess = { user ->
                     _uiState.value = SignUpState.Success
-                }, onFailure = { error ->
-                    _uiState.value = SignUpState.Error(error as ChefTubeError)
+                }, onError = { error ->
+                    _uiState.value = SignUpState.Error(error)
                 })
         }
     }

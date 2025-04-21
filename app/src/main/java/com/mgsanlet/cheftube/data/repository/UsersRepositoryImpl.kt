@@ -3,24 +3,38 @@ package com.mgsanlet.cheftube.data.repository
 import com.mgsanlet.cheftube.data.model.UserDto
 import com.mgsanlet.cheftube.data.model.toDomainUser
 import com.mgsanlet.cheftube.data.model.toUserDto
-import com.mgsanlet.cheftube.data.source.local.PreferencesLocalDataSource
+import com.mgsanlet.cheftube.data.source.local.PreferencesManager
 import com.mgsanlet.cheftube.data.source.local.UserLocalDataSource
 import com.mgsanlet.cheftube.domain.model.DomainUser
-import com.mgsanlet.cheftube.domain.repository.UserRepository
-import com.mgsanlet.cheftube.domain.repository.UserRepository.UserError
+import com.mgsanlet.cheftube.domain.repository.UsersRepository
+import com.mgsanlet.cheftube.domain.repository.UsersRepository.UserError
 import com.mgsanlet.cheftube.domain.util.Result
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserRepositoryImpl @Inject constructor(
+class UsersRepositoryImpl @Inject constructor(
     private val userLocalDataSource: UserLocalDataSource,
-    private val preferences: PreferencesLocalDataSource
-) : UserRepository {
+    private val preferences: PreferencesManager
+) : UsersRepository {
 
     private var currentUser: DomainUser? = null
 
+    override fun getCurrentUserCopy(): Result<DomainUser, UserError> {
+        return currentUser?.let { user ->
+            Result.Success(
+                DomainUser(
+                    currentUser!!.id,
+                    currentUser!!.username,
+                    currentUser!!.email,
+                    currentUser!!.password
+                )
+            )
+        } ?: Result.Error(UserError.USER_NOT_FOUND)
+    }
+
     override suspend fun createUser(
+        id: String,
         username: String,
         email: String,
         password: String
@@ -33,7 +47,7 @@ class UserRepositoryImpl @Inject constructor(
                 Result.Error(UserError.EMAIL_IN_USE)
 
             } else {
-                val newUser = UserDto.create(username, email, password)
+                val newUser = UserDto(id, username, email, password)
 
                 if (userLocalDataSource.insertUser(newUser)) {
                     currentUser = newUser.toDomainUser()
@@ -47,7 +61,10 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun loginUser(emailOrUsername: String, password: String): Result<DomainUser, UserError> {
+    override suspend fun loginUser(
+        emailOrUsername: String,
+        password: String
+    ): Result<DomainUser, UserError> {
         return try {
             val user = userLocalDataSource.getUserByEmailOrUsername(emailOrUsername)
             when {
@@ -55,7 +72,7 @@ class UserRepositoryImpl @Inject constructor(
                     Result.Error(UserError.USER_NOT_FOUND)
                 }
 
-                !user.verifyPassword(password) -> {
+                user.password != password -> {
                     Result.Error(UserError.WRONG_PASSWORD)
                 }
 
@@ -69,20 +86,19 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateUser(user: DomainUser, oldPassword: String): Result<DomainUser, UserError> {
+    override suspend fun updateUser(
+        user: DomainUser,
+        oldPassword: String
+    ): Result<DomainUser, UserError> {
         return try {
 
-            // Obtener usuario actual
-            val currentUser = userLocalDataSource.getUserById(user.id) ?: return Result.Error(
-                UserError.USER_NOT_FOUND
-            )
-
             // Verificar la contraseña antigua
-            if (!currentUser.verifyPassword(oldPassword)) {
+            if (currentUser?.password != oldPassword) {
                 return Result.Error(UserError.WRONG_PASSWORD)
             }
 
             if (userLocalDataSource.updateUser(user.toUserDto())) {
+                currentUser = user
                 Result.Success(user)
             } else {
                 Result.Error(UserError.UNKNOWN)

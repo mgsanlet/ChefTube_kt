@@ -1,12 +1,12 @@
 package com.mgsanlet.cheftube.data.repository
 
-import com.mgsanlet.cheftube.data.source.local.PreferencesLocalDataSource
-import com.mgsanlet.cheftube.domain.repository.LocaleRepository
+import com.mgsanlet.cheftube.data.source.local.PreferencesManager
+import com.mgsanlet.cheftube.domain.repository.LanguagesRepository
 import javax.inject.Inject
 
-class LocaleRepositoryImpl @Inject constructor(
-    private val preferences: PreferencesLocalDataSource
-) : LocaleRepository {
+class LanguagesRepositoryImpl @Inject constructor(
+    private val preferences: PreferencesManager
+) : LanguagesRepository {
 
     override fun getSavedLanguageCode(): String? {
         return preferences.getSavedLanguageCode()

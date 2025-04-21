@@ -53,6 +53,7 @@ fun EditText.isEmpty(): Boolean{
 
 fun Snackbar.showWithCustomStyle(context: Context){
     this.setBackgroundTint(ContextCompat.getColor(context, R.color.dark_green))
+    this.setTextColor(ContextCompat.getColor(context, R.color.white))
     this.setActionTextColor(ContextCompat.getColor(context, R.color.white))
     this.show()
 }

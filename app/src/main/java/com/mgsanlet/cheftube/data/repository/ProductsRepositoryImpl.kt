@@ -3,16 +3,16 @@ package com.mgsanlet.cheftube.data.repository
 import com.mgsanlet.cheftube.data.model.toDomainProduct
 import com.mgsanlet.cheftube.data.source.remote.ProductApi
 import com.mgsanlet.cheftube.domain.model.DomainProduct
-import com.mgsanlet.cheftube.domain.repository.ProductRepository
-import com.mgsanlet.cheftube.domain.repository.ProductRepository.ProductError
+import com.mgsanlet.cheftube.domain.repository.ProductsRepository
+import com.mgsanlet.cheftube.domain.repository.ProductsRepository.ProductError
 import java.net.UnknownHostException
 import javax.inject.Inject
 import com.mgsanlet.cheftube.domain.util.Result
 
 
-class ProductRepositoryImpl @Inject constructor(
+class ProductsRepositoryImpl @Inject constructor(
     private val api: ProductApi
-) : ProductRepository {
+) : ProductsRepository {
     override suspend fun getProductByBarcode(barcode: String): Result<DomainProduct, ProductError> {
         return try {
             val response = api.getProductByBarcode(barcode)

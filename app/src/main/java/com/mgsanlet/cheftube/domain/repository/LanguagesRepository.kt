@@ -1,6 +1,6 @@
 package com.mgsanlet.cheftube.domain.repository
 
-interface LocaleRepository {
+interface LanguagesRepository {
     fun getSavedLanguageCode(): String?
     fun saveLanguageCode(languageCode: String)
 }

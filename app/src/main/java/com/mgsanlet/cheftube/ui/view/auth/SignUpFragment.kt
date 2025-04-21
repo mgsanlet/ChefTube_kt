@@ -8,12 +8,14 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentSignUpBinding
-import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
-import com.mgsanlet.cheftube.ui.viewmodel.auth.SignUpState
-import com.mgsanlet.cheftube.ui.viewmodel.auth.SignUpViewModel
+import com.mgsanlet.cheftube.domain.repository.UsersRepository.UserError
+import com.mgsanlet.cheftube.ui.util.asUiText
 import com.mgsanlet.cheftube.ui.util.matches
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.util.showWithCustomStyle
+import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
+import com.mgsanlet.cheftube.ui.viewmodel.auth.SignUpState
+import com.mgsanlet.cheftube.ui.viewmodel.auth.SignUpViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -47,7 +49,24 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
 
                 is SignUpState.Error -> {
                     showLoading(false)
-                    Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
+                    when (state.error) {
+
+                        UserError.USERNAME_IN_USE -> {
+                            binding.nameEditText.error =
+                                state.error.asUiText().asString(requireContext())
+                        }
+
+                        UserError.EMAIL_IN_USE -> {
+                            binding.emailEditText.error =
+                                state.error.asUiText().asString(requireContext())
+                        }
+
+                        else -> Toast.makeText(
+                            context,
+                            state.error.asUiText().asString(requireContext()),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
 
                 is SignUpState.Success -> {
@@ -69,7 +88,15 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
     }
 
     override fun setUpListeners() {
-        binding.saveButton.setOnClickListener { trySignUp() }
+        binding.saveButton.setOnClickListener {
+            if (isValidViewInput()) {
+                viewModel.trySignUp(
+                    binding.nameEditText.text.toString(),
+                    binding.emailEditText.text.toString(),
+                    binding.password1EditText.text.toString()
+                )
+            }
+        }
     }
 
     override fun setUpViewProperties() {
@@ -89,26 +116,6 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
                 isValidPasswordPattern(
                     binding.password1EditText
                 ) && passwordsMatch()
-    }
-
-    private fun trySignUp() {
-        if (!isValidViewInput()) return
-
-        if (viewModel.newUsernameAlreadyExists(binding.nameEditText.text.toString())) {
-            binding.nameEditText.error = getString(R.string.username_already)
-            return
-        }
-
-        if (viewModel.newEmailAlreadyExists(binding.emailEditText.text.toString())) {
-            binding.emailEditText.error = getString(R.string.email_already)
-            return
-        }
-
-        viewModel.trySignUp(
-            binding.nameEditText.text.toString(),
-            binding.emailEditText.text.toString(),
-            binding.password1EditText.text.toString()
-        )
     }
 
     /**

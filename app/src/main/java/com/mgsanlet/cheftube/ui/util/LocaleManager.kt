@@ -1,9 +1,7 @@
 package com.mgsanlet.cheftube.ui.util
 
 import android.content.Context
-import androidx.core.content.edit
-import com.mgsanlet.cheftube.domain.Constants
-import com.mgsanlet.cheftube.domain.repository.LocaleRepository
+import com.mgsanlet.cheftube.domain.repository.LanguagesRepository
 import com.yariksoffice.lingver.Lingver
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Locale
@@ -13,7 +11,7 @@ import javax.inject.Singleton
 @Singleton
 class LocaleManager @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val localeRepository: LocaleRepository,
+    private val localeRepository: LanguagesRepository,
 ) {
     fun getCurrentLocale(): Locale {
         return Lingver.Companion.getInstance().getLocale()

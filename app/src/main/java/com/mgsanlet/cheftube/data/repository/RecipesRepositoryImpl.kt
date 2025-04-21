@@ -2,17 +2,15 @@ package com.mgsanlet.cheftube.data.repository
 
 import android.content.Context
 import com.mgsanlet.cheftube.data.model.RecipeDto
-import com.mgsanlet.cheftube.data.source.local.RecipeLocalDataSource
-import com.mgsanlet.cheftube.domain.repository.RecipeRepository
+import com.mgsanlet.cheftube.data.source.local.RecipesLocalDataSource
+import com.mgsanlet.cheftube.domain.repository.RecipesRepository
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.mgsanlet.cheftube.domain.util.Result
-import com.mgsanlet.cheftube.domain.util.Error
 
 @Singleton
-class RecipeRepositoryImpl @Inject constructor(
-    private val recipeDataSource: RecipeLocalDataSource
-) : RecipeRepository {
+class RecipesRepositoryImpl @Inject constructor(
+    private val recipeDataSource: RecipesLocalDataSource
+) : RecipesRepository {
     override suspend fun filterRecipesByIngredient(context: Context, query: String): List<RecipeDto> {
         return recipeDataSource.filterRecipesByIngredient(context, query)
     }

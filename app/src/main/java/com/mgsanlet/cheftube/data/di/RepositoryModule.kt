@@ -1,15 +1,15 @@
 package com.mgsanlet.cheftube.data.di
 
 import android.content.Context
-import com.mgsanlet.cheftube.data.repository.ProductRepositoryImpl
-import com.mgsanlet.cheftube.data.repository.RecipeRepositoryImpl
-import com.mgsanlet.cheftube.data.repository.UserRepositoryImpl
-import com.mgsanlet.cheftube.data.source.local.RecipeLocalDataSource
+import com.mgsanlet.cheftube.data.repository.ProductsRepositoryImpl
+import com.mgsanlet.cheftube.data.repository.RecipesRepositoryImpl
+import com.mgsanlet.cheftube.data.repository.UsersRepositoryImpl
+import com.mgsanlet.cheftube.data.source.local.RecipesLocalDataSource
 import com.mgsanlet.cheftube.data.source.local.UserLocalDataSource
 import com.mgsanlet.cheftube.data.source.remote.ProductApi
-import com.mgsanlet.cheftube.domain.repository.ProductRepository
-import com.mgsanlet.cheftube.domain.repository.RecipeRepository
-import com.mgsanlet.cheftube.domain.repository.UserRepository
+import com.mgsanlet.cheftube.domain.repository.ProductsRepository
+import com.mgsanlet.cheftube.domain.repository.RecipesRepository
+import com.mgsanlet.cheftube.domain.repository.UsersRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,23 +25,23 @@ object RepositoryModule {
     fun provideUserRepository(
         @ApplicationContext context: Context,
         userLocalDataSource: UserLocalDataSource
-    ): UserRepository {
-        return UserRepositoryImpl(context, userLocalDataSource)
+    ): UsersRepository {
+        return UsersRepositoryImpl(context, userLocalDataSource)
     }
 
     @Provides
     @Singleton
     fun provideRecipeRepository(
-        recipeLocalDataSource: RecipeLocalDataSource
-    ): RecipeRepository {
-        return RecipeRepositoryImpl(recipeLocalDataSource)
+        recipesLocalDataSource: RecipesLocalDataSource
+    ): RecipesRepository {
+        return RecipesRepositoryImpl(recipesLocalDataSource)
     }
 
     @Provides
     @Singleton
     fun provideProductRepository(
         productApi: ProductApi
-    ): ProductRepository {
-        return ProductRepositoryImpl(productApi)
+    ): ProductsRepository {
+        return ProductsRepositoryImpl(productApi)
     }
 }

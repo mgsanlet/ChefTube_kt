@@ -1,9 +1,8 @@
 package com.mgsanlet.cheftube.data.di
 
 import com.mgsanlet.cheftube.data.source.local.DatabaseHelper
-import com.mgsanlet.cheftube.data.source.local.RecipeLocalDataSource
+import com.mgsanlet.cheftube.data.source.local.RecipesLocalDataSource
 import com.mgsanlet.cheftube.data.source.local.UserLocalDataSource
-import com.mgsanlet.cheftube.data.source.remote.ProductApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,7 +22,7 @@ object DataSourceModule {
 
     @Provides
     @Singleton
-    fun provideRecipeLocalDataSource(): RecipeLocalDataSource {
-        return RecipeLocalDataSource()
+    fun provideRecipeLocalDataSource(): RecipesLocalDataSource {
+        return RecipesLocalDataSource()
     }
 }

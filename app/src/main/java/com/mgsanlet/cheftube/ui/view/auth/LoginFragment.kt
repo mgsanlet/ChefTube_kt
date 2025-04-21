@@ -7,11 +7,13 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentLoginBinding
-import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
-import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginViewModel
-import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginState
-import com.mgsanlet.cheftube.ui.util.setCustomStyle
+import com.mgsanlet.cheftube.domain.repository.UsersRepository.UserError
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
+import com.mgsanlet.cheftube.ui.util.asUiText
+import com.mgsanlet.cheftube.ui.util.setCustomStyle
+import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
+import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginState
+import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -57,16 +59,19 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
                 is LoginState.Error -> {
                     showLoading(false)
                     when (state.error) {
-                        is UserError.UserNotFound -> binding.identityEditText.error =
-                            state.error.getLocalizedMessage(requireContext())
-                        is UserError.WrongPassword -> binding.passwordEditText.error =
-                            state.error.getLocalizedMessage(requireContext())
+                        UserError.USER_NOT_FOUND -> binding.identityEditText.error =
+                            state.error.asUiText().asString(requireContext())
+
+                        UserError.WRONG_PASSWORD -> binding.passwordEditText.error =
+                            state.error.asUiText().asString(requireContext())
+
                         else -> Toast.makeText(
                             context,
-                            state.error.getLocalizedMessage(requireContext()),
+                            state.error.asUiText().asString(requireContext()),
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+
                 }
 
                 is LoginState.AlreadyLogged -> {

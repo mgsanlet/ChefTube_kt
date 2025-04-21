@@ -2,13 +2,13 @@ package com.mgsanlet.cheftube.data.source.local
 
 import android.content.Context
 import androidx.core.content.edit
-import com.mgsanlet.cheftube.domain.Constants.LANGUAGE_KEY
-import com.mgsanlet.cheftube.domain.Constants.PREFS_NAME
-import com.mgsanlet.cheftube.domain.Constants.SAVED_USER_ID
+import com.mgsanlet.cheftube.domain.util.Constants.LANGUAGE_KEY
+import com.mgsanlet.cheftube.domain.util.Constants.PREFS_NAME
+import com.mgsanlet.cheftube.domain.util.Constants.SAVED_USER_ID
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class PreferencesLocalDataSource @Inject constructor(
+class PreferencesManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     private val preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)

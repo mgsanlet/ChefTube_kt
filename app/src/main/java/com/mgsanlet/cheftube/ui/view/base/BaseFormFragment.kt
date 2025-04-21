@@ -6,6 +6,7 @@ import androidx.viewbinding.ViewBinding
 
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.data.model.UserDto
+import com.mgsanlet.cheftube.domain.util.Constants.PASSWORD_MIN_LENGTH
 import com.mgsanlet.cheftube.ui.util.isEmpty
 
 abstract class BaseFormFragment<T : ViewBinding> : BaseFragment<T>() {
@@ -35,7 +36,7 @@ abstract class BaseFormFragment<T : ViewBinding> : BaseFragment<T>() {
 
     protected fun isValidPasswordPattern(password: EditText): Boolean {
         // Verificar longitud mínima
-        if (password.text.trim().length < UserDto.PASSWORD_MIN_LENGTH) {
+        if (password.text.trim().length < PASSWORD_MIN_LENGTH) {
             password.error = getString(R.string.short_pwd)
             return false
         }

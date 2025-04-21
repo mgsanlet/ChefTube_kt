@@ -19,7 +19,7 @@ fun UserDto.toDomainUser(): DomainUser {
         id = id,
         username = username,
         email = email,
-        password = passwordHash
+        password = password
     )
 }
 
@@ -28,6 +28,6 @@ fun DomainUser.toUserDto(): UserDto {
         id = id,
         username = username,
         email = email,
-        passwordHash = password
+        password = password
     )
 }

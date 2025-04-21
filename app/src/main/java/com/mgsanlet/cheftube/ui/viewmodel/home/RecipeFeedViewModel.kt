@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mgsanlet.cheftube.data.model.RecipeDto
-import com.mgsanlet.cheftube.domain.repository.RecipeRepository
+import com.mgsanlet.cheftube.domain.repository.RecipesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecipeFeedViewModel @Inject constructor(
-    private val recipeRepository: RecipeRepository
+    private val recipesRepository: RecipesRepository
 ) : ViewModel() {
     var recipeFeedState = MutableLiveData<RecipeFeedState>()
 
@@ -21,7 +21,7 @@ class RecipeFeedViewModel @Inject constructor(
         recipeFeedState.value = RecipeFeedState.Loading
 
         CoroutineScope(Dispatchers.Main).launch {
-            val recipeList = recipeRepository.getAll()
+            val recipeList = recipesRepository.getAll()
             if (recipeList.isEmpty()) {
                 recipeFeedState.value = RecipeFeedState.NoResults
             } else {
@@ -33,7 +33,7 @@ class RecipeFeedViewModel @Inject constructor(
     fun filterRecipesByIngredient(context: Context, query: String) {
         recipeFeedState.value = RecipeFeedState.Loading
         CoroutineScope(Dispatchers.Main).launch {
-            val recipeList = recipeRepository.filterRecipesByIngredient(context, query)
+            val recipeList = recipesRepository.filterRecipesByIngredient(context, query)
             if (recipeList.isEmpty()) {
                 recipeFeedState.value = RecipeFeedState.NoResults
             } else {

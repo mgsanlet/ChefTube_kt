@@ -1,7 +1,7 @@
 package com.mgsanlet.cheftube.data.di
 
 import android.content.Context
-import com.mgsanlet.cheftube.domain.repository.UserRepository
+import com.mgsanlet.cheftube.domain.repository.UsersRepository
 import com.mgsanlet.cheftube.utils.UserManager
 import dagger.Module
 import dagger.Provides
@@ -17,8 +17,8 @@ object ManagerModule {
     @Singleton
     fun provideUserManager(
         @ApplicationContext context: Context,
-        userRepository: UserRepository
+        usersRepository: UsersRepository
     ): UserManager {
-        return UserManager(context, userRepository)
+        return UserManager(context, usersRepository)
     }
 }

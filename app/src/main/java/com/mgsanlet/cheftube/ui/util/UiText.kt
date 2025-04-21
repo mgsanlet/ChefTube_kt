@@ -3,8 +3,8 @@ package com.mgsanlet.cheftube.ui.util
 import android.content.Context
 import androidx.annotation.StringRes
 import com.mgsanlet.cheftube.R
-import com.mgsanlet.cheftube.domain.repository.ProductRepository.ProductError
-import com.mgsanlet.cheftube.domain.repository.UserRepository.UserError
+import com.mgsanlet.cheftube.domain.repository.ProductsRepository.ProductError
+import com.mgsanlet.cheftube.domain.repository.UsersRepository.UserError
 
 class UiText(
     @StringRes val id: Int,

@@ -4,7 +4,7 @@ import com.mgsanlet.cheftube.domain.model.DomainProduct as Product
 import com.mgsanlet.cheftube.domain.util.Result
 import com.mgsanlet.cheftube.domain.util.Error
 
-interface ProductRepository {
+interface ProductsRepository {
     suspend fun getProductByBarcode(barcode: String): Result<Product, Error>
 
     enum class ProductError: Error {
