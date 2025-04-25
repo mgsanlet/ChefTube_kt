@@ -3,7 +3,8 @@ package com.mgsanlet.cheftube.ui.viewmodel.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mgsanlet.cheftube.domain.repository.ProductsRepository
+import com.mgsanlet.cheftube.domain.usecase.product.FetchProductByBarcodeUseCase
+import com.mgsanlet.cheftube.domain.util.error.ProductError
 import com.mgsanlet.cheftube.ui.util.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -14,17 +15,16 @@ import com.mgsanlet.cheftube.domain.model.DomainProduct as Product
 
 @HiltViewModel
 class ScannerViewModel @Inject constructor(
-    private val productRepository: ProductsRepository,
+    private val fetchProductByBarcode: FetchProductByBarcodeUseCase,
     private val localeManager: LocaleManager
 ) : ViewModel() {
 
     private val _currentBarcode = MutableLiveData<String>()
-    val currentBarcode: LiveData<String> = _currentBarcode
 
     private val _scannerState = MutableLiveData<ScannerState>()
     val scannerState: LiveData<ScannerState> = _scannerState
 
-    fun setBarcode(barcode: String) {
+    fun searchBarcode(barcode: String) {
         _currentBarcode.value = barcode
         CoroutineScope(Dispatchers.Main).launch {
             fetchProductData(barcode)
@@ -34,12 +34,12 @@ class ScannerViewModel @Inject constructor(
     private suspend fun fetchProductData(barcode: String) {
         _scannerState.value = ScannerState.Loading
 
-        productRepository.getProductByBarcode(barcode).fold(
+        fetchProductByBarcode(barcode).fold(
             onSuccess = { product ->
                 _scannerState.value = ScannerState.ProductFound(product)
             },
-            onFailure = { exception ->
-                _scannerState.value = ScannerState.Error(exception as ChefTubeError)
+            onError = { error ->
+                _scannerState.value = ScannerState.Error(error)
             }
         )
     }
@@ -71,6 +71,5 @@ sealed class ScannerState {
             }
         }
     }
-
-    data class Error(val error: ChefTubeError) : ScannerState()
+    data class Error(val error: ProductError) : ScannerState()
 }

@@ -8,8 +8,9 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentSignUpBinding
-import com.mgsanlet.cheftube.domain.repository.UsersRepository.UserError
-import com.mgsanlet.cheftube.ui.util.asUiText
+import com.mgsanlet.cheftube.domain.util.error.UserError
+import com.mgsanlet.cheftube.ui.util.afterTextChanged
+import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.matches
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.util.showWithCustomStyle
@@ -49,23 +50,27 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
 
                 is SignUpState.Error -> {
                     showLoading(false)
+                    val errorMessage = state.error.asMessage(requireContext())
                     when (state.error) {
 
-                        UserError.USERNAME_IN_USE -> {
-                            binding.nameEditText.error =
-                                state.error.asUiText().asString(requireContext())
+                        is UserError.InvalidEmailPattern -> binding.emailEditText.error =
+                            errorMessage
+
+                        is UserError.InvalidPasswordPattern -> {
+                            binding.password1EditText.error = errorMessage
+                            binding.password2EditText.error = errorMessage
                         }
 
-                        UserError.EMAIL_IN_USE -> {
-                            binding.emailEditText.error =
-                                state.error.asUiText().asString(requireContext())
+                        is UserError.PasswordTooShort -> {
+                            binding.password1EditText.error = errorMessage
+                            binding.password2EditText.error = errorMessage
                         }
 
-                        else -> Toast.makeText(
-                            context,
-                            state.error.asUiText().asString(requireContext()),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        is UserError.UsernameInUse -> binding.nameEditText.error = errorMessage
+
+                        is UserError.EmailInUse -> binding.emailEditText.error = errorMessage
+
+                        else -> Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -97,6 +102,10 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
                 )
             }
         }
+        binding.nameEditText.afterTextChanged { cleanErrors() }
+        binding.emailEditText.afterTextChanged { cleanErrors() }
+        binding.password1EditText.afterTextChanged { cleanErrors() }
+        binding.password2EditText.afterTextChanged { cleanErrors() }
     }
 
     override fun setUpViewProperties() {
@@ -110,20 +119,15 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
             binding.password1EditText,
             binding.password2EditText,
         )
-
-        return !areFieldsEmpty(requiredFields) &&
-                isValidEmailPattern(binding.emailEditText) &&
-                isValidPasswordPattern(
-                    binding.password1EditText
-                ) && passwordsMatch()
+        return !areFieldsEmpty(requiredFields) && passwordsMatch()
     }
 
     /**
      * Verifica que las contraseñas coincidan
      */
     private fun passwordsMatch(): Boolean {
-        var isMatch = binding.password1EditText.matches(binding.password2EditText)
-        if (isMatch) binding.password2EditText.error = getString(R.string.pwd_d_match)
+        val isMatch = binding.password1EditText.matches(binding.password2EditText)
+        if (!isMatch) binding.password2EditText.error = getString(R.string.pwd_d_match)
         return isMatch
     }
 

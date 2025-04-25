@@ -6,6 +6,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
@@ -13,6 +14,9 @@ import androidx.fragment.app.viewModels
 import com.google.zxing.integration.android.IntentIntegrator
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentScannerBinding
+import com.mgsanlet.cheftube.domain.util.error.ProductError
+import com.mgsanlet.cheftube.ui.util.asMessage
+import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerState
 import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerViewModel
@@ -59,20 +63,34 @@ class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBindin
                 }
 
                 is ScannerState.Error -> {
-                    showBadResult(state.error.getLocalizedMessage(requireContext()))
+                    binding.progressBar.visibility = View.GONE
+                    val errorMessage = state.error.asMessage(requireContext())
+                    when (state.error) {
+                        is ProductError.NotFound -> showBadResult(errorMessage)
+                        else -> {
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                            showBadResult(getString(R.string.error))
+                        }
+                    }
                 }
             }
         }
     }
 
     private fun showBadResult(message: String) {
-        binding.progressBar.visibility = View.GONE
+
         binding.resultTextView.apply {
             visibility = View.VISIBLE
             text = message
             this.setBackgroundResource(R.drawable.result_red_shapes)
         }
         binding.infoButton.isEnabled = false
+        binding.infoButton.setBackgroundColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.grey
+            )
+        )
     }
 
     override fun setUpListeners() {
@@ -85,7 +103,7 @@ class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBindin
         binding.infoButton.setBackgroundColor("#505050".toColorInt())
         binding.progressBar.visibility = View.GONE
         binding.resultTextView.visibility = View.GONE
-        setUpProgressBar(binding.progressBar)
+        binding.progressBar.setCustomStyle(requireContext())
     }
 
     override fun onResume() {
@@ -120,7 +138,7 @@ class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBindin
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        result?.contents?.let { viewModel.setBarcode(it) }
+        result?.contents?.let { viewModel.searchBarcode(it) }
     }
 
     /**

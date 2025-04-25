@@ -10,14 +10,17 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mgsanlet.cheftube.R
-import com.mgsanlet.cheftube.data.model.RecipeDto
 import com.mgsanlet.cheftube.databinding.FragmentRecipeFeedBinding
+import com.mgsanlet.cheftube.domain.util.error.RecipeError
 import com.mgsanlet.cheftube.ui.adapter.RecipeFeedAdapter
+import com.mgsanlet.cheftube.ui.util.asMessage
+import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedState
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
 
 /**
  * Un fragmento que muestra una lista de recetas. Cada receta se muestra con su título y una imagen.
@@ -35,7 +38,7 @@ class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeed
     ): FragmentRecipeFeedBinding = FragmentRecipeFeedBinding.inflate(inflater, container, false)
 
     override fun setUpObservers() {
-        viewModel.recipeFeedState.observe(viewLifecycleOwner) { state ->
+        viewModel.uiState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is RecipeFeedState.InitialLoad -> {
                     showLoading(false)
@@ -44,16 +47,25 @@ class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeed
 
                 is RecipeFeedState.Loading -> showLoading(true)
 
-                is RecipeFeedState.NoResults -> {
-                    showLoading(false)
-                    showNoResults()
-                }
-
                 is RecipeFeedState.SomeResults -> {
                     showLoading(false)
                     loadRecycler(state.recipeList)
                     showResultNumber(state.recipeList.size)
                 }
+
+                is RecipeFeedState.Error ->
+                    when (state.error) {
+                        is RecipeError.NoResults -> {
+                            showNoResults()
+                            showLoading(false)
+                        }
+
+                        else -> Toast.makeText(
+                            context,
+                            state.error.asMessage(requireContext()),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
             }
         }
     }
@@ -63,14 +75,14 @@ class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeed
     }
 
     override fun setUpViewProperties() {
-        setUpProgressBar(binding.progressBar)
+        binding.progressBar.setCustomStyle(requireContext())
         binding.recipeFeedRecyclerView.setLayoutManager(LinearLayoutManager(context))
 
         binding.noResultsTextView.visibility = View.GONE // Oculta mensaje de sin resultados-
         binding.recipeFeedRecyclerView.visibility = View.VISIBLE // Mostrar RecyclerView
     }
 
-    private fun loadRecycler(recipeList: List<RecipeDto>) {
+    private fun loadRecycler(recipeList: List<Recipe>) {
         val recipeAdapter = RecipeFeedAdapter(
             requireContext(), recipeList, parentFragmentManager
         )
@@ -115,9 +127,8 @@ class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeed
         okButton.setOnClickListener {
             val query = input.text.toString().trim { it <= ' ' }
             // Filtrar las recetas según la consulta de entrada
-            viewModel.filterRecipesByIngredient(requireContext(), query)
+            viewModel.handleSearchByIngredient(query)
             searchDialog.dismiss() // Descartar el diálogo después de la búsqueda
-
         }
     }
 }

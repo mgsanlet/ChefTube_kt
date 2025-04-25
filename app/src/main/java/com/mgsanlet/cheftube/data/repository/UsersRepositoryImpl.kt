@@ -1,14 +1,11 @@
 package com.mgsanlet.cheftube.data.repository
 
-import com.mgsanlet.cheftube.data.model.UserDto
-import com.mgsanlet.cheftube.data.model.toDomainUser
-import com.mgsanlet.cheftube.data.model.toUserDto
 import com.mgsanlet.cheftube.data.source.local.PreferencesManager
 import com.mgsanlet.cheftube.data.source.local.UserLocalDataSource
-import com.mgsanlet.cheftube.domain.model.DomainUser
+import com.mgsanlet.cheftube.domain.model.DomainUser as User
 import com.mgsanlet.cheftube.domain.repository.UsersRepository
-import com.mgsanlet.cheftube.domain.repository.UsersRepository.UserError
-import com.mgsanlet.cheftube.domain.util.Result
+import com.mgsanlet.cheftube.domain.util.DomainResult
+import com.mgsanlet.cheftube.domain.util.error.UserError
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,19 +15,19 @@ class UsersRepositoryImpl @Inject constructor(
     private val preferences: PreferencesManager
 ) : UsersRepository {
 
-    private var currentUser: DomainUser? = null
+    private var currentUser: User? = null
 
-    override fun getCurrentUserCopy(): Result<DomainUser, UserError> {
-        return currentUser?.let { user ->
-            Result.Success(
-                DomainUser(
+    override fun getCurrentUserCopy(): DomainResult<User, UserError> {
+        return currentUser?.let {
+            DomainResult.Success(
+                User(
                     currentUser!!.id,
                     currentUser!!.username,
                     currentUser!!.email,
                     currentUser!!.password
                 )
             )
-        } ?: Result.Error(UserError.USER_NOT_FOUND)
+        } ?: DomainResult.Error(UserError.UserNotFound)
     }
 
     override suspend fun createUser(
@@ -38,127 +35,140 @@ class UsersRepositoryImpl @Inject constructor(
         username: String,
         email: String,
         password: String
-    ): Result<DomainUser, UserError> {
+    ): DomainResult<Unit, UserError> {
         return try {
-            if (userLocalDataSource.getUserByName(username) != null) {
-                Result.Error(UserError.USERNAME_IN_USE)
+            if (userLocalDataSource.getUserByName(username) is DomainResult.Success) {
+                DomainResult.Error(UserError.UsernameInUse)
 
-            } else if (userLocalDataSource.getUserByEmail(email) != null) {
-                Result.Error(UserError.EMAIL_IN_USE)
+            } else if (userLocalDataSource.getUserByEmail(email) is DomainResult.Success) {
+                DomainResult.Error(UserError.EmailInUse)
 
             } else {
-                val newUser = UserDto(id, username, email, password)
+                val newUser = User(id, username, email, password)
 
-                if (userLocalDataSource.insertUser(newUser)) {
-                    currentUser = newUser.toDomainUser()
-                    Result.Success(newUser.toDomainUser())
-                } else {
-                    Result.Error(UserError.UNKNOWN)
-                }
+                userLocalDataSource.insertUser(newUser).fold(
+                    onSuccess = {
+                        currentUser = newUser
+                        DomainResult.Success(Unit)
+                    },
+                    onError = { error ->
+                        DomainResult.Error(error)
+                    }
+                )
             }
         } catch (e: Exception) {
-            Result.Error(UserError.UNKNOWN)
+            DomainResult.Error(UserError.Unknown(e.message))
         }
     }
 
     override suspend fun loginUser(
         emailOrUsername: String,
         password: String
-    ): Result<DomainUser, UserError> {
+    ): DomainResult<Unit, UserError> {
         return try {
-            val user = userLocalDataSource.getUserByEmailOrUsername(emailOrUsername)
-            when {
-                user == null -> {
-                    Result.Error(UserError.USER_NOT_FOUND)
+            val result = userLocalDataSource.getUserByEmailOrUsername(emailOrUsername)
+            result.fold(
+                onSuccess = { user ->
+                    if (user.password != password) {
+                        DomainResult.Error(UserError.WrongPassword)
+                    } else {
+                        currentUser = user
+                        DomainResult.Success(Unit)
+                    }
+                },
+                onError = { error ->
+                    DomainResult.Error(error)
                 }
-
-                user.password != password -> {
-                    Result.Error(UserError.WRONG_PASSWORD)
-                }
-
-                else -> {
-                    currentUser = user.toDomainUser()
-                    Result.Success(user.toDomainUser())
-                }
-            }
+            )
         } catch (e: Exception) {
-            Result.Error(UserError.UNKNOWN)
+            DomainResult.Error(UserError.Unknown(e.message))
         }
     }
 
     override suspend fun updateUser(
-        user: DomainUser,
+        user: User,
         oldPassword: String
-    ): Result<DomainUser, UserError> {
+    ): DomainResult<User, UserError> {
         return try {
 
             // Verificar la contraseña antigua
             if (currentUser?.password != oldPassword) {
-                return Result.Error(UserError.WRONG_PASSWORD)
+                return DomainResult.Error(UserError.WrongPassword)
             }
 
-            if (userLocalDataSource.updateUser(user.toUserDto())) {
-                currentUser = user
-                Result.Success(user)
-            } else {
-                Result.Error(UserError.UNKNOWN)
-            }
+            userLocalDataSource.updateUser(user).fold(
+                onSuccess = {
+                    currentUser = user
+                    DomainResult.Success(user)
+                }, onError = { error ->
+                    DomainResult.Error(error)
+                })
         } catch (e: Exception) {
-            Result.Error(UserError.UNKNOWN)
+            DomainResult.Error(UserError.Unknown(e.message))
         }
     }
 
-    override suspend fun getUserById(userId: String): Result<DomainUser, UserError> {
+    override suspend fun getUserById(userId: String): DomainResult<User, UserError> {
         return try {
-            val user = userLocalDataSource.getUserById(userId)
-            if (user != null) {
-                Result.Success(user.toDomainUser())
-            } else {
-                Result.Error(UserError.USER_NOT_FOUND)
-            }
+            userLocalDataSource.getUserById(userId)
         } catch (e: Exception) {
-            Result.Error(UserError.UNKNOWN)
+            DomainResult.Error(UserError.Unknown(e.message))
         }
     }
 
-    override suspend fun getUserByName(username: String): Result<DomainUser, UserError> {
+    override suspend fun getUserByName(username: String): DomainResult<User, UserError> {
         return try {
-            val user = userLocalDataSource.getUserByName(username)
-            if (user != null) {
-                Result.Success(user.toDomainUser())
-            } else {
-                Result.Error(UserError.USER_NOT_FOUND)
-            }
+            userLocalDataSource.getUserByName(username)
         } catch (e: Exception) {
-            Result.Error(UserError.UNKNOWN)
+            DomainResult.Error(UserError.Unknown(e.message))
         }
     }
 
-    override suspend fun getUserByEmail(userEmail: String): Result<DomainUser, UserError> {
+    override suspend fun getUserByEmail(userEmail: String): DomainResult<User, UserError> {
         return try {
-            val user = userLocalDataSource.getUserByEmail(userEmail)
-            if (user != null) {
-                Result.Success(user.toDomainUser())
-            } else {
-                Result.Error(UserError.USER_NOT_FOUND)
-            }
+            userLocalDataSource.getUserByEmail(userEmail)
         } catch (e: Exception) {
-            Result.Error(UserError.UNKNOWN)
+            DomainResult.Error(UserError.Unknown(e.message))
         }
     }
 
-    override suspend fun tryAutoLogin(): Boolean {
-        var result = false
+    override suspend fun tryAutoLogin(): DomainResult<Unit, UserError> {
+
         val persistentUserId = preferences.getSavedUserId()
         persistentUserId?.let {
             getUserById(it).fold(
                 onSuccess = { user ->
                     currentUser = user
-                    result = true
+                    return DomainResult.Success(Unit)
                 }, onError = {
                     currentUser = null
                 })
         }
-        return result
+        return DomainResult.Error(UserError.UserNotFound)
+    }
+
+    override fun alternateKeepSession(keep: Boolean): DomainResult<Unit, UserError> {
+        currentUser?.let {
+            if (keep) {
+                preferences.saveUserId(it.id)
+            } else {
+                preferences.deleteUserId()
+            }
+        } ?: return DomainResult.Error(UserError.UserNotFound)
+
+        return DomainResult.Success(Unit)
+    }
+
+    override fun isSessionKept(): DomainResult<Boolean, UserError> {
+        var isKept = false
+        currentUser?.let {
+            isKept = preferences.isIdSaved(it.id)
+        } ?: return DomainResult.Error(UserError.UserNotFound)
+        return DomainResult.Success(isKept)
+    }
+
+    override fun logout() {
+        currentUser = null
+        preferences.deleteUserId()
     }
 }

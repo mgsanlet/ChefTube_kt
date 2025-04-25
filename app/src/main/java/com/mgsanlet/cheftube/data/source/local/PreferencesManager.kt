@@ -2,9 +2,9 @@ package com.mgsanlet.cheftube.data.source.local
 
 import android.content.Context
 import androidx.core.content.edit
-import com.mgsanlet.cheftube.domain.util.Constants.LANGUAGE_KEY
-import com.mgsanlet.cheftube.domain.util.Constants.PREFS_NAME
-import com.mgsanlet.cheftube.domain.util.Constants.SAVED_USER_ID
+import com.mgsanlet.cheftube.data.util.Constants.LANGUAGE_KEY
+import com.mgsanlet.cheftube.data.util.Constants.PREFS_NAME
+import com.mgsanlet.cheftube.data.util.Constants.SAVED_USER_ID
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

@@ -4,23 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mgsanlet.cheftube.domain.repository.UsersRepository.UserError
 import com.mgsanlet.cheftube.domain.usecase.user.AutomaticLoginUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.LoginUserUseCase
+import com.mgsanlet.cheftube.domain.util.DomainResult
+import com.mgsanlet.cheftube.domain.util.error.UserError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-
-sealed class LoginState {
-    data object Initial : LoginState()
-    data object Loading : LoginState()
-    data object AlreadyLogged : LoginState()
-    data object Success : LoginState()
-    data class  Error(val error: UserError) : LoginState()
-}
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -37,9 +30,7 @@ class LoginViewModel @Inject constructor(
 
     private fun tryAutoLogin() {
         viewModelScope.launch {
-            if (automaticLogin()) {
-                _uiState.value = LoginState.AlreadyLogged
-            }
+            if (automaticLogin() is DomainResult.Success) { _uiState.value = LoginState.AlreadyLogged }
         }
     }
 
@@ -54,12 +45,11 @@ class LoginViewModel @Inject constructor(
             }
 
             result.fold(
-                onSuccess = { user ->
+                onSuccess = {
                     _uiState.value = LoginState.Success
                 }, onError = { error ->
                     _uiState.value = LoginState.Error(error)
                 })
-
         }
     }
 
@@ -72,3 +62,12 @@ class LoginViewModel @Inject constructor(
         resetState()
     }
 }
+
+sealed class LoginState {
+    data object Initial : LoginState()
+    data object Loading : LoginState()
+    data object AlreadyLogged : LoginState()
+    data object Success : LoginState()
+    data class  Error(val error: UserError) : LoginState()
+}
+

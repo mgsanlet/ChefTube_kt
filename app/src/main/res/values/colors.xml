@@ -6,4 +6,5 @@
     <color name="primary_orange">#FB9E27</color>
     <color name="primary_red">#FF4D38</color>
     <color name="dark_red">#9E3426</color>
+    <color name="grey">#505050</color>
 </resources>

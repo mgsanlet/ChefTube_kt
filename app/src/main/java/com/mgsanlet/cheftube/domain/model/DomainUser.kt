@@ -5,5 +5,4 @@ class DomainUser(
     val username: String,
     val email: String,
     val password: String
-) {
-}
+)

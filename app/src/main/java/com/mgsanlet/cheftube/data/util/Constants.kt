@@ -10,15 +10,6 @@ object Constants {
         const val OFF_API_BASE_URL = "https://world.openfoodfacts.org/api/v3/"
     }
 
-    object Tag {
-        const val SIGN_UP = "SignUp"
-        const val LOGIN = "Login"
-        const val RECIPE_FEED = "RecipeFeed"
-        const val RECIPE_DETAIL = "RecipeDetail"
-        const val PROFILE = "Profile"
-        const val SCANNER = "Scanner"
-    }
-
     object Database {
         const val NAME = "cheftube.db"
         const val VERSION = 1

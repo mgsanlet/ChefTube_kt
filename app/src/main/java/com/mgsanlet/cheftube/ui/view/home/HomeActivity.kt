@@ -9,19 +9,20 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.ActivityHomeBinding
+import com.mgsanlet.cheftube.domain.util.Constants.SUPPORT_EMAIL
+import com.mgsanlet.cheftube.ui.util.Constants.URI_MAIL_TO_SCHEME
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.view.auth.AuthActivity
-import com.mgsanlet.cheftube.ui.util.LocaleManager
-import com.mgsanlet.cheftube.utils.UserManager
+import com.mgsanlet.cheftube.ui.viewmodel.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
-import javax.inject.Inject
 
 /**
  * HomeActivity contiene la vista principal de la aplicación desde la que el usuario
@@ -31,9 +32,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
 
-    @Inject lateinit var userManager: UserManager
-    @Inject lateinit var localeManager: LocaleManager
+
     private lateinit var binding: ActivityHomeBinding
+    private val viewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,13 +90,13 @@ class HomeActivity : AppCompatActivity() {
         AlertDialog.Builder(this).setTitle(getString(R.string.dialog_title))
             .setItems(languages) { _: DialogInterface?, indexOfSelected: Int ->
                 val selectedLanguage = languageCodes[indexOfSelected]
-                localeManager.setLocale(Locale(selectedLanguage))
+                viewModel.setLocale(Locale(selectedLanguage))
                 recreate()
             }.show()
     }
 
     private fun onLogout() {
-        userManager.currentUser = null
+        viewModel.handleLogout()
         startActivity(Intent(this, AuthActivity::class.java))
         finish()
     }
@@ -131,12 +132,5 @@ class HomeActivity : AppCompatActivity() {
                 else -> false
             }
         }
-    }
-
-    companion object {
-        private const val PREFS_NAME = "AppPrefs"
-        private const val LANGUAGE_KEY = "language"
-        private const val URI_MAIL_TO_SCHEME = "mailto"
-        private const val SUPPORT_EMAIL = "support@cheftube.com"
     }
 }

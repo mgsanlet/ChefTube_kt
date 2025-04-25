@@ -1,18 +1,11 @@
 package com.mgsanlet.cheftube.ui.view.base
 
-import android.graphics.BlendMode
-import android.graphics.BlendModeColorFilter
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
-import com.mgsanlet.cheftube.R
 
 abstract class BaseFragment<T : ViewBinding> : Fragment() {
 

@@ -11,7 +11,7 @@ import javax.inject.Singleton
 @Singleton
 class LocaleManager @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val localeRepository: LanguagesRepository,
+    private val languagesRepository: LanguagesRepository,
 ) {
     fun getCurrentLocale(): Locale {
         return Lingver.Companion.getInstance().getLocale()
@@ -19,10 +19,10 @@ class LocaleManager @Inject constructor(
 
     fun setLocale(locale: Locale) {
         Lingver.Companion.getInstance().setLocale(context, locale)
-        localeRepository.saveLanguageCode(locale.language)
+        languagesRepository.saveLanguageCode(locale.language)
     }
 
     fun getStoredLanguageCode(): String? {
-        return localeRepository.getSavedLanguageCode()
+        return languagesRepository.getSavedLanguageCode()
     }
 }

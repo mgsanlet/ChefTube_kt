@@ -4,8 +4,10 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.mgsanlet.cheftube.data.model.UserDto
+import com.mgsanlet.cheftube.domain.model.DomainUser as User
 import com.mgsanlet.cheftube.data.util.Constants.Database
+import com.mgsanlet.cheftube.domain.util.DomainResult
+import com.mgsanlet.cheftube.domain.util.error.UserError
 import javax.inject.Inject
 
 /**
@@ -20,14 +22,14 @@ class UserLocalDataSource @Inject constructor(
         val CREATE_TABLE = """
             CREATE TABLE ${Database.TABLE_USERS} (
                 ${Database.COLUMN_ID} TEXT PRIMARY KEY,
-                ${Database.COLUMN_USERNAME} TEXT NOT NULL,
+                ${Database.COLUMN_USERNAME} TEXT UNIQUE NOT NULL,
                 ${Database.COLUMN_EMAIL} TEXT UNIQUE NOT NULL,
-                $${Database.COLUMN_PASSWORD} TEXT NOT NULL
+                ${Database.COLUMN_PASSWORD} TEXT NOT NULL
             )
         """.trimIndent()
     }
 
-    fun insertUser(user: UserDto): Boolean {
+    fun insertUser(user: User): DomainResult<Unit, UserError> {
         return try {
             val db = dbHelper.writableDatabase
             val values = ContentValues().apply {
@@ -38,157 +40,17 @@ class UserLocalDataSource @Inject constructor(
             }
 
             val result = db.insert(Database.TABLE_USERS, null, values)
-            result != -1L
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    fun getUserById(id: String): UserDto? {
-        return try {
-            val db = dbHelper.readableDatabase
-            val cursor = db.query(
-                Database.TABLE_USERS,
-                arrayOf(
-                    Database.COLUMN_ID,
-                    Database.COLUMN_USERNAME,
-                    Database.COLUMN_EMAIL,
-                    Database.COLUMN_PASSWORD
-                ),
-                "$Database.COLUMN_ID = ?",
-                arrayOf(id),
-                null,
-                null,
-                null
-            )
-
-            cursor.use {
-                if (it.moveToFirst()) {
-                    val user = UserDto(
-                        id = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_ID)),
-                        username = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_USERNAME)),
-                        email = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_EMAIL)),
-                        password = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_PASSWORD))
-                    )
-                    user
-                } else {
-                    null
-                }
+            if (result != -1L){
+                DomainResult.Success(Unit)
+            }else{
+                DomainResult.Error(UserError.Unknown())
             }
         } catch (e: Exception) {
-            null
+            DomainResult.Error(UserError.Unknown(e.message))
         }
     }
 
-    fun getUserByName(name: String): UserDto? {
-        return try {
-            val db = dbHelper.readableDatabase
-            val cursor = db.query(
-                Database.TABLE_USERS,
-                arrayOf(
-                    Database.COLUMN_ID,
-                    Database.COLUMN_USERNAME,
-                    Database.COLUMN_EMAIL,
-                    Database.COLUMN_PASSWORD
-                ),
-                "$Database.COLUMN_USERNAME = ?",
-                arrayOf(name),
-                null,
-                null,
-                null
-            )
-
-            cursor.use {
-                if (it.moveToFirst()) {
-                    val user = UserDto(
-                        id = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_ID)),
-                        username = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_USERNAME)),
-                        email = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_EMAIL)),
-                        password = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_PASSWORD))
-                    )
-                    user
-                } else {
-                    null
-                }
-            }
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    fun getUserByEmail(email: String): UserDto? {
-        return try {
-            val db = dbHelper.readableDatabase
-            val cursor = db.query(
-                Database.TABLE_USERS,
-                arrayOf(
-                    Database.COLUMN_ID,
-                    Database.COLUMN_USERNAME,
-                    Database.COLUMN_EMAIL,
-                    Database.COLUMN_PASSWORD
-                ),
-                "$Database.COLUMN_EMAIL = ?",
-                arrayOf(email),
-                null,
-                null,
-                null
-            )
-
-            cursor.use {
-                if (it.moveToFirst()) {
-                    val user = UserDto(
-                        id = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_ID)),
-                        username = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_USERNAME)),
-                        email = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_EMAIL)),
-                        password = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_PASSWORD))
-                    )
-                    user
-                } else {
-                    null
-                }
-            }
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    fun getUserByEmailOrUsername(identity: String): UserDto? {
-        return try {
-            val db = dbHelper.readableDatabase
-            val cursor = db.query(
-                Database.TABLE_USERS,
-                arrayOf(
-                    Database.COLUMN_ID,
-                    Database.COLUMN_USERNAME,
-                    Database.COLUMN_EMAIL,
-                    Database.COLUMN_PASSWORD
-                ),
-                "$Database.COLUMN_EMAIL = ? OR $Database.COLUMN_USERNAME = ?",
-                arrayOf(identity, identity),
-                null,
-                null,
-                null
-            )
-
-            cursor.use {
-                if (it.moveToFirst()) {
-                    val user = UserDto(
-                        id = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_ID)),
-                        username = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_USERNAME)),
-                        email = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_EMAIL)),
-                        password = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_PASSWORD))
-                    )
-                    user
-                } else {
-                    null
-                }
-            }
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    fun updateUser(user: UserDto): Boolean {
+    fun updateUser(user: User): DomainResult<Unit, UserError> {
         return try {
             val db = dbHelper.writableDatabase
             val values = ContentValues().apply {
@@ -200,9 +62,157 @@ class UserLocalDataSource @Inject constructor(
             val result = db.update(
                 Database.TABLE_USERS, values, "${Database.COLUMN_ID} = ?", arrayOf(user.id)
             )
-            result > 0
+            if (result > 0){
+                DomainResult.Success(Unit)
+            }else{
+                DomainResult.Error(UserError.Unknown())
+            }
         } catch (e: Exception) {
-            false
+            DomainResult.Error(UserError.Unknown(e.message))
+        }
+    }
+
+    fun getUserById(id: String): DomainResult<User, UserError> {
+        return try {
+            val db = dbHelper.readableDatabase
+            val cursor = db.query(
+                Database.TABLE_USERS,
+                arrayOf(
+                    Database.COLUMN_ID,
+                    Database.COLUMN_USERNAME,
+                    Database.COLUMN_EMAIL,
+                    Database.COLUMN_PASSWORD
+                ),
+                "${Database.COLUMN_ID} = ?",
+                arrayOf(id),
+                null,
+                null,
+                null
+            )
+
+            cursor.use {
+                if (it.moveToFirst()) {
+                    val user = User(
+                        id = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_ID)),
+                        username = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_USERNAME)),
+                        email = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_EMAIL)),
+                        password = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_PASSWORD))
+                    )
+                    DomainResult.Success(user)
+                } else {
+                    DomainResult.Error(UserError.UserNotFound)
+                }
+            }
+        } catch (e: Exception) {
+            DomainResult.Error(UserError.Unknown(e.message))
+        }
+    }
+
+    fun getUserByName(name: String): DomainResult<User, UserError> {
+        return try {
+            val db = dbHelper.readableDatabase
+            val cursor = db.query(
+                Database.TABLE_USERS,
+                arrayOf(
+                    Database.COLUMN_ID,
+                    Database.COLUMN_USERNAME,
+                    Database.COLUMN_EMAIL,
+                    Database.COLUMN_PASSWORD
+                ),
+                "${Database.COLUMN_USERNAME} = ?",
+                arrayOf(name),
+                null,
+                null,
+                null
+            )
+
+            cursor.use {
+                if (it.moveToFirst()) {
+                    val user = User(
+                        id = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_ID)),
+                        username = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_USERNAME)),
+                        email = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_EMAIL)),
+                        password = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_PASSWORD))
+                    )
+                    DomainResult.Success(user)
+                } else {
+                    DomainResult.Error(UserError.UserNotFound)
+                }
+            }
+        } catch (e: Exception) {
+            DomainResult.Error(UserError.Unknown(e.message))
+        }
+    }
+
+    fun getUserByEmail(email: String): DomainResult<User, UserError> {
+        return try {
+            val db = dbHelper.readableDatabase
+            val cursor = db.query(
+                Database.TABLE_USERS,
+                arrayOf(
+                    Database.COLUMN_ID,
+                    Database.COLUMN_USERNAME,
+                    Database.COLUMN_EMAIL,
+                    Database.COLUMN_PASSWORD
+                ),
+                "${Database.COLUMN_EMAIL} = ?",
+                arrayOf(email),
+                null,
+                null,
+                null
+            )
+
+            cursor.use {
+                if (it.moveToFirst()) {
+                    val user = User(
+                        id = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_ID)),
+                        username = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_USERNAME)),
+                        email = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_EMAIL)),
+                        password = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_PASSWORD))
+                    )
+                    DomainResult.Success(user)
+                } else {
+                    DomainResult.Error(UserError.UserNotFound)
+                }
+            }
+        } catch (e: Exception) {
+            DomainResult.Error(UserError.Unknown(e.message))
+        }
+    }
+
+    fun getUserByEmailOrUsername(identity: String): DomainResult<User, UserError> {
+        return try {
+            val db = dbHelper.readableDatabase
+            val cursor = db.query(
+                Database.TABLE_USERS,
+                arrayOf(
+                    Database.COLUMN_ID,
+                    Database.COLUMN_USERNAME,
+                    Database.COLUMN_EMAIL,
+                    Database.COLUMN_PASSWORD
+                ),
+                "${Database.COLUMN_EMAIL} = ? OR ${Database.COLUMN_USERNAME} = ?",
+                arrayOf(identity, identity),
+                null,
+                null,
+                null
+            )
+
+            cursor.use {
+                if (it.moveToFirst()) {
+                    val user = User(
+                        id = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_ID)),
+                        username = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_USERNAME)),
+                        email = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_EMAIL)),
+                        password = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_PASSWORD))
+                    )
+                    DomainResult.Success(user)
+                } else {
+                    DomainResult.Error(UserError.UserNotFound)
+                }
+            }
+        } catch (e: Exception) {
+            DomainResult.Error(UserError.Unknown(e.message))
         }
     }
 }

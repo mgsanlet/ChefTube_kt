@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.mgsanlet.cheftube.databinding.ActivitySplashBinding
+import com.mgsanlet.cheftube.ui.util.hideSystemBars
 
 /**
  * SplashActivity es la pantalla introductoria que aparece cuando la aplicación se inicia.
@@ -28,7 +29,7 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
         this.enableEdgeToEdge()
-        SystemUiHelper.hideSystemBars(window.decorView)
+        window.decorView.hideSystemBars()
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v: View, insets: WindowInsetsCompat ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

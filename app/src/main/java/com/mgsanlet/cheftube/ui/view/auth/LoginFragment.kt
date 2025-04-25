@@ -7,9 +7,9 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentLoginBinding
-import com.mgsanlet.cheftube.domain.repository.UsersRepository.UserError
+import com.mgsanlet.cheftube.domain.util.error.UserError
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
-import com.mgsanlet.cheftube.ui.util.asUiText
+import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginState
@@ -58,18 +58,13 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
 
                 is LoginState.Error -> {
                     showLoading(false)
+                    val errorMessage = state.error.asMessage(requireContext())
                     when (state.error) {
-                        UserError.USER_NOT_FOUND -> binding.identityEditText.error =
-                            state.error.asUiText().asString(requireContext())
+                        is UserError.UserNotFound -> binding.identityEditText.error = errorMessage
 
-                        UserError.WRONG_PASSWORD -> binding.passwordEditText.error =
-                            state.error.asUiText().asString(requireContext())
+                        is UserError.WrongPassword -> binding.passwordEditText.error = errorMessage
 
-                        else -> Toast.makeText(
-                            context,
-                            state.error.asUiText().asString(requireContext()),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        else -> Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                     }
 
                 }

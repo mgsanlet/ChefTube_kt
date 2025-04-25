@@ -8,9 +8,7 @@
     <string name="pwd_d_match">Las contraseñas no coinciden</string>
     <string name="no_email_app">No se encontró aplicación de email</string>
     <string name="wrong_password">Contraseña incorrecta</string>
-    <string name="invalid_login">Login inválido</string>
     <string name="user_not_found">Usuario no encontrado</string>
-    <string name="network_error">Error de red</string>
 
     <!-- EDIT TEXTS -->
     <string name="username">Nombre de usuario</string>
@@ -52,7 +50,6 @@
     <string name="ingredients">Ingredientes</string>
     <string name="steps">Pasos de la receta</string>
     <string name="scan_prompt">Escanea el código de barras</string>
-    <string name="product_name">Nombre del producto:</string>
     <string name="product_not_found_error">Producto no encontrado</string>
     <string name="set_timer">Indicar tiempo</string>
     <string name="minutes">Minutos</string>
@@ -109,16 +106,16 @@
     <string name="ingredient_07_03">1 pimiento rojo, picado</string>
 
     <!-- RECIPE STEPS -->
-    <string name="step_01_01">1. Cocina las lentejas: Lava las lentejas y ponlas en una olla con agua. Lleva a ebullición y luego hierve a fuego lento durante unos 20-30 minutos, o hasta que estén tiernas. Escurre el exceso de agua.</string>
+    <string name="step_01_01">1. Cocina las lentejas: Lava las lentejas y ponlas en una olla con agua. Lleva a ebullición y luego hierve a fuego lento durante unos 20–30 minutos, o hasta que estén tiernas. Escurre el exceso de agua.</string>
     <string name="step_01_02">2. Prepara el jamón: Corta el jamón en cubos pequeños. En una sartén aparte, calienta un poco de aceite a fuego medio y saltea el jamón hasta que quede crujiente y dorado.</string>
     <string name="step_01_03">3. Mezcla y sazona: Agrega las lentejas cocidas a la sartén con el jamón. Remueve bien y cocina unos minutos más, añadiendo sal, pimienta y otras especias al gusto (como ajo o pimentón). Sirve caliente.</string>
 
     <string name="step_02_01">1. Prepara las costillas de cerdo: Sazona las costillas con sal, pimienta y tus especias favoritas. Calienta un poco de aceite en una sartén y sella las costillas por todos los lados hasta que se doren. Reserva.</string>
-    <string name="step_02_02">2. Cocina las papas: Pela y corta las papas en cubos. En la misma sartén, añade más aceite si es necesario y saltea las papas hasta que estén doradas y crujientes por fuera, unos 10-15 minutos.</string>
+    <string name="step_02_02">2. Cocina las papas: Pela y corta las papas en cubos. En la misma sartén, añade más aceite si es necesario y saltea las papas hasta que estén doradas y crujientes por fuera, unos 10–15 minutos.</string>
     <string name="step_02_03">3. Mezcla y cocina a fuego lento: Añade las costillas selladas de nuevo a la sartén con las papas. Agrega un poco de agua o caldo, cubre y deja cocinar unos 40 minutos, o hasta que la carne esté tierna y las papas cocidas.</string>
 
     <string name="step_03_01">1. Limpia los rebozuelos: Limpia suavemente los rebozuelos con un trapo húmedo o un cepillo suave para quitar la suciedad. Recorta los extremos duros de los tallos si es necesario.</string>
-    <string name="step_03_02">2. Saltea los hongos: En una sartén caliente, derrite la mantequilla y agrega los rebozuelos junto con el ajo picado. Cocina durante unos 5-7 minutos, removiendo ocasionalmente hasta que los hongos estén tiernos.</string>
+    <string name="step_03_02">2. Saltea los hongos: En una sartén caliente, derrite la mantequilla y agrega los rebozuelos junto con el ajo picado. Cocina durante unos 5–7 minutos, removiendo ocasionalmente hasta que los hongos estén tiernos.</string>
     <string name="step_03_03">3. Sirve: Añade sal y pimienta al gusto, y sirve los rebozuelos salteados como acompañamiento o sobre una cama de arroz.</string>
 
     <string name="step_04_01">1. Prepara el filete de cerdo empanado: Empana el filete de cerdo (tonkatsu) cubriéndolo con harina, sumergiéndolo en huevo batido y cubriéndolo con pan rallado. Fríelo en aceite hasta que esté dorado y crujiente. Reserva.</string>
@@ -127,7 +124,7 @@
 
     <string name="step_05_01">1. Cocina los frijoles: Remoja los frijoles rojos durante la noche, luego cocínalos en una olla con agua hasta que estén tiernos (aproximadamente 1.5–2 horas), o utiliza frijoles enlatados para mayor comodidad.</string>
     <string name="step_05_02">2. Fría el plátano: En una sartén, fríe el plátano picado en aceite hasta que esté dorado y ligeramente caramelizado.</string>
-    <string name="step_05_03">3. Mezcla y sazona: Añade los frijoles cocidos y el plátano a una olla. Agrega el hogao (salsa criolla colombiana) y cocina durante 10-15 minutos para que los sabores se mezclen. Sirve caliente.</string>
+    <string name="step_05_03">3. Mezcla y sazona: Añade los frijoles cocidos y el plátano a una olla. Agrega el hogao (salsa criolla colombiana) y cocina durante 10–15 minutos para que los sabores se mezclen. Sirve caliente.</string>
 
     <string name="step_06_01">1. Fría el pollo: Sazona los muslos de pollo con sal y pimienta. En una olla grande, dóralos por ambos lados en aceite. Retíralos y resérvalos.</string>
     <string name="step_06_02">2. Cocina el arroz: En la misma olla, saltea las verduras mixtas hasta que estén tiernas. Añade el arroz y revuelve durante un minuto. Vierte el caldo de pollo y lleva a ebullición.</string>
@@ -135,13 +132,15 @@
 
     <string name="step_07_01">1. Saltea las verduras: En una sartén, calienta aceite y saltea el pimiento rojo y la cebolla picados hasta que estén tiernos.</string>
     <string name="step_07_02">2. Cocina los calamares: Añade los calamares rebanados a la sartén y cocina durante 3–5 minutos hasta que estén ligeramente tiernos.</string>
-    <string name="step_07_03">3. Cocina a fuego lento en salsa: Vierte la salsa de tomate y sazona con pimentón, sal y pimienta. Cocina a fuego lento durante 15-20 minutos hasta que los calamares estén tiernos y los sabores se mezclen. Sirve caliente.</string>
+    <string name="step_07_03">3. Cocina a fuego lento en salsa: Vierte la salsa de tomate y sazona con pimentón, sal y pimienta. Cocina a fuego lento durante 15–20 minutos hasta que los calamares estén tiernos y los sabores se mezclen. Sirve caliente.</string>
     <string name="unknown_error">Error desconocido: : %1$s</string>
     <string name="keep_logged">Mantener sesión iniciada</string>
     <string name="account_created">Cuenta creada con éxito</string>
     <string name="empty_product_response_error">Respuesta de producto vacía</string>
-    <string name="non_translated_error">Error no traducido</string>
     <string name="no_internet">Error: Sin conexión a internet</string>
+    <string name="recipe_not_found_error">Receta no encontrada</string>
+    <string name="pwd_pattern">La contraseña debe contener al menos un número y una letra</string>
+    <string name="error">Error</string>
 
 
 </resources>

@@ -45,14 +45,14 @@ android {
 
 dependencies {
     // Kotlin
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.10")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlinx.coroutines.android)
 
     // Hilt
-    implementation("com.google.dagger:hilt-android:2.56.1")
+    implementation(libs.hilt.android)
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
     kapt("com.google.dagger:hilt-android-compiler:2.56.1")
-    kapt("androidx.hilt:hilt-compiler:1.1.0")
+    kapt(libs.hilt.compiler)
     implementation("androidx.hilt:hilt-work:1.1.0")
 
     // Android core
@@ -74,14 +74,14 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
 
     // Network
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-    implementation("com.android.volley:volley:1.2.1")
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
+    implementation(libs.volley)
+    implementation(libs.gson)
 
     // Image Loading
-    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation(libs.glide)
 
     // Data Binding
     implementation("androidx.databinding:databinding-runtime:8.2.2")
@@ -90,16 +90,13 @@ dependencies {
     implementation("androidx.media3:media3-common-ktx:1.6.0")
 
     // Barcode Scanner
-    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation(libs.zxing.android.embedded)
 
     // Language
-    implementation("com.github.YarikSOffice:lingver:1.3.0")
-
-    // Security
-    implementation("org.mindrot:jbcrypt:0.4")
+    implementation(libs.lingver)
 
     // Testing
-    testImplementation("junit:junit:4.13.2")
+    testImplementation(libs.junit)
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }

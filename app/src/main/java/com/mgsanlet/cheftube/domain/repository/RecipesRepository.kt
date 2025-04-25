@@ -1,13 +1,12 @@
 package com.mgsanlet.cheftube.domain.repository
 
-import android.content.Context
-import com.mgsanlet.cheftube.data.model.RecipeDto
-import com.mgsanlet.cheftube.domain.util.Result
-import com.mgsanlet.cheftube.domain.util.Error
+import com.mgsanlet.cheftube.domain.util.DomainResult
+import com.mgsanlet.cheftube.domain.util.error.RecipeError
+import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
 
 
 interface RecipesRepository {
-    suspend fun filterRecipesByIngredient(context: Context, query: String): Result<List<RecipeDto>, Error>
-    suspend fun getById(recipeId: String): Result<RecipeDto, Error>
-    suspend fun getAll(): Result<List<RecipeDto>, Error>
+    suspend fun filterRecipesByIngredient(ingredientQuery: String): DomainResult<List<Recipe>, RecipeError>
+    suspend fun getById(recipeId: String): DomainResult<Recipe, RecipeError>
+    suspend fun getAll(): DomainResult<List<Recipe>, RecipeError>
 }

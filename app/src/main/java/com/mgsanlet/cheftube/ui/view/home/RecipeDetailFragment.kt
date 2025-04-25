@@ -15,13 +15,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.mgsanlet.cheftube.R
-import com.mgsanlet.cheftube.data.model.RecipeDto
 import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
+import com.mgsanlet.cheftube.ui.util.asMessage
+import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModel
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModel.Companion.ARG_RECIPE
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeState
 import com.mgsanlet.cheftube.ui.viewmodel.home.TimerState
+import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -41,28 +43,30 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.loadRecipe( arguments?.getString(ARG_RECIPE) ?: "") // Cargar la receta después de que el fragment esté creado
+        // Cargar la receta después de que el fragment esté creado
+        viewModel.loadRecipe( arguments?.getString(ARG_RECIPE) ?: "")
     }
 
     override fun setUpObservers() {
         viewModel.recipeState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is RecipeState.Loading -> {
-                    showLoading()
+                    showLoading(true)
                 }
 
                 is RecipeState.Success -> {
-                    setRecipeDetails(state.recipe)/* El progressBar se oculta cuando la webview terminó de cargar,
+                    setRecipeDetails(state.recipe)
+                    /* El progressBar se oculta cuando la webview terminó de cargar,
                        pero si no hay, debe ocultarse cuando la petición devuelva éxito */
                     if (binding.videoWebView.url == null) {
-                        hideLoading()
+                        showLoading(false)
                     }
                     hideProgressWhenVideoLoaded()
                 }
 
                 is RecipeState.Error -> {
-                    hideLoading()
-                    showError(state.message)
+                    showLoading(false)
+                    Toast.makeText(requireContext(), state.error.asMessage(requireContext()), Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -106,7 +110,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
 
                 TimerState.Running -> viewModel.pauseTimer()
                 TimerState.Paused -> viewModel.startTimer(viewModel.timeLeftInMillis)
-                null -> showError("Not supported timer state")
+                null -> {}
             }
         }
 
@@ -117,13 +121,12 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
     }
 
     override fun setUpViewProperties() {
-        setUpProgressBar(binding.progressBar)
-
+        binding.progressBar.setCustomStyle(requireContext())
     }
 
     private fun hideProgressWhenVideoLoaded() {
         if (binding.videoWebView.progress == 100) {
-            hideLoading()
+            showLoading(false)
         } else {
             Handler(Looper.getMainLooper()).postDelayed({
                 hideProgressWhenVideoLoaded()
@@ -132,25 +135,23 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private fun setRecipeDetails(recipe: RecipeDto?) {
-        if (recipe != null) {
-            binding.titleTextView.text = getString(recipe.ttlRId)
-            // Configurar vídeo
-            binding.videoWebView.settings.javaScriptEnabled = true
-            val videoUrl = recipe.videoUrl
-            binding.videoWebView.loadUrl(videoUrl)
+    private fun setRecipeDetails(recipe: Recipe) {
+        binding.titleTextView.text = getString(recipe.ttlRId)
+        // Configurar vídeo
+        binding.videoWebView.settings.javaScriptEnabled = true
+        val videoUrl = recipe.videoUrl
+        binding.videoWebView.loadUrl(videoUrl)
 
-            // Agregar ingredientes dinámicamente al contenedor de ingredientes
-            fillIngredients(recipe)
+        // Agregar ingredientes dinámicamente al contenedor de ingredientes
+        fillIngredients(recipe)
 
-            // Agregar pasos dinámicamente al contenedor de pasos
-            fillSteps(recipe)
-        }
+        // Agregar pasos dinámicamente al contenedor de pasos
+        fillSteps(recipe)
     }
 
-    private fun fillIngredients(recipe: RecipeDto) {
+    private fun fillIngredients(recipe: Recipe) {
         binding.ingredientsLinearLayout.removeAllViews()
-        for (ingredientId in recipe.getIngredientsResIds()) {
+        for (ingredientId in recipe.ingredientsResIds) {
             val ingredientTextView = TextView(context)
             ingredientTextView.setText(ingredientId)
             if (context != null) {
@@ -165,9 +166,9 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
     }
 
-    private fun fillSteps(recipe: RecipeDto) {
+    private fun fillSteps(recipe: Recipe) {
         binding.stepsLinearLayout.removeAllViews()
-        for (stepId in recipe.getStepsResIds()) {
+        for (stepId in recipe.stepsResIds) {
             val stepTextView = TextView(context)
             stepTextView.setText(stepId)
             stepTextView.setPadding(0, 4, 0, 2)
@@ -228,18 +229,14 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
     }
 
-    private fun showError(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
-    }
-
-    private fun showLoading() {
-        binding.progressBar.visibility = View.VISIBLE
-        binding.recipeContent.visibility = View.GONE
-    }
-
-    private fun hideLoading() {
-        binding.progressBar.visibility = View.GONE
-        binding.recipeContent.visibility = View.VISIBLE
+    private fun showLoading(show: Boolean) {
+        if (show) {
+            binding.progressBar.visibility = View.VISIBLE
+            binding.recipeContent.visibility = View.GONE
+        } else {
+            binding.progressBar.visibility = View.GONE
+            binding.recipeContent.visibility = View.VISIBLE
+        }
     }
 
     companion object {

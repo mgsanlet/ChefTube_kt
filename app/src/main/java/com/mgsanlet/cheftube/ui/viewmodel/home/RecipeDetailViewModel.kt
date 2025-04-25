@@ -2,12 +2,13 @@ package com.mgsanlet.cheftube.ui.viewmodel.home
 
 import android.annotation.SuppressLint
 import android.os.CountDownTimer
-import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mgsanlet.cheftube.data.model.RecipeDto
-import com.mgsanlet.cheftube.domain.repository.RecipesRepository
+import com.mgsanlet.cheftube.domain.usecase.recipe.GetRecipeByIdUseCase
+import com.mgsanlet.cheftube.domain.util.error.RecipeError
+import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,79 +17,81 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecipeDetailViewModel @Inject constructor(
-    private val recipesRepository: RecipesRepository
+    private  val getRecipeById: GetRecipeByIdUseCase
 ) : ViewModel() {
 
-    var recipeState = MutableLiveData<RecipeState>()
+    private val _recipeState = MutableLiveData<RecipeState>()
+    val recipeState: LiveData<RecipeState> = _recipeState
 
     // Estado del cronómetro
-    private var timer: CountDownTimer? = null
+    private var _timer: CountDownTimer? = null
+
     var timeLeftInMillis: Long = 0
 
-    val timerState = MutableLiveData<TimerState>()
-    val timeLeft = MutableLiveData<String>()
+    private val _timerState = MutableLiveData<TimerState>()
+    val timerState : LiveData<TimerState> = _timerState
+
+    private val _timeLeft = MutableLiveData<String>()
+    val timeLeft: LiveData<String> = _timeLeft
 
     init {
-
-        timerState.value = TimerState.Initial
+        _timerState.value = TimerState.Initial
     }
 
     fun loadRecipe(recipeId: String) {
-        Log.i("DETAIL", recipeId)
-        if (recipeId.isEmpty()) {
-            recipeState.value = RecipeState.Error("Invalid recipe ID")
-            return
-        }
-
         viewModelScope.launch {
             try {
-                recipeState.value = RecipeState.Loading
+                _recipeState.value = RecipeState.Loading
                 val result = withContext(Dispatchers.IO) {
-                    recipesRepository.getById(recipeId)
+                    getRecipeById(recipeId)
                 }
-                if (result != null) {
-                    recipeState.value = RecipeState.Success(result)
-                } else {
-                    recipeState.value = RecipeState.Error("Recipe not found")
-                }
+                result.fold(
+                    onSuccess = { recipe ->
+                        _recipeState.value = RecipeState.Success(recipe)
+                    },
+                    onError = { error ->
+                        _recipeState.value = RecipeState.Error(error)
+                    }
+                )
             } catch (e: Exception) {
-                recipeState.value = RecipeState.Error(e.message ?: "Unknown error")
+                _recipeState.value =
+                    RecipeState.Error(RecipeError.Unknown(e.message))
             }
         }
     }
 
     fun setTime(timeInMillis: Long) {
         timeLeftInMillis = timeInMillis
-        timeLeft.value = formatTime(timeInMillis)
-        timerState.value = TimerState.Initial
+        _timeLeft.value = formatTime(timeInMillis)
+        _timerState.value = TimerState.Initial
     }
 
     // Métodos públicos para controlar el cronómetro
     fun startTimer(timeInMillis: Long) {
         if (timeLeftInMillis < 1000) return
 
-        timer?.cancel()
-        timer = null
+        _timer?.cancel()
+        _timer = null
 
         timeLeftInMillis = timeInMillis
-        timer = object : CountDownTimer(timeInMillis, 1000) {
+        _timer = object : CountDownTimer(timeInMillis, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 timeLeftInMillis = millisUntilFinished
-                timeLeft.value = formatTime(millisUntilFinished)
+                _timeLeft.value = formatTime(millisUntilFinished)
             }
 
             override fun onFinish() {
-                timerState.value = TimerState.Finished
+                _timerState.value = TimerState.Finished
             }
         }.start()
-        timerState.value = TimerState.Running
+        _timerState.value = TimerState.Running
     }
 
     fun pauseTimer() {
-        timer?.cancel()
-        timer = null
+        _timer?.cancel()
+        _timer = null
 
-        timerState.value = TimerState.Paused
+        _timerState.value = TimerState.Paused
     }
 
     @SuppressLint("DefaultLocale")
@@ -98,7 +101,7 @@ class RecipeDetailViewModel @Inject constructor(
         return String.format("%02d:%02d", minutes, seconds)
     }
 
-    companion object{
+    companion object {
         const val ARG_RECIPE = "recipeId"
     }
 }
@@ -112,6 +115,6 @@ sealed class TimerState {
 
 sealed class RecipeState {
     data object Loading : RecipeState()
-    data class Success(val recipe: RecipeDto) : RecipeState()
-    data class Error(val message: String) : RecipeState()
+    data class Success(val recipe: Recipe) : RecipeState()
+    data class Error(val error: RecipeError) : RecipeState()
 }
