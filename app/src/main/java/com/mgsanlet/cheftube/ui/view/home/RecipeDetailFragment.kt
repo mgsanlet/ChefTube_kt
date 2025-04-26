@@ -136,7 +136,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setRecipeDetails(recipe: Recipe) {
-        binding.titleTextView.text = getString(recipe.ttlRId)
+        binding.titleTextView.text = recipe.title
         // Configurar vídeo
         binding.videoWebView.settings.javaScriptEnabled = true
         val videoUrl = recipe.videoUrl
@@ -151,9 +151,9 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
 
     private fun fillIngredients(recipe: Recipe) {
         binding.ingredientsLinearLayout.removeAllViews()
-        for (ingredientId in recipe.ingredientsResIds) {
+        for (ingredient in recipe.ingredients) {
             val ingredientTextView = TextView(context)
-            ingredientTextView.setText(ingredientId)
+            ingredientTextView.text = ingredient
             if (context != null) {
                 ingredientTextView.setTextColor(
                     ContextCompat.getColor(
@@ -168,9 +168,9 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
 
     private fun fillSteps(recipe: Recipe) {
         binding.stepsLinearLayout.removeAllViews()
-        for (stepId in recipe.stepsResIds) {
+        for (step in recipe.steps) {
             val stepTextView = TextView(context)
-            stepTextView.setText(stepId)
+            stepTextView.setText(step)
             stepTextView.setPadding(0, 4, 0, 2)
             if (context != null) {
                 stepTextView.setTextColor(
@@ -179,7 +179,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
                     )
                 )
             }
-            stepTextView.textSize = 12f
+            stepTextView.textSize = 14f
             binding.stepsLinearLayout.addView(stepTextView)
         }
     }

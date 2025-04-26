@@ -5,9 +5,9 @@ import com.mgsanlet.cheftube.data.repository.ProductsRepositoryImpl
 import com.mgsanlet.cheftube.data.repository.RecipesRepositoryImpl
 import com.mgsanlet.cheftube.data.repository.UsersRepositoryImpl
 import com.mgsanlet.cheftube.data.source.local.PreferencesManager
-import com.mgsanlet.cheftube.data.source.local.RecipesLocalDataSource
 import com.mgsanlet.cheftube.data.source.local.UserLocalDataSource
-import com.mgsanlet.cheftube.data.source.remote.ProductApi
+import com.mgsanlet.cheftube.data.source.remote.FirebaseRecipeApi
+import com.mgsanlet.cheftube.data.source.remote.OpenFoodFactsApi
 import com.mgsanlet.cheftube.data.util.PatternValidatorImpl
 import com.mgsanlet.cheftube.domain.repository.LanguagesRepository
 import com.mgsanlet.cheftube.domain.repository.ProductsRepository
@@ -35,17 +35,17 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideRecipesRepository(
-        recipesLocalDataSource: RecipesLocalDataSource
+        api: FirebaseRecipeApi
     ): RecipesRepository {
-        return RecipesRepositoryImpl(recipesLocalDataSource)
+        return RecipesRepositoryImpl(api)
     }
 
     @Provides
     @Singleton
     fun provideProductsRepository(
-        productApi: ProductApi
+        openFoodFactsApi: OpenFoodFactsApi
     ): ProductsRepository {
-        return ProductsRepositoryImpl(productApi)
+        return ProductsRepositoryImpl(openFoodFactsApi)
     }
 
     @Provides

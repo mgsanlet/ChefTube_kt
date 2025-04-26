@@ -7,9 +7,9 @@ package com.mgsanlet.cheftube.domain.model
  */
 data class DomainRecipe(
     val id: String,
-    val ttlRId: Int,
-    val imgRId: Int,
+    val title: String,
+    val imageUrl: String,
     val videoUrl: String,
-    val ingredientsResIds: MutableList<Int> = ArrayList(),
-    val stepsResIds: MutableList<Int> = ArrayList()
+    val ingredients: List<String> = ArrayList(),
+    val steps: List<String> = ArrayList()
 )

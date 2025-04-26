@@ -1,7 +1,7 @@
 package com.mgsanlet.cheftube.data.repository
 
 import com.mgsanlet.cheftube.data.model.toDomainProduct
-import com.mgsanlet.cheftube.data.source.remote.ProductApi
+import com.mgsanlet.cheftube.data.source.remote.OpenFoodFactsApi
 import com.mgsanlet.cheftube.domain.model.DomainProduct
 import com.mgsanlet.cheftube.domain.repository.ProductsRepository
 import java.net.UnknownHostException
@@ -11,7 +11,7 @@ import com.mgsanlet.cheftube.domain.util.error.ProductError
 
 
 class ProductsRepositoryImpl @Inject constructor(
-    private val api: ProductApi
+    private val api: OpenFoodFactsApi
 ) : ProductsRepository {
     override suspend fun fetchProductByBarcode(barcode: String): DomainResult<DomainProduct, ProductError> {
         return try {

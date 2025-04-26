@@ -40,9 +40,11 @@ class RecipeFeedAdapter(
         val recipe = recipeList[position]
         val binding = holder.binding
 
-        binding.titleTextView.setText(recipe.ttlRId)
+        binding.titleTextView.setText(recipe.title)
         // Cargar imágenes de recetas con esquinas redondeadas usando Glide
-        Glide.with(mContext).load(recipe.imgRId).skipMemoryCache(true)
+        Glide.with(mContext)
+            .load(recipe.imageUrl)
+            .skipMemoryCache(true)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .apply(RequestOptions.bitmapTransform(RoundedCorners(40)))
             .into(binding.imageView)

@@ -1,6 +1,7 @@
 package com.mgsanlet.cheftube.data.di
 
-import com.mgsanlet.cheftube.data.source.remote.ProductApi
+import com.mgsanlet.cheftube.data.source.remote.FirebaseRecipeApi
+import com.mgsanlet.cheftube.data.source.remote.OpenFoodFactsApi
 import com.mgsanlet.cheftube.data.util.Constants.Api.OFF_API_BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -46,20 +47,15 @@ object NetworkModule {
             .build()
     }
 
-//    @Provides
-//    @Singleton
-//    @RecipeRetrofit
-//    fun provideRecipeRetrofit(okHttpClient: OkHttpClient): Retrofit {
-//        return Retrofit.Builder()
-//            .baseUrl("URL_RECETAS")
-//            .client(okHttpClient)
-//            .addConverterFactory(GsonConverterFactory.create())
-//            .build()
-//    }
+    @Provides
+    @Singleton
+    fun provideFirebaseRecipeAp(): FirebaseRecipeApi {
+        return FirebaseRecipeApi()
+    }
 
     @Provides
     @Singleton
-    fun provideProductApi(@ProductRetrofit retrofit: Retrofit): ProductApi {
-        return retrofit.create(ProductApi::class.java)
+    fun provideProductApi(@ProductRetrofit retrofit: Retrofit): OpenFoodFactsApi {
+        return retrofit.create(OpenFoodFactsApi::class.java)
     }
 }

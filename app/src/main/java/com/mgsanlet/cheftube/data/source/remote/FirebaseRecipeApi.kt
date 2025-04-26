@@ -4,58 +4,52 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.mgsanlet.cheftube.data.model.RecipeResponse
-import com.mgsanlet.cheftube.domain.model.DomainRecipe
 import com.mgsanlet.cheftube.domain.util.DomainResult
 import com.mgsanlet.cheftube.domain.util.error.RecipeError
 
-class FirebaseRecipeProvider {
+class FirebaseRecipeApi {
     private val db by lazy { Firebase.firestore }
     private val storage by lazy { Firebase.storage }
 
-    fun getAll() {
+    fun getAll(callback: (DomainResult<List<RecipeResponse>, RecipeError>) -> Unit) {
+        val recipeList: MutableList<RecipeResponse> = mutableListOf()
+
         db.collection("recipes")
             .get()
             .addOnSuccessListener { result ->
                 for (document in result) {
                     // Convierte el documento a tu clase de datos
-                    val recipe = document.toObject(RecipeResponse::class.java)
-                    Log.d("Firestore", "${document.id} => $recipe")
+                    val recipeResponse = document.toObject(RecipeResponse::class.java)
+                    Log.d("Firestore", "${document.id} => $recipeResponse")
+                    recipeList.add(recipeResponse)
                 }
+                callback(DomainResult.Success(recipeList))
             }
             .addOnFailureListener { exception ->
                 Log.d("Firestore", "Error getting documents: ", exception)
+                callback(DomainResult.Error(RecipeError.Unknown(exception.message)))
             }
-
     }
 
-    fun getById(recipeId: String) {
-
+    fun getById(recipeId: String, callback: (DomainResult<RecipeResponse, RecipeError>) -> Unit) {
         val docRef = db.collection("recipes").document(recipeId)
         docRef.get()
             .addOnSuccessListener { document ->
-                if (document != null) {
-                    // Convierte el documento a tu clase de datos
+                document?.let {
                     val recipeResponse = document.toObject(RecipeResponse::class.java)
-                    // Usa los datos
-                    Log.d("Firestore", "Datos: $recipeResponse")
-                    recipeResponse?.let {
-                        getStorageUrlFromPath(it.imagePath)
-                    }
 
-//                    return@addOnSuccessListener DomainResult.Success(DomainRecipe(
-//                        id = recipeId,
-//                        title = recipeResponse.title,
-//                        ingredients = recipeResponse.ingredients,
-//                        steps = recipeResponse.steps
-//                    ))
-                } else {
-                    Log.d("Firestore", "No such document")
-                }
+                    recipeResponse?.let {
+                        callback(DomainResult.Success(recipeResponse))
+                    } ?: callback(DomainResult.Error(RecipeError.RecipeNotFound))
+
+                } ?: callback(DomainResult.Error(RecipeError.RecipeNotFound))
+
             }
             .addOnFailureListener { exception ->
                 Log.d("Firestore", "get failed with ", exception)
+                // Llama al callback con un error
+                callback(DomainResult.Error(RecipeError.Unknown(exception.message)))
             }
-
     }
 
     fun getStorageUrlFromPath(path: String): String {
