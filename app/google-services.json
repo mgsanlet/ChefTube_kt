@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "365335503894",
+    "project_id": "cheftube-5b6c5",
+    "storage_bucket": "cheftube-5b6c5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:365335503894:android:5aa171e898735acc0b4137",
+        "android_client_info": {
+          "package_name": "com.mgsanlet.cheftube"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWftU7kPE2v31oCIJ5iInziEfbBfVAUYg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

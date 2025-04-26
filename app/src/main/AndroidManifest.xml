@@ -27,7 +27,13 @@
         android:roundIcon="@drawable/ic_app2"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChefTube"
-        tools:targetApi="34">
+        tools:targetApi="34"
+        >
+
+        <meta-data
+        android:name="firebase_automatic_data_collection_enabled"
+        android:value="false" />
+
 
         <activity
             android:name=".ui.view.auth.SplashActivity"

@@ -7,7 +7,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.FirebaseApp
 import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.data.source.remote.FirebaseRecipeProvider
 import com.mgsanlet.cheftube.ui.util.hideSystemBars
 import com.mgsanlet.cheftube.ui.view.home.HomeActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,6 +32,10 @@ class AuthActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        val provider = FirebaseRecipeProvider()
+        provider.getById("recipe01")
+        provider.getAll()
     }
 
     fun navToHomePage() {

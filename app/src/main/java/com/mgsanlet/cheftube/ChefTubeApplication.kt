@@ -1,6 +1,8 @@
 package com.mgsanlet.cheftube
 
 import android.app.Application
+import android.util.Log
+import com.google.firebase.FirebaseApp
 import com.mgsanlet.cheftube.ui.util.LocaleManager
 import com.yariksoffice.lingver.Lingver
 import dagger.hilt.android.HiltAndroidApp
@@ -15,6 +17,7 @@ class ChefTubeApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        FirebaseApp.initializeApp(this)
         initializeLocale()
     }
 
