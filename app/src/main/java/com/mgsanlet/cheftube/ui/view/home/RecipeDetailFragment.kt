@@ -167,10 +167,11 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
     }
 
     private fun fillSteps(recipe: Recipe) {
+        var index = 1
         binding.stepsLinearLayout.removeAllViews()
         for (step in recipe.steps) {
             val stepTextView = TextView(context)
-            stepTextView.setText(step)
+            stepTextView.text = getString(R.string.step_formatted, index++.toString(), step)
             stepTextView.setPadding(0, 4, 0, 2)
             if (context != null) {
                 stepTextView.setTextColor(

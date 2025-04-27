@@ -3,7 +3,6 @@ package com.mgsanlet.cheftube.data.di
 import android.content.Context
 import com.mgsanlet.cheftube.data.source.local.DatabaseHelper
 import com.mgsanlet.cheftube.data.source.local.PreferencesManager
-import com.mgsanlet.cheftube.data.source.local.RecipesLocalDataSource
 import com.mgsanlet.cheftube.data.source.local.UserLocalDataSource
 import dagger.Module
 import dagger.Provides
@@ -21,14 +20,6 @@ object DataSourceModule {
         databaseHelper: DatabaseHelper
     ): UserLocalDataSource {
         return UserLocalDataSource(databaseHelper)
-    }
-
-    @Provides
-    @Singleton
-    fun provideRecipeLocalDataSource(
-        @ApplicationContext context: Context
-    ): RecipesLocalDataSource {
-        return RecipesLocalDataSource(context)
     }
 
     @Provides

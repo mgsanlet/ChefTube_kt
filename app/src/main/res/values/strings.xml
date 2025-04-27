@@ -144,5 +144,6 @@
     <string name="recipe_not_found_error">Recipe not found</string>
     <string name="pwd_pattern">Password must contain at least one number and one letter</string>
     <string name="error">Error</string>
+    <string name="step_formatted" translatable="false">%1$s. %2$s</string>
 
 </resources>

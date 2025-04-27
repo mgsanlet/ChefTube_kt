@@ -1,5 +1,6 @@
 package com.mgsanlet.cheftube.data.di
 
+import com.mgsanlet.cheftube.data.source.remote.FirebaseApi
 import com.mgsanlet.cheftube.data.source.remote.FirebaseRecipeApi
 import com.mgsanlet.cheftube.data.source.remote.OpenFoodFactsApi
 import com.mgsanlet.cheftube.data.util.Constants.Api.OFF_API_BASE_URL
@@ -17,6 +18,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+
+    // Retrofit
+
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
@@ -27,14 +31,10 @@ object NetworkModule {
             .build()
     }
 
-    // Qualifiers para diferentes APIs
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
     annotation class ProductRetrofit
 
-//    @Qualifier
-//    @Retention(AnnotationRetention.BINARY)
-//    annotation class RecipeRetrofit  // Para futuras APIs de recetas
 
     @Provides
     @Singleton
@@ -49,13 +49,23 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseRecipeAp(): FirebaseRecipeApi {
-        return FirebaseRecipeApi()
+    fun provideProductApi(@ProductRetrofit retrofit: Retrofit): OpenFoodFactsApi {
+        return retrofit.create(OpenFoodFactsApi::class.java)
+    }
+
+    // Firebase
+
+    @Provides
+    @Singleton
+    fun provideFirebaseApi(): FirebaseApi {
+        return FirebaseApi()
     }
 
     @Provides
     @Singleton
-    fun provideProductApi(@ProductRetrofit retrofit: Retrofit): OpenFoodFactsApi {
-        return retrofit.create(OpenFoodFactsApi::class.java)
+    fun provideFirebaseRecipeApi(mainApi: FirebaseApi): FirebaseRecipeApi {
+        return FirebaseRecipeApi(mainApi)
     }
+
+
 }
