@@ -28,6 +28,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun tryAutoLogin() {
+        _uiState.value = LoginState.Loading
         viewModelScope.launch {
             _uiState.value = LoginState.Loading
             if (automaticLogin() is DomainResult.Success) { _uiState.value = LoginState.AlreadyLogged }
