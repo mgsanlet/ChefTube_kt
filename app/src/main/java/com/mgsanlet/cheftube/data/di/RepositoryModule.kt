@@ -6,7 +6,9 @@ import com.mgsanlet.cheftube.data.repository.RecipesRepositoryImpl
 import com.mgsanlet.cheftube.data.repository.UsersRepositoryImpl
 import com.mgsanlet.cheftube.data.source.local.PreferencesManager
 import com.mgsanlet.cheftube.data.source.local.UserLocalDataSource
+import com.mgsanlet.cheftube.data.source.remote.FirebaseApi
 import com.mgsanlet.cheftube.data.source.remote.FirebaseRecipeApi
+import com.mgsanlet.cheftube.data.source.remote.FirebaseUserApi
 import com.mgsanlet.cheftube.data.source.remote.OpenFoodFactsApi
 import com.mgsanlet.cheftube.data.util.PatternValidatorImpl
 import com.mgsanlet.cheftube.domain.repository.LanguagesRepository
@@ -26,10 +28,11 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideUsersRepository(
-        userLocalDataSource: UserLocalDataSource,
-        preferences: PreferencesManager
+        api: FirebaseApi,
+        userApi: FirebaseUserApi,
+        userLocalDataSource: UserLocalDataSource
     ): UsersRepository {
-        return UsersRepositoryImpl(userLocalDataSource, preferences)
+        return UsersRepositoryImpl(api, userApi, userLocalDataSource)
     }
 
     @Provides

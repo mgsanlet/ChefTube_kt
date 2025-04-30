@@ -2,6 +2,7 @@ package com.mgsanlet.cheftube.data.di
 
 import com.mgsanlet.cheftube.data.source.remote.FirebaseApi
 import com.mgsanlet.cheftube.data.source.remote.FirebaseRecipeApi
+import com.mgsanlet.cheftube.data.source.remote.FirebaseUserApi
 import com.mgsanlet.cheftube.data.source.remote.OpenFoodFactsApi
 import com.mgsanlet.cheftube.data.util.Constants.Api.OFF_API_BASE_URL
 import dagger.Module
@@ -65,6 +66,12 @@ object NetworkModule {
     @Singleton
     fun provideFirebaseRecipeApi(mainApi: FirebaseApi): FirebaseRecipeApi {
         return FirebaseRecipeApi(mainApi)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseUserApi(mainApi: FirebaseApi): FirebaseUserApi {
+        return FirebaseUserApi(mainApi)
     }
 
 

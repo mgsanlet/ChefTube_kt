@@ -12,10 +12,10 @@ class UpdateUserUseCase@Inject constructor(
     private val validateNewPassword: ValidateNewPasswordUseCase
 ) {
     suspend operator fun invoke(updatedUser: User, oldPassword: String): DomainResult<User, UserError> {
-        if (updatedUser.password != oldPassword) {
+        if ("updatedUser.password" != oldPassword) {
             var result = validateNewEmail(updatedUser.email)
             if (result is DomainResult.Error ) { return DomainResult.Error(result.error) }
-            result = validateNewPassword(updatedUser.password)
+            result = validateNewPassword("updatedUser.password")
             if (result is DomainResult.Error ) { return DomainResult.Error(result.error) }
         }
         return usersRepository.updateUser(updatedUser, oldPassword)

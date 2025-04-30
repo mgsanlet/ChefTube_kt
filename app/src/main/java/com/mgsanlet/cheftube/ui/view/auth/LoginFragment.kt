@@ -40,7 +40,7 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
         viewModel.uiState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is LoginState.Initial -> {
-                    binding.identityEditText.text.clear()
+                    binding.emailEditText.text.clear()
                     binding.passwordEditText.text.clear()
                     showLoading(false)
                     cleanErrors()
@@ -60,7 +60,7 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
                     showLoading(false)
                     val errorMessage = state.error.asMessage(requireContext())
                     when (state.error) {
-                        is UserError.UserNotFound -> binding.identityEditText.error = errorMessage
+                        is UserError.UserNotFound -> binding.emailEditText.error = errorMessage
 
                         is UserError.WrongPassword -> binding.passwordEditText.error = errorMessage
 
@@ -80,7 +80,7 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
         binding.signInButton.setOnClickListener {
             if (isValidViewInput()) {
                 viewModel.tryLogin(
-                    binding.identityEditText.text.toString(),
+                    binding.emailEditText.text.toString(),
                     binding.passwordEditText.text.toString()
                 )
             }
@@ -100,7 +100,7 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
 
     override fun isValidViewInput(): Boolean {
         val requiredFields = listOf(
-            binding.identityEditText, binding.passwordEditText
+            binding.emailEditText, binding.passwordEditText
         )
 
         return !areFieldsEmpty(requiredFields)
@@ -110,7 +110,7 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
      * Limpia los mensajes de error de los campos de entrada
      */
     private fun cleanErrors() {
-        binding.identityEditText.error = null
+        binding.emailEditText.error = null
         binding.passwordEditText.error = null
     }
 

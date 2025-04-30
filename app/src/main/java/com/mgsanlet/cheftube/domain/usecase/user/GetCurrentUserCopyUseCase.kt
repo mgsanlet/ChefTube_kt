@@ -10,6 +10,6 @@ class GetCurrentUserCopyUseCase @Inject constructor(
     private val usersRepository: UsersRepository
 ) {
     operator fun invoke(): DomainResult<User, UserError> {
-        return usersRepository.getCurrentUserCopy()
+        return usersRepository.getCurrentUser()
     }
 }

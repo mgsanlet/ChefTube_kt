@@ -10,7 +10,6 @@ import com.mgsanlet.cheftube.domain.util.DomainResult
 import com.mgsanlet.cheftube.domain.util.error.UserError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -29,8 +28,10 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun tryAutoLogin() {
+        _uiState.value = LoginState.Loading
         viewModelScope.launch {
             if (automaticLogin() is DomainResult.Success) { _uiState.value = LoginState.AlreadyLogged }
+            else { _uiState.value = LoginState.Initial }
         }
     }
 
@@ -38,7 +39,6 @@ class LoginViewModel @Inject constructor(
 
         viewModelScope.launch {
             _uiState.value = LoginState.Loading
-            delay(3000L)
 
             val result = withContext(Dispatchers.IO) {
                 loginUser(identity, password)

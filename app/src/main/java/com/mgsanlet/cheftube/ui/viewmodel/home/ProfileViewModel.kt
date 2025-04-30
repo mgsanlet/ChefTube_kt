@@ -5,9 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mgsanlet.cheftube.domain.model.DomainUser as User
-import com.mgsanlet.cheftube.domain.usecase.user.AlternateKeepSessionUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.GetCurrentUserCopyUseCase
-import com.mgsanlet.cheftube.domain.usecase.user.IsSessionKeptUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.UpdateUserUseCase
 import com.mgsanlet.cheftube.domain.util.error.UserError
 import com.mgsanlet.cheftube.domain.util.DomainResult
@@ -18,9 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val getCurrentUserCopy: GetCurrentUserCopyUseCase,
-    private val updateUser: UpdateUserUseCase,
-    private val alternateKeepSession: AlternateKeepSessionUseCase,
-    private val isSessionKept: IsSessionKeptUseCase
+    private val updateUser: UpdateUserUseCase
 ) : ViewModel() {
     private val _uiState = MutableLiveData<ProfileState>()
     val uiState: LiveData<ProfileState> = _uiState
@@ -50,7 +46,7 @@ class ProfileViewModel @Inject constructor(
         getCurrentUserCopy().fold(
             onSuccess = { currentUser ->
                 updatedUser = User(
-                    currentUser.id, finalUsername, finalEmail, finalPassword
+                    currentUser.id, finalUsername, finalEmail
                 )
             },
             onError = { error ->
@@ -70,20 +66,6 @@ class ProfileViewModel @Inject constructor(
                 onError = { error -> _uiState.value = ProfileState.Error(error) }
             )
         }
-    }
-
-    fun handleKeepSessionToggle(keepLoggedIn: Boolean) {
-        val result = alternateKeepSession(keepLoggedIn)
-        if (result is DomainResult.Error) _uiState.value = ProfileState.Error(result.error)
-    }
-
-    fun isSessionBeingKept(): Boolean {
-        var isKept = false
-        isSessionKept().fold(
-            onSuccess = { isKept = it },
-            onError = { error -> _uiState.value = ProfileState.Error(error) }
-        )
-        return isKept
     }
 }
 

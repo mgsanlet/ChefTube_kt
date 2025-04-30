@@ -8,7 +8,7 @@ import javax.inject.Inject
 class LoginUserUseCase @Inject constructor(
     private val usersRepository: UsersRepository
 ) {
-    suspend operator fun invoke(emailOrUsername: String, password: String): DomainResult<Unit, UserError> {
-        return usersRepository.loginUser(emailOrUsername, password)
+    suspend operator fun invoke(email: String, password: String): DomainResult<Unit, UserError> {
+        return usersRepository.loginUser(email, password)
     }
 }
