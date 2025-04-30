@@ -113,14 +113,6 @@ class UsersRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserById(userId: String): DomainResult<DomainUser, UserError> {
-        return try {
-            userLocalDataSource.getUserById(userId)
-        } catch (e: Exception) {
-            DomainResult.Error(UserError.Unknown(e.message))
-        }
-    }
-
     override suspend fun tryAutoLogin(): DomainResult<Unit, UserError> {
 
         mainApi.auth.currentUser?.let {
