@@ -3,7 +3,6 @@ package com.mgsanlet.cheftube.domain.usecase.user
 import com.mgsanlet.cheftube.domain.repository.UsersRepository
 import com.mgsanlet.cheftube.domain.util.DomainResult
 import com.mgsanlet.cheftube.domain.util.error.UserError
-import java.util.UUID
 import javax.inject.Inject
 
 class CreateUserUseCase @Inject constructor(
@@ -20,6 +19,6 @@ class CreateUserUseCase @Inject constructor(
         if (result is DomainResult.Error ) { return DomainResult.Error(result.error) }
         result = validateNewPassword(password)
         if (result is DomainResult.Error ) { return DomainResult.Error(result.error) }
-        return usersRepository.createUser(UUID.randomUUID().toString(), username, email, password)
+        return usersRepository.createUser(username, email, password)
     }
 }

@@ -78,13 +78,9 @@ class ProfileFragment @Inject constructor() : BaseFormFragment<FragmentProfileBi
 
     override fun setUpListeners() {
         binding.saveButton.setOnClickListener { tryUpdateProfile() }
-        binding.keepLoggedCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.handleKeepSessionToggle(isChecked)
-        }
     }
 
     override fun setUpViewProperties() {
-        binding.keepLoggedCheckBox.isChecked = viewModel.isSessionBeingKept()
         binding.progressBar.setCustomStyle(requireContext())
     }
 

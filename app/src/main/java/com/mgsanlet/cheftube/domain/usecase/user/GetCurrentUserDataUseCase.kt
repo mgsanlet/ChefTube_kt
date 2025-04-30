@@ -6,10 +6,10 @@ import com.mgsanlet.cheftube.domain.util.error.UserError
 import com.mgsanlet.cheftube.domain.util.DomainResult
 import javax.inject.Inject
 
-class GetCurrentUserCopyUseCase @Inject constructor(
+class GetCurrentUserDataUseCase @Inject constructor(
     private val usersRepository: UsersRepository
 ) {
-    operator fun invoke(): DomainResult<User, UserError> {
-        return usersRepository.getCurrentUserCopy()
+    suspend operator fun invoke(): DomainResult<User, UserError> {
+        return usersRepository.getCurrentUserData()
     }
 }

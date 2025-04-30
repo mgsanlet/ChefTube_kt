@@ -36,7 +36,7 @@ class UserLocalDataSource @Inject constructor(
                 put(Database.COLUMN_ID, user.id)
                 put(Database.COLUMN_USERNAME, user.username)
                 put(Database.COLUMN_EMAIL, user.email)
-                put(Database.COLUMN_PASSWORD, user.password)
+                put(Database.COLUMN_PASSWORD, "user.password")
             }
 
             val result = db.insert(Database.TABLE_USERS, null, values)
@@ -56,7 +56,7 @@ class UserLocalDataSource @Inject constructor(
             val values = ContentValues().apply {
                 put(Database.COLUMN_USERNAME, user.username)
                 put(Database.COLUMN_EMAIL, user.email)
-                put(Database.COLUMN_PASSWORD, user.password)
+                put(Database.COLUMN_PASSWORD, "user.password")
             }
 
             val result = db.update(
@@ -95,8 +95,8 @@ class UserLocalDataSource @Inject constructor(
                     val user = User(
                         id = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_ID)),
                         username = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_USERNAME)),
-                        email = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_EMAIL)),
-                        password = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_PASSWORD))
+                        email = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_EMAIL))
+                        //password = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_PASSWORD))
                     )
                     DomainResult.Success(user)
                 } else {
@@ -131,8 +131,8 @@ class UserLocalDataSource @Inject constructor(
                     val user = User(
                         id = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_ID)),
                         username = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_USERNAME)),
-                        email = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_EMAIL)),
-                        password = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_PASSWORD))
+                        email = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_EMAIL))
+                        //password = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_PASSWORD))
                     )
                     DomainResult.Success(user)
                 } else {
@@ -167,8 +167,8 @@ class UserLocalDataSource @Inject constructor(
                     val user = User(
                         id = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_ID)),
                         username = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_USERNAME)),
-                        email = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_EMAIL)),
-                        password = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_PASSWORD))
+                        email = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_EMAIL))
+                        //password = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_PASSWORD))
                     )
                     DomainResult.Success(user)
                 } else {
@@ -203,8 +203,8 @@ class UserLocalDataSource @Inject constructor(
                     val user = User(
                         id = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_ID)),
                         username = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_USERNAME)),
-                        email = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_EMAIL)),
-                        password = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_PASSWORD))
+                        email = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_EMAIL))
+                        //password = it.getString(it.getColumnIndexOrThrow(Database.COLUMN_PASSWORD))
                     )
                     DomainResult.Success(user)
                 } else {

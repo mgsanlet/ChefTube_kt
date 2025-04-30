@@ -10,11 +10,9 @@ import javax.inject.Inject
 class ValidateNewPasswordUseCase @Inject constructor(private val validator: PatternValidator) {
     operator fun invoke(newPassword: String): DomainResult<Unit, UserError> {
         return try {
-
             validator.isValidPasswordPattern(
                 newPassword, PASSWORD_MIN_LENGTH, Regex(PASSWORD_REGEX)
             )
-
         } catch (e: Exception) {
             DomainResult.Error(UserError.Unknown(e.message))
         }

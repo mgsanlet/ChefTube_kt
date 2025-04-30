@@ -8,7 +8,6 @@ import com.mgsanlet.cheftube.domain.usecase.user.CreateUserUseCase
 import com.mgsanlet.cheftube.domain.util.error.UserError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -24,7 +23,6 @@ class SignUpViewModel @Inject constructor(
     fun trySignUp(username: String, email: String, password: String) {
         viewModelScope.launch {
             _uiState.value = SignUpState.Loading
-            delay(3000L)
 
             val result = withContext(Dispatchers.IO) {
                 createUser(username, email, password)

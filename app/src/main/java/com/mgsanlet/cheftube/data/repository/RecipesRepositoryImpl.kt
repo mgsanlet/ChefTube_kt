@@ -13,6 +13,7 @@ import com.mgsanlet.cheftube.domain.util.error.RecipeError
 class RecipesRepositoryImpl @Inject constructor(
     private val api: FirebaseRecipeApi
 ) : RecipesRepository {
+    var recipesCache: List<DomainRecipe>? = null
 
     override suspend fun filterRecipesByIngredient(ingredientQuery: String): DomainResult<List<DomainRecipe>, RecipeError> {
         return when (val result = api.getAll()) {
@@ -68,6 +69,10 @@ class RecipesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAll(): DomainResult<List<DomainRecipe>, RecipeError> {
+        recipesCache?.let {
+            if (!it.isEmpty()) return Success(it)
+        }
+
         return when (val result = api.getAll()) {
             is Success -> {
                 val domainRecipes = result.data.map { recipe ->
@@ -83,6 +88,7 @@ class RecipesRepositoryImpl @Inject constructor(
                 if (domainRecipes.isEmpty()) {
                     Error(RecipeError.NoResults)
                 } else {
+                    recipesCache = domainRecipes
                     Success(domainRecipes)
                 }
             }
