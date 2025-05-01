@@ -3,8 +3,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="primary_green">#46A467</color>
     <color name="dark_green">#2C6640</color>
+    <color name="dark_green_alpha">#F12C6640</color>
     <color name="primary_orange">#FB9E27</color>
     <color name="primary_red">#FF4D38</color>
     <color name="dark_red">#9E3426</color>
     <color name="grey">#505050</color>
+    <color name="transparent">#00F44336</color>
 </resources>

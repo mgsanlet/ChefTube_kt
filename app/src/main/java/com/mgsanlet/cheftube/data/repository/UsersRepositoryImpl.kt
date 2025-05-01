@@ -3,7 +3,6 @@ package com.mgsanlet.cheftube.data.repository
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.mgsanlet.cheftube.data.source.local.UserLocalDataSource
 import com.mgsanlet.cheftube.data.source.remote.FirebaseApi
 import com.mgsanlet.cheftube.data.source.remote.FirebaseUserApi
 import com.mgsanlet.cheftube.domain.model.DomainUser
@@ -17,8 +16,7 @@ import javax.inject.Singleton
 @Singleton
 class UsersRepositoryImpl @Inject constructor(
     private val mainApi: FirebaseApi,
-    private val userApi: FirebaseUserApi,
-    private val userLocalDataSource: UserLocalDataSource
+    private val userApi: FirebaseUserApi
 ) : UsersRepository {
 
     private var currentUser: DomainUser? = null
@@ -27,7 +25,8 @@ class UsersRepositoryImpl @Inject constructor(
         currentUser?.let {
             when (val result = userApi.getUserDataById(it.id)) {
                 is DomainResult.Success -> {
-                    currentUser = DomainUser(it.id, result.data.username, it.email)
+                    currentUser =
+                        DomainUser(it.id, result.data.username, it.email, result.data.bio, "")
                     return DomainResult.Success(currentUser!!)
                 }
 
@@ -37,9 +36,7 @@ class UsersRepositoryImpl @Inject constructor(
     }
 
     override suspend fun createUser(
-        username: String,
-        email: String,
-        password: String
+        username: String, email: String, password: String
     ): DomainResult<Unit, UserError> {
         try {
             val isAvailableResult = userApi.isAvailableUsername(username)
@@ -54,7 +51,7 @@ class UsersRepositoryImpl @Inject constructor(
                 return insertDataResult
             }
 
-            currentUser = DomainUser(user.uid, username, email)
+            currentUser = DomainUser(user.uid, username, email, "", "")
             return DomainResult.Success(Unit)
         } catch (e: Exception) {
             return if (e is FirebaseAuthException) {
@@ -75,7 +72,8 @@ class UsersRepositoryImpl @Inject constructor(
             val user = mainApi.auth.currentUser ?: throw Exception("User not found after login")
             when (val result = userApi.getUserDataById(user.uid)) {
                 is DomainResult.Success -> {
-                    currentUser = DomainUser(user.uid, result.data.username, email)
+                    currentUser =
+                        DomainUser(user.uid, result.data.username, email, result.data.bio, "")
                     return DomainResult.Success(Unit)
                 }
 
@@ -90,36 +88,29 @@ class UsersRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateUser(
-        user: DomainUser,
-        oldPassword: String
-    ): DomainResult<DomainUser, UserError> {
-        return try {
+    override suspend fun updateCurrentUserData(newUserData: DomainUser): DomainResult<Unit, UserError> {
+        currentUser?.let {
+            if (newUserData.username != it.username &&
+                userApi.isAvailableUsername(newUserData.username) is DomainResult.Error) {
 
-//            // Verificar la contraseña antigua
-//            if (currentUser?.password != oldPassword) {
-//                return DomainResult.Error(UserError.WrongPassword)
-//            }
-
-            userLocalDataSource.updateUser(user).fold(
-                onSuccess = {
-                    currentUser = user
-                    DomainResult.Success(user)
-                }, onError = { error ->
-                    DomainResult.Error(error)
-                })
-        } catch (e: Exception) {
-            DomainResult.Error(UserError.Unknown(e.message))
-        }
+                return DomainResult.Error(UserError.UsernameInUse)
+            }
+            val newUserData = DomainUser(
+                id = it.id,
+                username = newUserData.username.ifBlank { it.username },
+                email = it.email,
+                bio = newUserData.bio.ifBlank { it.bio },
+                profilePictureUrl = it.profilePictureUrl,
+            )
+            return userApi.updateUserData(it.id, newUserData)
+        } ?: throw Exception("User not found after login")
     }
 
     override suspend fun tryAutoLogin(): DomainResult<Unit, UserError> {
 
         mainApi.auth.currentUser?.let {
             currentUser = DomainUser(
-                it.uid,
-                "",
-                it.email ?: ""
+                it.uid, "", it.email ?: "", "", ""
             )
             return DomainResult.Success(Unit)
         } ?: return DomainResult.Error(UserError.UserNotFound)

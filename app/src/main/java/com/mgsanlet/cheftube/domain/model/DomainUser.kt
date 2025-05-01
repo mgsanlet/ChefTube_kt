@@ -1,7 +1,9 @@
 package com.mgsanlet.cheftube.domain.model
 
-class DomainUser(
+data class DomainUser(
     val id: String,
     val username: String,
-    val email: String
+    val email: String,
+    val bio: String,
+    val profilePictureUrl: String
 )

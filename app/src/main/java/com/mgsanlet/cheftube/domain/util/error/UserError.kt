@@ -8,5 +8,6 @@ sealed class UserError: DomainError {
     data object PasswordTooShort: UserError()
     data object InvalidPasswordPattern: UserError()
     data object InvalidEmailPattern: UserError()
+    data object InvalidUsernamePattern: UserError()
     data class Unknown(val messageArg:Any? = ""): UserError()
 }

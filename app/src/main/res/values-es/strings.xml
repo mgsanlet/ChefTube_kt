@@ -141,6 +141,16 @@
     <string name="recipe_not_found_error">Receta no encontrada</string>
     <string name="pwd_pattern">La contraseña debe contener al menos un número y una letra</string>
     <string name="error">Error</string>
+    <string name="user_s_avatar">Avatar de usuario</string>
+    <string name="confirm_new_name">Confirmar nuevo nombre</string>
+    <string name="user_avatar_cdesc">Imagen de avatar de usuario</string>
+    <string name="user_bio">Biografía del usuario</string>
+    <string name="confirm_new_bio">Confirmar nueva biografía</string>
+    <string name="invalid_username_length">La longitud del nombre de usuario debe estar entre %1$d y %2$d caracteres.</string>
+    <string name="followers">%1$d seguidores</string>
+    <string name="following">%1$d seguidos</string>
+    <string name="edit_profile">Editar perfil</string>
+    <string name="write_bio_here">Escribe aquí tu biografía…</string>
 
 
 </resources>

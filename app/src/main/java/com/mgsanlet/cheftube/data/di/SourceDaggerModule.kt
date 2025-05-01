@@ -1,5 +1,7 @@
 package com.mgsanlet.cheftube.data.di
 
+import android.content.Context
+import com.mgsanlet.cheftube.data.source.local.PreferencesManager
 import com.mgsanlet.cheftube.data.source.remote.FirebaseApi
 import com.mgsanlet.cheftube.data.source.remote.FirebaseRecipeApi
 import com.mgsanlet.cheftube.data.source.remote.FirebaseUserApi
@@ -8,6 +10,7 @@ import com.mgsanlet.cheftube.data.util.Constants.Api.OFF_API_BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -18,7 +21,17 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object NetworkModule {
+object SourceDaggerModule {
+
+    // Local
+
+    @Provides
+    @Singleton
+    fun providePreferencesManager(
+        @ApplicationContext context: Context,
+    ): PreferencesManager {
+        return PreferencesManager(context)
+    }
 
     // Retrofit
 

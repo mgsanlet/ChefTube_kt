@@ -2,6 +2,8 @@ package com.mgsanlet.cheftube.ui.util
 
 import android.content.Context
 import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.domain.util.Constants.USERNAME_MAX_LENGTH
+import com.mgsanlet.cheftube.domain.util.Constants.USERNAME_MIN_LENGTH
 import com.mgsanlet.cheftube.domain.util.error.ProductError
 import com.mgsanlet.cheftube.domain.util.error.RecipeError
 import com.mgsanlet.cheftube.domain.util.error.UserError
@@ -17,6 +19,11 @@ fun UserError.asMessage(context: Context): String {
         is UserError.InvalidEmailPattern -> context.getString(R.string.invalid_email)
         is UserError.PasswordTooShort -> context.getString(R.string.short_pwd)
         is UserError.InvalidPasswordPattern -> context.getString(R.string.pwd_pattern)
+        UserError.InvalidUsernamePattern -> context.getString(
+            R.string.invalid_username_length,
+            USERNAME_MIN_LENGTH,
+            USERNAME_MAX_LENGTH
+        )
     }
 }
 

@@ -5,16 +5,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.mgsanlet.cheftube.databinding.ItemRecipeBinding
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.domain.model.DomainRecipe
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.view.home.RecipeDetailFragment
 import com.mgsanlet.cheftube.ui.view.home.RecipeFeedFragment
+import com.mgsanlet.cheftube.ui.util.loadUrl
 
 /**
  * Adaptador para mostrar una lista de recetas en un RecyclerView.
@@ -42,12 +39,7 @@ class RecipeFeedAdapter(
 
         binding.titleTextView.setText(recipe.title)
         // Cargar imágenes de recetas con esquinas redondeadas usando Glide
-        Glide.with(mContext)
-            .load(recipe.imageUrl)
-            .skipMemoryCache(true)
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .apply(RequestOptions.bitmapTransform(RoundedCorners(40)))
-            .into(binding.imageView)
+        binding.imageView.loadUrl(recipe.imageUrl, mContext)
 
         binding.imageView.setOnClickListener { navToRecipeDetail(recipe) }
     }

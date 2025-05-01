@@ -145,5 +145,15 @@
     <string name="pwd_pattern">Password must contain at least one number and one letter</string>
     <string name="error">Error</string>
     <string name="step_formatted" translatable="false">%1$s. %2$s</string>
+    <string name="user_s_avatar">User\'s avatar</string>
+    <string name="confirm_new_name">Confirm new name</string>
+    <string name="user_avatar_cdesc">User\'s avatar image</string>
+    <string name="user_bio">User\'s biography</string>
+    <string name="confirm_new_bio">Confirm new biography</string>
+    <string name="invalid_username_length">Username length must be between %1$d and %2$d characters</string>
+    <string name="followers">%1$d followers</string>
+    <string name="following">%1$d following</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="write_bio_here">Write your biography here…</string>
 
 </resources>

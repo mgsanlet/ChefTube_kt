@@ -3,11 +3,10 @@ package com.mgsanlet.cheftube.ui.viewmodel.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.mgsanlet.cheftube.domain.usecase.recipe.GetAllRecipesUseCase
 import com.mgsanlet.cheftube.domain.usecase.recipe.FilterRecipesByIngredientUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
@@ -24,7 +23,7 @@ class RecipeFeedViewModel @Inject constructor(
     init {
         _uiState.value = RecipeFeedState.Loading
 
-        CoroutineScope(Dispatchers.Main).launch {
+        viewModelScope.launch {
             val result = getAllRecipes()
             result.fold(
                 onSuccess = { recipeList ->
@@ -39,7 +38,7 @@ class RecipeFeedViewModel @Inject constructor(
 
     fun handleSearchByIngredient(ingredientQuery: String) {
         _uiState.value = RecipeFeedState.Loading
-        CoroutineScope(Dispatchers.Main).launch {
+        viewModelScope.launch {
             val result = filterRecipesByIngredient(ingredientQuery)
             result.fold(
                 onSuccess = { recipeList ->

@@ -5,7 +5,6 @@ import com.mgsanlet.cheftube.data.repository.ProductsRepositoryImpl
 import com.mgsanlet.cheftube.data.repository.RecipesRepositoryImpl
 import com.mgsanlet.cheftube.data.repository.UsersRepositoryImpl
 import com.mgsanlet.cheftube.data.source.local.PreferencesManager
-import com.mgsanlet.cheftube.data.source.local.UserLocalDataSource
 import com.mgsanlet.cheftube.data.source.remote.FirebaseApi
 import com.mgsanlet.cheftube.data.source.remote.FirebaseRecipeApi
 import com.mgsanlet.cheftube.data.source.remote.FirebaseUserApi
@@ -24,15 +23,14 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RepositoryModule {
+object RepositoryDaggerModule {
     @Provides
     @Singleton
     fun provideUsersRepository(
         api: FirebaseApi,
-        userApi: FirebaseUserApi,
-        userLocalDataSource: UserLocalDataSource
+        userApi: FirebaseUserApi
     ): UsersRepository {
-        return UsersRepositoryImpl(api, userApi, userLocalDataSource)
+        return UsersRepositoryImpl(api, userApi)
     }
 
     @Provides

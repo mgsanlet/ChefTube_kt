@@ -2,6 +2,7 @@ package com.mgsanlet.cheftube.data.source.remote
 
 import android.util.Log
 import com.mgsanlet.cheftube.data.model.UserResponse
+import com.mgsanlet.cheftube.domain.model.DomainUser
 import com.mgsanlet.cheftube.domain.util.DomainResult
 import com.mgsanlet.cheftube.domain.util.error.UserError
 import kotlinx.coroutines.tasks.await
@@ -43,6 +44,18 @@ class FirebaseUserApi @Inject constructor(private val mainApi: FirebaseApi) {
     suspend fun insertUserData(id: String, username: String): DomainResult<Unit, UserError> {
         try{
             val user = hashMapOf("username" to username)
+            mainApi.db.collection("users").document(id).set(user).await()
+        }catch(exception: Exception){
+            Log.e("Firestore", "get failed with ", exception)
+            return DomainResult.Error(UserError.Unknown(exception.message))
+        }
+        return DomainResult.Success(Unit)
+    }
+
+    suspend fun updateUserData(id: String, user: DomainUser): DomainResult<Unit, UserError> {
+        try {
+            val user = hashMapOf("username" to user.username,
+                                  "bio" to user.bio  )
             mainApi.db.collection("users").document(id).set(user).await()
         }catch(exception: Exception){
             Log.e("Firestore", "get failed with ", exception)

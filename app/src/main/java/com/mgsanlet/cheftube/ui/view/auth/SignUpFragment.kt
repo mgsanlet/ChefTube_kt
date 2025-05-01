@@ -66,6 +66,9 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
                             binding.password2EditText.error = errorMessage
                         }
 
+                        is UserError.InvalidUsernamePattern -> binding.nameEditText.error =
+                            errorMessage
+
                         is UserError.UsernameInUse -> binding.nameEditText.error = errorMessage
 
                         is UserError.EmailInUse -> binding.emailEditText.error = errorMessage

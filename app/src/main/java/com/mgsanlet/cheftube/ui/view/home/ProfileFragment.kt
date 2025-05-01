@@ -1,19 +1,21 @@
 package com.mgsanlet.cheftube.ui.view.home
 
+import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentProfileBinding
-import com.mgsanlet.cheftube.domain.model.DomainUser as User
 import com.mgsanlet.cheftube.domain.util.error.UserError
-import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileState
 import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileViewModel
 import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
+import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -22,9 +24,11 @@ import javax.inject.Inject
  * incluyendo nombre de usuario, email y contraseña.
  */
 @AndroidEntryPoint
-class ProfileFragment @Inject constructor() : BaseFormFragment<FragmentProfileBinding>() {
+class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBinding>() {
 
     private val viewModel: ProfileViewModel by viewModels()
+    private var editDialog: AlertDialog? = null
+    private var usernameEditText: EditText? = null
 
     override fun inflateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -38,111 +42,73 @@ class ProfileFragment @Inject constructor() : BaseFormFragment<FragmentProfileBi
                     showLoading(false)
                     when (state.error) {
 
-                        is UserError.WrongPassword ->
-                            binding.oldPasswordEditText.error = errorMessage
-
-                        is UserError.EmailInUse -> binding.emailEditText.error = errorMessage
-
-                        is UserError.UsernameInUse -> binding.nameEditText.error = errorMessage
-
-                        is UserError.InvalidPasswordPattern -> {
-                            binding.newPassword1EditText.error = errorMessage
-                            binding.newPassword2EditText.error = errorMessage
-                        }
-
-                        is UserError.PasswordTooShort ->{
-                            binding.newPassword1EditText.error = errorMessage
-                            binding.newPassword2EditText.error = errorMessage
-                        }
-
-                        is UserError.InvalidEmailPattern ->
-                            binding.emailEditText.error = errorMessage
-
+                        is UserError.UsernameInUse -> usernameEditText?.error = errorMessage
+                        is UserError.InvalidUsernamePattern -> usernameEditText?.error = errorMessage
                         else -> Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                     }
                 }
                 is ProfileState.Loading -> showLoading(true)
                 is ProfileState.LoadSuccess -> {
                     showLoading(false)
-                    showUserData(state.user)
+                    showUserData()
                 }
                 is ProfileState.SaveSuccess -> {
                     showLoading(false)
+                    showUserData()
                     Toast.makeText(context, getString(R.string.data_saved), Toast.LENGTH_SHORT)
                         .show()
-                    clearPasswordFields()
+                    editDialog?.dismiss()
                 }
             }
         }
     }
 
     override fun setUpListeners() {
-        binding.saveButton.setOnClickListener { tryUpdateProfile() }
+        binding.editButton.setOnClickListener { showEditFormDialog() }
+    }
+
+    private fun showEditFormDialog() {
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+
+        // Inflar un diseño personalizado para el diálogo de búsqueda
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_profile, null)
+        dialogBuilder.setView(dialogView)
+
+        // Obtener una referencia a los elementos de la interfaz de usuario en el diseño personalizado
+        usernameEditText = dialogView.findViewById<EditText>(R.id.usernameEditText)
+        usernameEditText?.setText(binding.usernameTextView.text.toString())
+        val bioEditText = dialogView.findViewById<EditText>(R.id.bioEditText)
+        bioEditText.setText(binding.bioTextView.text.toString())
+
+        val saveButton = dialogView.findViewById<Button>(R.id.saveButton)
+        val cancelButton = dialogView.findViewById<Button>(R.id.cancelButton)
+
+        editDialog = dialogBuilder.create()
+        editDialog?.show()
+
+        saveButton.setOnClickListener {
+            viewModel.tryUpdateUserData(usernameEditText?.text.toString(), bioEditText.text.toString())
+        }
+        cancelButton.setOnClickListener {
+            editDialog?.dismiss()
+        }
     }
 
     override fun setUpViewProperties() {
         binding.progressBar.setCustomStyle(requireContext())
     }
 
-    override fun isValidViewInput(): Boolean {
-        val requiredFields = listOf(
-            binding.nameEditText, binding.emailEditText, binding.oldPasswordEditText
-        )
 
-        return !areFieldsEmpty(requiredFields) && isValidNewPassword()
-    }
-
-    private fun tryUpdateProfile() {
-        if (!isValidViewInput()) return
-
-        // Obtener los nuevos datos o mantener los actuales
-        val finalUsername = binding.nameEditText.text.toString()
-        val finalEmail = binding.emailEditText.text.toString()
-        val oldPassword = binding.oldPasswordEditText.text.toString()
-        // Es posible que no se cambie la contraseña
-        val newPassword = binding.newPassword1EditText.text.toString().ifEmpty { null }
-
-        viewModel.updateUser(finalUsername, finalEmail, newPassword, oldPassword)
-    }
-
-    private fun isValidNewPassword(): Boolean {
-        val newPassword1 = binding.newPassword1EditText.text.toString()
-        val newPassword2 = binding.newPassword2EditText.text.toString()
-
-        // Si no hay nueva contraseña, es válido
-        if (newPassword1.isEmpty() && newPassword2.isEmpty()) {
-            return true
+    private fun showUserData() {
+        viewModel.userData.value?.let{
+            //binding.profilePictureImageView.loadUrl(user.profilePictureUrl, requireContext())
+            binding.usernameTextView.text = it.username
+            binding.emailTextView.text = it.email
+            binding.followersTextView.text = getString(R.string.followers, 43) //TODO
+            binding.followingTextView.text = getString(R.string.following, 2) //TODO
+            binding.bioTextView.text = it.bio
         }
-
-        // Si solo uno de los campos está vacío, no es válido
-        if (newPassword1.isEmpty() || newPassword2.isEmpty()) {
-            if (newPassword1.isEmpty()) binding.newPassword1EditText.error =
-                getString(R.string.required)
-            if (newPassword2.isEmpty()) binding.newPassword2EditText.error =
-                getString(R.string.required)
-            return false
-        }
-
-        // Verificar que las contraseñas coincidan
-        if (newPassword1 != newPassword2) {
-            binding.newPassword2EditText.error = getString(R.string.pwd_d_match)
-            return false
-        }
-
-        return true
     }
-
-    private fun clearPasswordFields() {
-        binding.oldPasswordEditText.text.clear()
-        binding.newPassword1EditText.text.clear()
-        binding.newPassword2EditText.text.clear()
-    }
-
-    private fun showUserData(user: User) {
-        binding.nameEditText.setText(user.username)
-        binding.emailEditText.setText(user.email)
-    }
-
     private fun showLoading(show: Boolean) {
         if (show) {
             binding.progressBar.visibility = View.VISIBLE
