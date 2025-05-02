@@ -41,9 +41,9 @@ class FirebaseUserApi @Inject constructor(private val mainApi: FirebaseApi) {
         }
     }
 
-    suspend fun insertUserData(id: String, username: String): DomainResult<Unit, UserError> {
+    suspend fun insertUserData(id: String, username: String, email: String): DomainResult<Unit, UserError> {
         try{
-            val user = hashMapOf("username" to username)
+            val user = hashMapOf("username" to username, "email" to email)
             mainApi.db.collection("users").document(id).set(user).await()
         }catch(exception: Exception){
             Log.e("Firestore", "get failed with ", exception)

@@ -136,6 +136,13 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setRecipeDetails(recipe: Recipe) {
+        if (recipe.author == null) {
+            binding.authorTag.visibility = View.GONE
+        }
+        if (recipe.videoUrl.isBlank()) {
+            binding.videoFrame.visibility = View.GONE
+        }
+        binding.authorTextView.text = recipe.author?.username ?: ""
         binding.titleTextView.text = recipe.title
         // Configurar vídeo
         binding.videoWebView.settings.javaScriptEnabled = true

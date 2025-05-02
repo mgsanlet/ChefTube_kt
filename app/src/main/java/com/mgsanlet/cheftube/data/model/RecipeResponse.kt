@@ -6,5 +6,8 @@ data class RecipeResponse(
     val imagePath: String = "",
     val videoUrl: String = "",
     val ingredients: List<String> = emptyList(),
-    val steps: List<String> = emptyList()
+    val steps: List<String> = emptyList(),
+    // Author
+    val authorId: String = "",
+    val authorName: String = ""
 )

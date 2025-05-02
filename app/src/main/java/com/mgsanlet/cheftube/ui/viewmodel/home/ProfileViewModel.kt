@@ -82,6 +82,10 @@ class ProfileViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    fun getProfileUserCreatedRecipes(): List<String> {
+        return _userData.value?.createdRecipes ?: emptyList()
+    }
+
 }
 
 sealed class ProfileState {

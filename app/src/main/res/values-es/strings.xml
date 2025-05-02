@@ -160,6 +160,7 @@
     <string name="chef_icon_cdesc">Icono de sombrero de chef</string>
     <string name="see_created_recipes">Ver las recetas creadas por %1$s</string>
     <string name="see_favourite_recipes">Ver las recetas favoritas de %1$s</string>
+    <string name="no_recipes_created">El usuario aún no ha creado ninguna receta</string>
 
 
 </resources>

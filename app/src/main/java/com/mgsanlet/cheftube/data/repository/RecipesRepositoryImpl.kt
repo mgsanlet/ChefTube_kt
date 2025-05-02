@@ -1,16 +1,15 @@
 package com.mgsanlet.cheftube.data.repository
 
 import com.mgsanlet.cheftube.data.source.remote.FirebaseRecipeApi
+import com.mgsanlet.cheftube.domain.model.DomainRecipe
+import com.mgsanlet.cheftube.domain.model.DomainUser
 import com.mgsanlet.cheftube.domain.repository.RecipesRepository
+import com.mgsanlet.cheftube.domain.util.DomainResult
+import com.mgsanlet.cheftube.domain.util.DomainResult.Error
+import com.mgsanlet.cheftube.domain.util.DomainResult.Success
+import com.mgsanlet.cheftube.domain.util.error.RecipeError
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.mgsanlet.cheftube.domain.model.DomainRecipe
-import com.mgsanlet.cheftube.domain.util.DomainResult
-import com.mgsanlet.cheftube.domain.util.DomainResult.*
-import com.mgsanlet.cheftube.domain.util.error.RecipeError
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 @Singleton
 class RecipesRepositoryImpl @Inject constructor(
@@ -32,7 +31,11 @@ class RecipesRepositoryImpl @Inject constructor(
                         imageUrl = api.getStorageUrlFromPath(recipe.imagePath),
                         videoUrl = recipe.videoUrl,
                         ingredients = recipe.ingredients,
-                        steps = recipe.steps
+                        steps = recipe.steps,
+                        author = DomainUser(
+                            id = recipe.authorId,
+                            username = recipe.authorName
+                        )
                     )
                 }
                 if (domainRecipes.isEmpty()) {
@@ -62,7 +65,11 @@ class RecipesRepositoryImpl @Inject constructor(
                         imageUrl = api.getStorageUrlFromPath(recipeResponse.imagePath),
                         videoUrl = recipeResponse.videoUrl,
                         ingredients = recipeResponse.ingredients,
-                        steps = recipeResponse.steps
+                        steps = recipeResponse.steps,
+                        author = DomainUser(
+                            id = recipeResponse.authorId,
+                            username = recipeResponse.authorName
+                        )
                     )
                 }
 
@@ -72,6 +79,7 @@ class RecipesRepositoryImpl @Inject constructor(
                     Success(filteredRecipes)
                 }
             }
+
             is Error -> Error(result.error)
         }
     }
@@ -87,13 +95,18 @@ class RecipesRepositoryImpl @Inject constructor(
                         imageUrl = api.getStorageUrlFromPath(recipe.imagePath),
                         videoUrl = recipe.videoUrl,
                         ingredients = recipe.ingredients,
-                        steps = recipe.steps
+                        steps = recipe.steps,
+                        author = DomainUser(
+                            id = recipe.authorId,
+                            username = recipe.authorName
+                        )
                     )
                     Success(domainRecipe)
-                } catch (e: Exception){
+                } catch (e: Exception) {
                     Error(RecipeError.Unknown(e.message))
                 }
             }
+
             is Error -> {
                 Error(result.error)
             }
@@ -110,7 +123,11 @@ class RecipesRepositoryImpl @Inject constructor(
                         imageUrl = api.getStorageUrlFromPath(recipeResponse.imagePath),
                         videoUrl = recipeResponse.videoUrl,
                         ingredients = recipeResponse.ingredients,
-                        steps = recipeResponse.steps
+                        steps = recipeResponse.steps,
+                        author = DomainUser(
+                            id = recipeResponse.authorId,
+                            username = recipeResponse.authorName
+                        )
                     )
                 }
 
@@ -120,6 +137,7 @@ class RecipesRepositoryImpl @Inject constructor(
                     Success(filteredRecipes)
                 }
             }
+
             is Error -> Error(result.error)
         }
     }

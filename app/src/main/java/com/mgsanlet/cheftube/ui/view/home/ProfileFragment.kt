@@ -93,8 +93,14 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
                 sharedViewModel.unfollowUser()
             }
         }
+
         binding.seeCreatedButton.setOnClickListener {
-            val recipeFeedFragment = RecipeFeedFragment.newInstance(arrayListOf("recipe01","recipe02")) // TODO
+            val createdRecipes = sharedViewModel.getProfileUserCreatedRecipes()
+            if (createdRecipes.isEmpty()) {
+                Toast.makeText(context, getString(R.string.no_recipes_created), Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            val recipeFeedFragment = RecipeFeedFragment.newInstance(createdRecipes as ArrayList<String>)
             FragmentNavigator.loadFragmentInstance(
                 null, this,
                 recipeFeedFragment, R.id.fragmentContainerView

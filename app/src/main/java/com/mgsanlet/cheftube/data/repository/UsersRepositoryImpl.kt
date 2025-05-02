@@ -26,7 +26,13 @@ class UsersRepositoryImpl @Inject constructor(
             when (val result = userApi.getUserDataById(it.id)) {
                 is DomainResult.Success -> {
                     currentUser =
-                        DomainUser(it.id, result.data.username, it.email, result.data.bio, "")
+                        DomainUser(
+                            id = it.id,
+                            username = result.data.username,
+                            email = result.data.email,
+                            bio = result.data.bio,
+                            createdRecipes = result.data.createdRecipes
+                        )
                     return DomainResult.Success(currentUser!!)
                 }
 
@@ -40,11 +46,11 @@ class UsersRepositoryImpl @Inject constructor(
             is DomainResult.Success -> {
                 DomainResult.Success(
                     DomainUser(
-                        userId,
-                        result.data.username,
-                        "",
-                        result.data.bio,
-                        ""
+                        id = userId,
+                        username = result.data.username,
+                        email = result.data.email,
+                        bio = result.data.bio,
+                        createdRecipes = result.data.createdRecipes
                     )
                 )
             }
@@ -64,12 +70,16 @@ class UsersRepositoryImpl @Inject constructor(
             mainApi.auth.createUserWithEmailAndPassword(email, password).await()
             val user = mainApi.auth.currentUser ?: throw Exception("User not found after creation")
 
-            val insertDataResult = userApi.insertUserData(user.uid, username)
+            val insertDataResult = userApi.insertUserData(user.uid, username, email)
             if (insertDataResult is DomainResult.Error) {
                 return insertDataResult
             }
 
-            currentUser = DomainUser(user.uid, username, email, "", "")
+            currentUser = DomainUser(
+                id = user.uid,
+                username = username,
+                email = email
+            )
             return DomainResult.Success(Unit)
         } catch (e: Exception) {
             return if (e is FirebaseAuthException) {
@@ -91,7 +101,13 @@ class UsersRepositoryImpl @Inject constructor(
             when (val result = userApi.getUserDataById(user.uid)) {
                 is DomainResult.Success -> {
                     currentUser =
-                        DomainUser(user.uid, result.data.username, email, result.data.bio, "")
+                        DomainUser(
+                            id = user.uid,
+                            username = result.data.username,
+                            email = email,
+                            bio = result.data.bio,
+                            createdRecipes = result.data.createdRecipes
+                        )
                     return DomainResult.Success(Unit)
                 }
 
@@ -120,6 +136,7 @@ class UsersRepositoryImpl @Inject constructor(
                 email = it.email,
                 bio = newUserData.bio.ifBlank { it.bio },
                 profilePictureUrl = it.profilePictureUrl,
+                createdRecipes = it.createdRecipes
             )
             val result = userApi.updateUserData(it.id, newUserData)
             if (result is DomainResult.Success) {
@@ -135,7 +152,8 @@ class UsersRepositoryImpl @Inject constructor(
 
         mainApi.auth.currentUser?.let {
             currentUser = DomainUser(
-                it.uid, "", it.email ?: "", "", ""
+                id = it.uid,
+                email = it.email ?: ""
             )
             return DomainResult.Success(Unit)
         } ?: return DomainResult.Error(UserError.UserNotFound)
