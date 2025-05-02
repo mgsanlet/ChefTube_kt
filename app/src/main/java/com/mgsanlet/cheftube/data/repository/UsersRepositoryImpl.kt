@@ -35,6 +35,24 @@ class UsersRepositoryImpl @Inject constructor(
         } ?: return DomainResult.Error(UserError.UserNotFound)
     }
 
+    override suspend fun getUserDataById(userId: String): DomainResult<DomainUser, UserError> {
+        return when (val result = userApi.getUserDataById(userId)) {
+            is DomainResult.Success -> {
+                DomainResult.Success(
+                    DomainUser(
+                        userId,
+                        result.data.username,
+                        "",
+                        result.data.bio,
+                        ""
+                    )
+                )
+            }
+
+            is DomainResult.Error -> DomainResult.Error(result.error)
+        }
+    }
+
     override suspend fun createUser(
         username: String, email: String, password: String
     ): DomainResult<Unit, UserError> {
@@ -82,7 +100,7 @@ class UsersRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             return when (e) {
                 is FirebaseAuthInvalidUserException -> DomainResult.Error(UserError.UserNotFound)
-                is FirebaseAuthInvalidCredentialsException -> DomainResult.Error(UserError.WrongPassword)
+                is FirebaseAuthInvalidCredentialsException -> DomainResult.Error(UserError.WrongCredentials)
                 else -> DomainResult.Error(UserError.Unknown(e.message))
             }
         }
@@ -91,7 +109,8 @@ class UsersRepositoryImpl @Inject constructor(
     override suspend fun updateCurrentUserData(newUserData: DomainUser): DomainResult<Unit, UserError> {
         currentUser?.let {
             if (newUserData.username != it.username &&
-                userApi.isAvailableUsername(newUserData.username) is DomainResult.Error) {
+                userApi.isAvailableUsername(newUserData.username) is DomainResult.Error
+            ) {
 
                 return DomainResult.Error(UserError.UsernameInUse)
             }
@@ -102,7 +121,13 @@ class UsersRepositoryImpl @Inject constructor(
                 bio = newUserData.bio.ifBlank { it.bio },
                 profilePictureUrl = it.profilePictureUrl,
             )
-            return userApi.updateUserData(it.id, newUserData)
+            val result = userApi.updateUserData(it.id, newUserData)
+            if (result is DomainResult.Success) {
+                currentUser = newUserData
+                return DomainResult.Success(Unit)
+            } else {
+                return result
+            }
         } ?: throw Exception("User not found after login")
     }
 

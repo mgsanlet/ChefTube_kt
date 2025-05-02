@@ -14,28 +14,39 @@
 
     tools:context=".ui.view.auth.LoginFragment">
 
-    <EditText
-        android:id="@+id/nameEditText"
-        style="@style/AuthFields"
-
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="280dp"
-        android:layout_marginEnd="24dp"
-        android:autofillHints="username"
-        android:hint="@string/username"
-        android:inputType="text"
-        android:minHeight="48dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="260dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/dark_green_alpha"
+        android:padding="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
+        <EditText
+            android:id="@+id/nameEditText"
+            style="@style/AuthFields"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:autofillHints="username"
+            android:hint="@string/username"
+            android:inputType="text"
+            android:minHeight="48dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
 
     <EditText
         android:id="@+id/emailEditText"
@@ -83,61 +94,72 @@
 
         tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
 
-    <EditText
-        android:id="@+id/password2EditText"
-        style="@style/AuthFields"
+        <EditText
+            android:id="@+id/password2EditText"
+            style="@style/AuthFields"
 
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        android:autofillHints="null"
-        android:hint="@string/repeat_password"
-        android:inputType="textPassword"
-        android:minHeight="48dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:autofillHints="null"
+            android:hint="@string/repeat_password"
+            android:inputType="textPassword"
+            android:minHeight="48dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
 
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password1EditText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/password1EditText"
 
-        tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
+            tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
 
-    <Button
-        android:id="@+id/saveButton"
-        style="@style/AuthBtns"
+        <Button
+            android:id="@+id/saveButton"
+            style="@style/AuthBtns"
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="48dp"
-        android:text="@string/create_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginTop="16dp"
 
-        app:backgroundTint="@null"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password2EditText"
-        app:layout_constraintVertical_bias="0.0"
+            android:layout_marginEnd="48dp"
+            android:text="@string/create_account"
+            app:backgroundTint="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
 
-        tools:ignore="TextContrastCheck" />
+            app:layout_constraintTop_toBottomOf="@+id/password2EditText"
+            tools:ignore="TextContrastCheck" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:indeterminate="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/saveButton"
-        android:visibility="invisible"/>
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="6dp"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/password2EditText" />
 
+        <ImageButton
+            android:id="@+id/backbutton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/transparent"
+            android:src="@drawable/ic_back_arrow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/password2EditText"
+            app:tint="@color/white" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

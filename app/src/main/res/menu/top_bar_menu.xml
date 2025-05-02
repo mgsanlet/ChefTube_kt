@@ -13,8 +13,14 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/manage_account_item"
+        android:title="@string/manage_account"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_logout"
         android:title="@string/logout"
         app:showAsAction="never" />
+
 
 </menu>

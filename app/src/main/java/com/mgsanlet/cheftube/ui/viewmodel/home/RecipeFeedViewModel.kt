@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mgsanlet.cheftube.domain.usecase.recipe.GetAllRecipesUseCase
 import com.mgsanlet.cheftube.domain.usecase.recipe.FilterRecipesByIngredientUseCase
+import com.mgsanlet.cheftube.domain.usecase.recipe.GetRecipesByIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,16 +16,32 @@ import com.mgsanlet.cheftube.domain.util.error.RecipeError
 @HiltViewModel
 class RecipeFeedViewModel @Inject constructor(
     private val getAllRecipes: GetAllRecipesUseCase,
+    private val getRecipesById: GetRecipesByIdUseCase,
     private val filterRecipesByIngredient: FilterRecipesByIngredientUseCase
 ) : ViewModel() {
     private val _uiState = MutableLiveData<RecipeFeedState>()
     val uiState: LiveData<RecipeFeedState> = _uiState
 
-    init {
+    fun loadInitialRecipes() {
         _uiState.value = RecipeFeedState.Loading
 
         viewModelScope.launch {
             val result = getAllRecipes()
+            result.fold(
+                onSuccess = { recipeList ->
+                    _uiState.value = RecipeFeedState.InitialLoad(recipeList)
+                },
+                onError = { error ->
+                    _uiState.value = RecipeFeedState.Error(error)
+                }
+            )
+        }
+    }
+
+    fun loadSentRecipes(recipeIds: ArrayList<String>) {
+        _uiState.value = RecipeFeedState.Loading
+        viewModelScope.launch {
+            val result = getRecipesById(recipeIds)
             result.fold(
                 onSuccess = { recipeList ->
                     _uiState.value = RecipeFeedState.InitialLoad(recipeList)

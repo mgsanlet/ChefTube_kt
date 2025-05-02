@@ -12,9 +12,7 @@ class UpdateUserDataUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(newUserData: DomainUser): DomainResult<Unit, UserError> {
         // Nombre de usuario vacío se utiliza para campo no actualizado
-        return if (!newUserData.username.isEmpty() &&
-            validateNewUsername(newUserData.username) is DomainResult.Error) {
-
+        return if (validateNewUsername(newUserData.username) is DomainResult.Error) {
             DomainResult.Error(UserError.InvalidUsernamePattern)
         } else {
             usersRepository.updateCurrentUserData(newUserData)

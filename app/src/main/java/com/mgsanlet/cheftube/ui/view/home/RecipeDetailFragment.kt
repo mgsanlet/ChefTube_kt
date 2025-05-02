@@ -16,11 +16,11 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
+import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE
 import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModel
-import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModel.Companion.ARG_RECIPE
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeState
 import com.mgsanlet.cheftube.ui.viewmodel.home.TimerState
 import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe

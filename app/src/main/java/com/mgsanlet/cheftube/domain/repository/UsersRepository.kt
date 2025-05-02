@@ -11,5 +11,6 @@ interface UsersRepository {
     suspend fun updateCurrentUserData(newUserData: DomainUser): DomainResult<Unit, UserError>
     suspend fun tryAutoLogin(): DomainResult<Unit, UserError>
     suspend fun getCurrentUserData(): DomainResult<DomainUser, UserError>
+    suspend fun getUserDataById(userId: String): DomainResult<DomainUser, UserError>
     fun logout()
 }

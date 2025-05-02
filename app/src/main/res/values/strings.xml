@@ -7,7 +7,7 @@
     <string name="short_pwd">Password too short</string>
     <string name="pwd_d_match">Passwords don\'t match</string>
     <string name="no_email_app">No email app found</string>
-    <string name="wrong_password">Wrong password</string>
+    <string name="wrong_credentials">Wrong credentials</string>
     <string name="user_not_found">User not found</string>
 
     <!-- EDIT TEXTS -->
@@ -155,5 +155,14 @@
     <string name="following">%1$d following</string>
     <string name="edit_profile">Edit profile</string>
     <string name="write_bio_here">Write your biography here…</string>
+    <string name="change_password">Change password</string>
+    <string name="change_email">Change email</string>
+    <string name="manage_account">Manage account</string>
+    <string name="following_tgl">Following</string>
+    <string name="follow_tgl">Follow</string>
+    <string name="favourite_icon_cdesc">Favourite icon</string>
+    <string name="chef_icon_cdesc">Chef hat icon</string>
+    <string name="see_created_recipes">See recipes created by %1$s</string>
+    <string name="see_favourite_recipes">See %1$s \'s favourite recipes</string>
 
 </resources>

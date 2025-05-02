@@ -1,5 +1,6 @@
 package com.mgsanlet.cheftube.ui.view.home
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,8 @@ import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentRecipeFeedBinding
 import com.mgsanlet.cheftube.domain.util.error.RecipeError
 import com.mgsanlet.cheftube.ui.adapter.RecipeFeedAdapter
+import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE
+import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE_LIST
 import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
@@ -32,6 +35,16 @@ import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
 class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeedBinding>() {
 
     private val viewModel: RecipeFeedViewModel by viewModels()
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        arguments?.let{
+            val recipeIds = it.getStringArrayList(ARG_RECIPE_LIST)
+            recipeIds?.let{
+                viewModel.loadSentRecipes(recipeIds)
+            } ?: viewModel.loadInitialRecipes()
+        } ?: viewModel.loadInitialRecipes()
+    }
 
     override fun inflateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -129,6 +142,17 @@ class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeed
             // Filtrar las recetas según la consulta de entrada
             viewModel.handleSearchByIngredient(query)
             searchDialog.dismiss() // Descartar el diálogo después de la búsqueda
+        }
+    }
+
+    companion object {
+
+        fun newInstance(recipeIds: ArrayList<String>): RecipeFeedFragment {
+            val fragment = RecipeFeedFragment()
+            val args = Bundle()
+            args.putStringArrayList(ARG_RECIPE_LIST, recipeIds)
+            fragment.arguments = args
+            return fragment
         }
     }
 }

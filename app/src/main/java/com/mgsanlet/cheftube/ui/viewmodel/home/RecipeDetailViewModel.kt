@@ -100,10 +100,6 @@ class RecipeDetailViewModel @Inject constructor(
         val seconds = (millis / 1000).toInt() % 60
         return String.format("%02d:%02d", minutes, seconds)
     }
-
-    companion object {
-        const val ARG_RECIPE = "recipeId"
-    }
 }
 
 sealed class TimerState {

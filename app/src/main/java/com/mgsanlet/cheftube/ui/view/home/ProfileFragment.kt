@@ -1,119 +1,143 @@
 package com.mgsanlet.cheftube.ui.view.home
 
-import android.app.AlertDialog
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentProfileBinding
-import com.mgsanlet.cheftube.domain.util.error.UserError
-import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileState
-import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileViewModel
+import com.mgsanlet.cheftube.ui.util.Constants.ARG_USER_ID
+import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
+import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileState
+import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-/**
- * ProfileFragment permite al usuario ver y modificar los detalles de su perfil,
- * incluyendo nombre de usuario, email y contraseña.
- */
 @AndroidEntryPoint
 class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBinding>() {
 
-    private val viewModel: ProfileViewModel by viewModels()
-    private var editDialog: AlertDialog? = null
-    private var usernameEditText: EditText? = null
+    private lateinit var sharedViewModel: ProfileViewModel
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        sharedViewModel = ViewModelProvider(requireActivity())[ProfileViewModel::class.java]
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.progressBar.setCustomStyle(requireContext())
+        arguments?.let {
+            it.getString(ARG_USER_ID)?.let{
+                sharedViewModel.loadUserDataById(it)
+            } ?: sharedViewModel.loadCurrentUserData()
+        } ?: sharedViewModel.loadCurrentUserData()
+    }
 
     override fun inflateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
     ): FragmentProfileBinding = FragmentProfileBinding.inflate(inflater, container, false)
 
     override fun setUpObservers() {
-        viewModel.uiState.observe(viewLifecycleOwner) { state ->
+        sharedViewModel.uiState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is ProfileState.Error -> {
                     val errorMessage = state.error.asMessage(requireContext())
                     showLoading(false)
-                    when (state.error) {
-
-                        is UserError.UsernameInUse -> usernameEditText?.error = errorMessage
-                        is UserError.InvalidUsernamePattern -> usernameEditText?.error = errorMessage
-                        else -> Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-                    }
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 }
+
                 is ProfileState.Loading -> showLoading(true)
                 is ProfileState.LoadSuccess -> {
                     showLoading(false)
                     showUserData()
                 }
-                is ProfileState.SaveSuccess -> {
-                    showLoading(false)
-                    showUserData()
-                    Toast.makeText(context, getString(R.string.data_saved), Toast.LENGTH_SHORT)
-                        .show()
-                    editDialog?.dismiss()
+                else -> {}
+            }
+        }
+
+        sharedViewModel.isCurrentUserProfile.observe(viewLifecycleOwner) { isCurrent ->
+            when (isCurrent) {
+                true -> {
+                    binding.editButton.visibility = View.VISIBLE
+                    binding.followToggle.visibility = View.INVISIBLE
+                }
+
+                false -> {
+                    binding.editButton.visibility = View.INVISIBLE
+                    binding.followToggle.visibility = View.VISIBLE
                 }
             }
         }
     }
 
     override fun setUpListeners() {
-        binding.editButton.setOnClickListener { showEditFormDialog() }
-    }
-
-    private fun showEditFormDialog() {
-        val dialogBuilder = AlertDialog.Builder(requireContext())
-
-        // Inflar un diseño personalizado para el diálogo de búsqueda
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_profile, null)
-        dialogBuilder.setView(dialogView)
-
-        // Obtener una referencia a los elementos de la interfaz de usuario en el diseño personalizado
-        usernameEditText = dialogView.findViewById<EditText>(R.id.usernameEditText)
-        usernameEditText?.setText(binding.usernameTextView.text.toString())
-        val bioEditText = dialogView.findViewById<EditText>(R.id.bioEditText)
-        bioEditText.setText(binding.bioTextView.text.toString())
-
-        val saveButton = dialogView.findViewById<Button>(R.id.saveButton)
-        val cancelButton = dialogView.findViewById<Button>(R.id.cancelButton)
-
-        editDialog = dialogBuilder.create()
-        editDialog?.show()
-
-        saveButton.setOnClickListener {
-            viewModel.tryUpdateUserData(usernameEditText?.text.toString(), bioEditText.text.toString())
+        binding.editButton.setOnClickListener {
+            FragmentNavigator.loadFragment(
+                null, this,
+                EditProfileFragment(), R.id.fragmentContainerView
+            )
         }
-        cancelButton.setOnClickListener {
-            editDialog?.dismiss()
+        binding.followToggle.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                sharedViewModel.followUser()
+            } else {
+                sharedViewModel.unfollowUser()
+            }
+        }
+        binding.seeCreatedButton.setOnClickListener {
+            val recipeFeedFragment = RecipeFeedFragment.newInstance(arrayListOf("recipe01","recipe02")) // TODO
+            FragmentNavigator.loadFragmentInstance(
+                null, this,
+                recipeFeedFragment, R.id.fragmentContainerView
+            )
+        }
+        binding.seeFavButton.setOnClickListener {
+//            val recipeFeedFragment = RecipeDetailFragment.newInstance(sharedViewModel.userData.favouriteRecipesIds)
+//            FragmentNavigator.loadFragmentInstance(
+//                null, this,
+//                RecipeFeedFragment(), R.id.fragmentContainerView
+//            )
         }
     }
-
-    override fun setUpViewProperties() {
-        binding.progressBar.setCustomStyle(requireContext())
-    }
-
 
     private fun showUserData() {
-        viewModel.userData.value?.let{
+        sharedViewModel.userData.value?.let {
             //binding.profilePictureImageView.loadUrl(user.profilePictureUrl, requireContext())
             binding.usernameTextView.text = it.username
             binding.emailTextView.text = it.email
             binding.followersTextView.text = getString(R.string.followers, 43) //TODO
             binding.followingTextView.text = getString(R.string.following, 2) //TODO
             binding.bioTextView.text = it.bio
+            binding.seeCreatedButton.text = getString(R.string.see_created_recipes, it.username)
+            binding.seeFavButton.text = getString(R.string.see_favourite_recipes, it.username)
         }
     }
+
     private fun showLoading(show: Boolean) {
         if (show) {
             binding.progressBar.visibility = View.VISIBLE
         } else {
             binding.progressBar.visibility = View.GONE
+        }
+    }
+
+    companion object {
+
+        fun newInstance(userId: String? = null): ProfileFragment {
+            return ProfileFragment().apply {
+                arguments = Bundle().apply {
+                    userId?.let { putString(ARG_USER_ID, it) }
+                }
+            }
         }
     }
 }

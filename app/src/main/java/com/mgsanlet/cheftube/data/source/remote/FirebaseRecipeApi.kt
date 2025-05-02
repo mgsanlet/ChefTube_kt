@@ -1,4 +1,5 @@
 package com.mgsanlet.cheftube.data.source.remote
+
 import android.util.Log
 import com.mgsanlet.cheftube.data.model.RecipeResponse
 import com.mgsanlet.cheftube.domain.util.DomainResult
@@ -41,6 +42,27 @@ class FirebaseRecipeApi @Inject constructor(private val mainApi: FirebaseApi) {
             DomainResult.Error(RecipeError.Unknown(exception.message))
         }
     }
+
+    suspend fun getByIds(recipeIds: ArrayList<String>): DomainResult<List<RecipeResponse>, RecipeError> {
+        return try {
+            val result =
+                mainApi.db.collection("recipes").whereIn("id", recipeIds).get()
+                    .await()
+            val recipeList = result.documents.mapNotNull { document ->
+                try {
+                    document.toObject(RecipeResponse::class.java)
+                } catch (e: Exception) {
+                    Log.e("Firestore", "Error converting document: ${document.id} to object", e)
+                    null
+                }
+            }
+            DomainResult.Success(recipeList)
+        } catch (exception: Exception) {
+            Log.e("Firestore", "Error getting documents: ", exception)
+            DomainResult.Error(RecipeError.Unknown(exception.message))
+        }
+    }
+
 
     suspend fun getStorageUrlFromPath(path: String): String {
         return try {

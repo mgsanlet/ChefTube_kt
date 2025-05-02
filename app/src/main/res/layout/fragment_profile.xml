@@ -31,8 +31,8 @@
 
         <ImageButton
             android:id="@+id/editButton"
-            android:layout_width="35dp"
-            android:layout_height="38dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:backgroundTint="@color/transparent"
@@ -41,8 +41,7 @@
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/white"
-            tools:ignore="TouchTargetSizeCheck" />
+            app:tint="@color/white" />
 
         <TextView
             android:id="@+id/bioTextView"
@@ -63,8 +62,8 @@
             android:id="@+id/profilePictureImageView"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="36dp"
             android:contentDescription="@string/user_avatar_cdesc"
             android:src="@drawable/account_default_image"
             app:layout_constraintStart_toStartOf="parent"
@@ -74,14 +73,13 @@
             android:id="@+id/usernameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="44dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="48dp"
             android:fontFamily="sans-serif-medium"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.307"
             app:layout_constraintStart_toEndOf="@+id/profilePictureImageView"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Nombre de usuario" />
@@ -90,11 +88,10 @@
             android:id="@+id/emailTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:textAlignment="center"
             android:textColor="@color/white"
-            app:layout_constraintEnd_toEndOf="@+id/usernameTextView"
             app:layout_constraintStart_toEndOf="@+id/profilePictureImageView"
-            app:layout_constraintStart_toStartOf="@+id/usernameTextView"
             app:layout_constraintTop_toBottomOf="@id/usernameTextView"
             tools:text="email@example.com" />
 
@@ -114,11 +111,10 @@
             android:id="@+id/followingTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:textAlignment="center"
             android:textColor="@color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.08"
             app:layout_constraintStart_toEndOf="@+id/followersTextView"
             app:layout_constraintTop_toBottomOf="@+id/divider1"
             tools:text="23 following" />
@@ -140,37 +136,110 @@
             android:layout_width="361dp"
             android:layout_height="1dp"
             android:layout_marginStart="1dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="1dp"
             android:background="?android:attr/listDivider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/followersTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/followToggle" />
 
         <View
             android:id="@+id/divider1"
             android:layout_width="361dp"
             android:layout_height="1dp"
             android:layout_marginStart="1dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="1dp"
             android:background="?android:attr/listDivider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profilePictureImageView" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginBottom="16dp"
-        android:indeterminate="true"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        <ToggleButton
+            android:id="@+id/followToggle"
+            android:layout_width="89dp"
+            android:layout_height="39dp"
+            android:layout_marginStart="20dp"
+            android:backgroundTint="@color/white"
+            android:checked="false"
+            android:textAllCaps="false"
+            android:textColor="@color/dark_green"
+            android:textOff="@string/follow_tgl"
+            android:textOn="@string/following_tgl"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/followingTextView"
+            app:layout_constraintTop_toBottomOf="@+id/divider1"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <Button
+            android:id="@+id/seeFavButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:backgroundTint="@color/primary_green"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/favIcon"
+            app:layout_constraintTop_toBottomOf="@+id/seeCreatedButton"
+            tools:ignore="TextContrastCheck"
+            tools:text="See user's favourite recipes" />
+
+        <ImageView
+            android:id="@+id/favIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:contentDescription="@string/favourite_icon_cdesc"
+            android:src="@drawable/ic_star"
+            app:layout_constraintBottom_toBottomOf="@+id/seeFavButton"
+            app:layout_constraintEnd_toStartOf="@+id/seeFavButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/seeFavButton"
+            app:tint="@color/white" />
+
+        <Button
+            android:id="@+id/seeCreatedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:backgroundTint="@color/primary_green"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/chefIcon"
+            app:layout_constraintTop_toBottomOf="@+id/divider3"
+            tools:ignore="TextContrastCheck"
+            tools:text="See recipes created by user" />
+
+        <ImageView
+            android:id="@+id/chefIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:contentDescription="@string/chef_icon_cdesc"
+            android:src="@drawable/ic_chef_hat"
+            app:layout_constraintBottom_toBottomOf="@+id/seeCreatedButton"
+            app:layout_constraintEnd_toStartOf="@+id/seeCreatedButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/seeCreatedButton"
+            app:tint="@color/white" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/seeFavButton" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

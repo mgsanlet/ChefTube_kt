@@ -60,9 +60,11 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
                     showLoading(false)
                     val errorMessage = state.error.asMessage(requireContext())
                     when (state.error) {
-                        is UserError.UserNotFound -> binding.emailEditText.error = errorMessage
 
-                        is UserError.WrongPassword -> binding.passwordEditText.error = errorMessage
+                        is UserError.WrongCredentials -> {
+                            binding.emailEditText.error = errorMessage
+                            binding.passwordEditText.error = errorMessage
+                        }
 
                         else -> Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                     }
@@ -118,8 +120,10 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
         binding.signInButton.isEnabled = !show
         if (show) {
             binding.progressBar.visibility = View.VISIBLE
+            binding.signInButton.visibility = View.INVISIBLE
         } else {
             binding.progressBar.visibility = View.GONE
+            binding.signInButton.visibility = View.VISIBLE
         }
     }
 }

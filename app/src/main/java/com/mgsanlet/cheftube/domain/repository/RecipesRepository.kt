@@ -9,4 +9,5 @@ interface RecipesRepository {
     suspend fun filterRecipesByIngredient(ingredientQuery: String): DomainResult<List<Recipe>, RecipeError>
     suspend fun getById(recipeId: String): DomainResult<Recipe, RecipeError>
     suspend fun getAll(): DomainResult<List<Recipe>, RecipeError>
+    suspend fun getByIds(recipeIds: ArrayList<String>): DomainResult<List<Recipe>, RecipeError>
 }

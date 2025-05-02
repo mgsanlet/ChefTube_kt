@@ -7,7 +7,7 @@
     <string name="short_pwd">Contraseña demasiado corta</string>
     <string name="pwd_d_match">Las contraseñas no coinciden</string>
     <string name="no_email_app">No se encontró aplicación de email</string>
-    <string name="wrong_password">Contraseña incorrecta</string>
+    <string name="wrong_credentials">Credenciales incorrectas</string>
     <string name="user_not_found">Usuario no encontrado</string>
 
     <!-- EDIT TEXTS -->
@@ -151,6 +151,15 @@
     <string name="following">%1$d seguidos</string>
     <string name="edit_profile">Editar perfil</string>
     <string name="write_bio_here">Escribe aquí tu biografía…</string>
+    <string name="change_password">Cambiar contraseña</string>
+    <string name="change_email">Cambiar email</string>
+    <string name="manage_account">Gestionar cuenta</string>
+    <string name="following_tgl">Siguiendo</string>
+    <string name="follow_tgl">Seguir</string>
+    <string name="favourite_icon_cdesc">Icono de favorito</string>
+    <string name="chef_icon_cdesc">Icono de sombrero de chef</string>
+    <string name="see_created_recipes">Ver las recetas creadas por %1$s</string>
+    <string name="see_favourite_recipes">Ver las recetas favoritas de %1$s</string>
 
 
 </resources>

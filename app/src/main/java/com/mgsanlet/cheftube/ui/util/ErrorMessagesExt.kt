@@ -14,7 +14,7 @@ fun UserError.asMessage(context: Context): String {
         is UserError.UsernameInUse -> context.getString(R.string.username_already)
         is UserError.EmailInUse -> context.getString(R.string.email_already)
         is UserError.UserNotFound -> context.getString(R.string.user_not_found)
-        is UserError.WrongPassword -> context.getString(R.string.wrong_password)
+        is UserError.WrongCredentials -> context.getString(R.string.wrong_credentials)
         is UserError.Unknown -> context.getString(R.string.unknown_error, this.messageArg)
         is UserError.InvalidEmailPattern -> context.getString(R.string.invalid_email)
         is UserError.PasswordTooShort -> context.getString(R.string.short_pwd)

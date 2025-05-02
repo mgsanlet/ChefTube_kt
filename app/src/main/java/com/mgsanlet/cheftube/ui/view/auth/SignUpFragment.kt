@@ -109,6 +109,10 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
         binding.emailEditText.afterTextChanged { cleanErrors() }
         binding.password1EditText.afterTextChanged { cleanErrors() }
         binding.password2EditText.afterTextChanged { cleanErrors() }
+
+        binding.backbutton.setOnClickListener {
+            (activity as? AuthActivity)?.onBackPressedDispatcher?.onBackPressed()
+        }
     }
 
     override fun setUpViewProperties() {
@@ -152,8 +156,10 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
         binding.saveButton.isEnabled = !show
         if (show) {
             binding.progressBar.visibility = View.VISIBLE
+            binding.saveButton.visibility = View.INVISIBLE
         } else {
             binding.progressBar.visibility = View.GONE
+            binding.saveButton.visibility = View.VISIBLE
         }
     }
 }

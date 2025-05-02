@@ -8,12 +8,44 @@ import com.mgsanlet.cheftube.domain.model.DomainRecipe
 import com.mgsanlet.cheftube.domain.util.DomainResult
 import com.mgsanlet.cheftube.domain.util.DomainResult.*
 import com.mgsanlet.cheftube.domain.util.error.RecipeError
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @Singleton
 class RecipesRepositoryImpl @Inject constructor(
     private val api: FirebaseRecipeApi
 ) : RecipesRepository {
     var recipesCache: List<DomainRecipe>? = null
+
+    override suspend fun getAll(): DomainResult<List<DomainRecipe>, RecipeError> {
+        recipesCache?.let {
+            if (!it.isEmpty()) return Success(it)
+        }
+
+        return when (val result = api.getAll()) {
+            is Success -> {
+                val domainRecipes = result.data.map { recipe ->
+                    DomainRecipe(
+                        id = recipe.id,
+                        title = recipe.title,
+                        imageUrl = api.getStorageUrlFromPath(recipe.imagePath),
+                        videoUrl = recipe.videoUrl,
+                        ingredients = recipe.ingredients,
+                        steps = recipe.steps
+                    )
+                }
+                if (domainRecipes.isEmpty()) {
+                    Error(RecipeError.NoResults)
+                } else {
+                    recipesCache = domainRecipes
+                    Success(domainRecipes)
+                }
+            }
+
+            is Error -> Error(result.error)
+        }
+    }
 
     override suspend fun filterRecipesByIngredient(ingredientQuery: String): DomainResult<List<DomainRecipe>, RecipeError> {
         return when (val result = api.getAll()) {
@@ -68,32 +100,28 @@ class RecipesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAll(): DomainResult<List<DomainRecipe>, RecipeError> {
-        recipesCache?.let {
-            if (!it.isEmpty()) return Success(it)
-        }
-
-        return when (val result = api.getAll()) {
+    override suspend fun getByIds(recipeIds: ArrayList<String>): DomainResult<List<DomainRecipe>, RecipeError> {
+        return when (val result = api.getByIds(recipeIds)) {
             is Success -> {
-                val domainRecipes = result.data.map { recipe ->
+                val filteredRecipes = result.data.map { recipeResponse ->
                     DomainRecipe(
-                        id = recipe.id,
-                        title = recipe.title,
-                        imageUrl = api.getStorageUrlFromPath(recipe.imagePath),
-                        videoUrl = recipe.videoUrl,
-                        ingredients = recipe.ingredients,
-                        steps = recipe.steps
+                        id = recipeResponse.id,
+                        title = recipeResponse.title,
+                        imageUrl = api.getStorageUrlFromPath(recipeResponse.imagePath),
+                        videoUrl = recipeResponse.videoUrl,
+                        ingredients = recipeResponse.ingredients,
+                        steps = recipeResponse.steps
                     )
                 }
-                if (domainRecipes.isEmpty()) {
+
+                if (filteredRecipes.isEmpty()) {
                     Error(RecipeError.NoResults)
                 } else {
-                    recipesCache = domainRecipes
-                    Success(domainRecipes)
+                    Success(filteredRecipes)
                 }
             }
-
             is Error -> Error(result.error)
         }
     }
+
 }

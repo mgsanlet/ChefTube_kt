@@ -3,17 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/dark_green"
     android:orientation="vertical"
     android:padding="16dp">
 
-
     <TextView
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/edit_profile"
@@ -27,30 +24,29 @@
         android:id="@+id/profilePictureImageView"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="64dp"
         android:contentDescription="@string/user_avatar_cdesc"
         android:src="@drawable/account_default_image"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/usernameEditText"
         style="@style/AuthFields"
-        android:maxLength="16"
         android:layout_width="0dp"
         android:layout_height="48dp"
-
         android:layout_marginTop="24dp"
         android:layout_weight="1"
         android:autofillHints="null"
         android:background="?android:attr/editTextBackground"
-
-        android:textColor="@color/white"
         android:hint="@string/username"
         android:inputType="text"
+        android:maxLength="16"
         android:minHeight="48dp"
         android:padding="10dp"
+        android:textColor="@color/white"
         android:textColorHint="#A6FFFFFF"
         app:layout_constraintDimensionRatio=""
         app:layout_constraintEnd_toEndOf="parent"
@@ -60,61 +56,64 @@
 
     <EditText
         android:id="@+id/bioEditText"
-
         android:layout_width="0dp"
         android:layout_height="142dp"
-
         android:layout_marginTop="16dp"
         android:autofillHints="null"
         android:gravity="top|start"
         android:hint="@string/write_bio_here"
         android:inputType="textMultiLine"
-        android:textColor="@color/white"
         android:maxLength="140"
         android:maxLines="5"
         android:minHeight="48dp"
         android:padding="10dp"
+        android:textColor="@color/white"
         android:textColorHint="#A6FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/usernameEditText" />
 
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="136dp"
+        android:indeterminate="true"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <Button
         android:id="@+id/saveButton"
         style="@style/AuthBtns"
-
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginEnd="16dp"
         android:padding="10dp"
-
         android:text="@string/save"
         android:textColor="@color/white"
         app:backgroundTint="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bioEditText"
         tools:ignore="TextContrastCheck" />
 
     <Button
         android:id="@+id/cancelButton"
         style="@style/AuthBtns"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="20dp"
-
+        android:layout_marginEnd="16dp"
         android:backgroundTint="@color/dark_red"
         android:padding="10dp"
         android:text="@string/cancel"
         android:textColor="@color/white"
         app:backgroundTint="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/saveButton"
-        app:layout_constraintTop_toBottomOf="@+id/bioEditText"
         tools:ignore="TextContrastCheck" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
