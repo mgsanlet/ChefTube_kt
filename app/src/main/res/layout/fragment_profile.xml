@@ -100,9 +100,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
             android:textAlignment="center"
             android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/divider2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider1"
             tools:text="344 followers" />
@@ -111,10 +111,10 @@
             android:id="@+id/followingTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
             android:textAlignment="center"
             android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/divider2"
             app:layout_constraintStart_toEndOf="@+id/followersTextView"
             app:layout_constraintTop_toBottomOf="@+id/divider1"
             tools:text="23 following" />
@@ -156,8 +156,8 @@
 
         <ToggleButton
             android:id="@+id/followToggle"
-            android:layout_width="89dp"
-            android:layout_height="39dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:backgroundTint="@color/white"
             android:checked="false"

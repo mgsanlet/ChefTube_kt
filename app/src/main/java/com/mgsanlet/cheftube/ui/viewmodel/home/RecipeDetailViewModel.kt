@@ -23,6 +23,8 @@ class RecipeDetailViewModel @Inject constructor(
     private val _recipeState = MutableLiveData<RecipeState>()
     val recipeState: LiveData<RecipeState> = _recipeState
 
+    var authorId: String? = null
+
     // Estado del cronómetro
     private var _timer: CountDownTimer? = null
 
@@ -48,6 +50,7 @@ class RecipeDetailViewModel @Inject constructor(
                 result.fold(
                     onSuccess = { recipe ->
                         _recipeState.value = RecipeState.Success(recipe)
+                        authorId = recipe.author?.id
                     },
                     onError = { error ->
                         _recipeState.value = RecipeState.Error(error)

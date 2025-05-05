@@ -21,7 +21,7 @@ class RecipesRepositoryImpl @Inject constructor(
         recipesCache?.let {
             if (!it.isEmpty()) return Success(it)
         }
-
+        // Si el caché es nulo
         return when (val result = api.getAll()) {
             is Success -> {
                 val domainRecipes = result.data.map { recipe ->
@@ -32,6 +32,7 @@ class RecipesRepositoryImpl @Inject constructor(
                         videoUrl = recipe.videoUrl,
                         ingredients = recipe.ingredients,
                         steps = recipe.steps,
+                        favouriteCount = recipe.favouriteCount,
                         author = DomainUser(
                             id = recipe.authorId,
                             username = recipe.authorName
@@ -66,6 +67,7 @@ class RecipesRepositoryImpl @Inject constructor(
                         videoUrl = recipeResponse.videoUrl,
                         ingredients = recipeResponse.ingredients,
                         steps = recipeResponse.steps,
+                        favouriteCount = recipeResponse.favouriteCount,
                         author = DomainUser(
                             id = recipeResponse.authorId,
                             username = recipeResponse.authorName
@@ -85,6 +87,11 @@ class RecipesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getById(recipeId: String): DomainResult<DomainRecipe, RecipeError> {
+        recipesCache?.let {
+            val recipe = it.find { recipe -> recipe.id == recipeId }
+            if (recipe != null) return Success(recipe)
+        }
+        // Si el caché es nulo
         return when (val result = api.getById(recipeId)) {
             is Success -> {
                 try {
@@ -96,6 +103,7 @@ class RecipesRepositoryImpl @Inject constructor(
                         videoUrl = recipe.videoUrl,
                         ingredients = recipe.ingredients,
                         steps = recipe.steps,
+                        favouriteCount = recipe.favouriteCount,
                         author = DomainUser(
                             id = recipe.authorId,
                             username = recipe.authorName
@@ -114,6 +122,10 @@ class RecipesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getByIds(recipeIds: ArrayList<String>): DomainResult<List<DomainRecipe>, RecipeError> {
+        recipesCache?.let {
+            return Success( it.filter { recipe -> recipeIds.contains(recipe.id) } )
+        }
+        // Si el caché es nulo
         return when (val result = api.getByIds(recipeIds)) {
             is Success -> {
                 val filteredRecipes = result.data.map { recipeResponse ->
@@ -124,6 +136,7 @@ class RecipesRepositoryImpl @Inject constructor(
                         videoUrl = recipeResponse.videoUrl,
                         ingredients = recipeResponse.ingredients,
                         steps = recipeResponse.steps,
+                        favouriteCount = recipeResponse.favouriteCount,
                         author = DomainUser(
                             id = recipeResponse.authorId,
                             username = recipeResponse.authorName

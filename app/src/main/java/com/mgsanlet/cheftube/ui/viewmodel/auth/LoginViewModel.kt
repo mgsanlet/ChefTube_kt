@@ -20,17 +20,11 @@ class LoginViewModel @Inject constructor(
     private val automaticLogin: AutomaticLoginUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableLiveData<LoginState>(LoginState.Initial)
+    private val _uiState = MutableLiveData<LoginState>(LoginState.Loading)
     val uiState: LiveData<LoginState> = _uiState
 
-    init {
-        tryAutoLogin()
-    }
-
-    private fun tryAutoLogin() {
-        _uiState.value = LoginState.Loading
+    fun tryAutoLogin() {
         viewModelScope.launch {
-            _uiState.value = LoginState.Loading
             if (automaticLogin() is DomainResult.Success) { _uiState.value = LoginState.AlreadyLogged }
             else { _uiState.value = LoginState.Initial }
         }
@@ -52,15 +46,6 @@ class LoginViewModel @Inject constructor(
                     _uiState.value = LoginState.Error(error)
                 })
         }
-    }
-
-    fun resetState() {
-        _uiState.value = LoginState.Initial
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        resetState()
     }
 }
 

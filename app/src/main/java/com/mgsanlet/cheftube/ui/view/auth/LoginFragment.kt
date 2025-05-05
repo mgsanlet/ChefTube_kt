@@ -1,5 +1,6 @@
 package com.mgsanlet.cheftube.ui.view.auth
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,11 +27,6 @@ import javax.inject.Inject
 class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBinding>() {
 
     private val viewModel: LoginViewModel by viewModels()
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.resetState()
-    }
 
     override fun inflateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -76,6 +72,11 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
                 }
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.tryAutoLogin()
     }
 
     override fun setUpListeners() {

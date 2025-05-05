@@ -7,7 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.mgsanlet.cheftube.domain.model.DomainUser
 import com.mgsanlet.cheftube.domain.usecase.user.GetCurrentUserDataUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.GetUserDataByIdUseCase
+import com.mgsanlet.cheftube.domain.usecase.user.UpdateCurrentUserDataUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.UpdateUserDataUseCase
+import com.mgsanlet.cheftube.domain.util.DomainResult
 import com.mgsanlet.cheftube.domain.util.error.UserError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,6 +19,7 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val getUserDataById: GetUserDataByIdUseCase,
     private val getCurrentUserData: GetCurrentUserDataUseCase,
+    private val updateCurrentUserData: UpdateCurrentUserDataUseCase,
     private val updateUserData: UpdateUserDataUseCase
 ) : ViewModel() {
     private val _uiState = MutableLiveData<ProfileState>()
@@ -29,6 +32,19 @@ class ProfileViewModel @Inject constructor(
     fun loadUserDataById(userId: String) {
         _uiState.value = ProfileState.Loading
         viewModelScope.launch {
+            getCurrentUserData().fold(
+                onSuccess = { currentUser ->
+                    _isCurrentUserProfile.value = currentUser.id == userId
+                    if (_isCurrentUserProfile.value == true) {
+                        _userData.value = currentUser
+                        _uiState.value = ProfileState.LoadSuccess
+                    }
+                },
+                onError = { error -> _uiState.value = ProfileState.Error(error) }
+            )
+            if (_isCurrentUserProfile.value == true) {
+                return@launch
+            }
             getUserDataById(userId).fold(
                 onSuccess = { user ->
                     _isCurrentUserProfile.value = false
@@ -44,9 +60,9 @@ class ProfileViewModel @Inject constructor(
         _uiState.value = ProfileState.Loading
         viewModelScope.launch {
             getCurrentUserData().fold(
-                onSuccess = { user ->
+                onSuccess = { currentUser ->
                     _isCurrentUserProfile.value = true
-                    _userData.value = user
+                    _userData.value = currentUser
                     _uiState.value = ProfileState.LoadSuccess
                 },
                 onError = { error -> _uiState.value = ProfileState.Error(error) }
@@ -54,7 +70,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun tryUpdateUserData(newUsername: String, newBio: String) {
+    fun tryUpdateCurrentUserData(newUsername: String, newBio: String) {
         _uiState.value = ProfileState.Loading
 
         var newUserData = _userData.value?.copy(
@@ -63,7 +79,7 @@ class ProfileViewModel @Inject constructor(
         ) ?: throw Exception("Null logged user")
 
         viewModelScope.launch {
-            updateUserData(newUserData).fold(
+            updateCurrentUserData(newUserData).fold(
                 onSuccess = {
                     _userData.value = newUserData
                     _uiState.value = ProfileState.SaveSuccess
@@ -74,16 +90,77 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun followUser() {
-        TODO("Not yet implemented")
+    fun isUserBeingFollowed(): Boolean {
+        var currentUserId: String? = null
+        var isBeingFollowed = false
+        viewModelScope.launch {
+            getCurrentUserData().fold(
+                onSuccess = { currentUserData ->
+                    currentUserId = currentUserData.id
+                },
+                onError = { error ->
+                    _uiState.value = ProfileState.Error(error)
+                    return@launch
+                }
+            )
+            isBeingFollowed = _userData.value?.followersIds?.contains(currentUserId) == true
+        }
+        return isBeingFollowed
     }
 
-    fun unfollowUser() {
-        TODO("Not yet implemented")
+    fun followUser(doFollow: Boolean) {
+        var currentUserData: DomainUser? = null
+        var newUserData: DomainUser? = null
+        var newCurrentUserData: DomainUser? = null
+        viewModelScope.launch {
+            getCurrentUserData().fold(
+                onSuccess = { currentUserData = it },
+                onError = { error ->
+                    _uiState.value = ProfileState.Error(error)
+                    return@launch
+                }
+            )
+            try {// Actualizamos las listas de followers y following
+                if (doFollow) {
+                    newUserData = _userData.value?.copy(
+                        followersIds = _userData.value!!.followersIds.plus(currentUserData!!.id)
+                    )
+                    newCurrentUserData = currentUserData!!.copy(
+                        followingIds = currentUserData.followingIds.plus(_userData.value!!.id)
+                    )
+                } else {
+                    newUserData = _userData.value?.copy(
+                        followersIds = _userData.value!!.followersIds.filterNot { it == currentUserData!!.id }
+                    )
+                    newCurrentUserData = currentUserData!!.copy(
+                        followingIds = currentUserData.followingIds.filterNot { it == _userData.value!!.id }
+                    )
+                }
+                // Llamamos a los casos de uso de actualización
+                var result = updateUserData(newUserData!!)
+                if (result is DomainResult.Error) {
+                    _uiState.value = ProfileState.Error(result.error)
+                    return@launch
+                }
+                _userData.value = newUserData!!
+                result = updateCurrentUserData(newCurrentUserData)
+                if (result is DomainResult.Error) {
+                    _uiState.value = ProfileState.Error(result.error)
+                    return@launch
+                }
+            } catch (_: Exception) {
+                _uiState.value = ProfileState.Error(UserError.Unknown())
+            }
+        }
+
     }
 
     fun getProfileUserCreatedRecipes(): List<String> {
         return _userData.value?.createdRecipes ?: emptyList()
+    }
+
+    fun getProfileUserFavouriteRecipes(): List<String> {
+        return _userData.value?.favouriteRecipes ?: emptyList()
     }
 
 }

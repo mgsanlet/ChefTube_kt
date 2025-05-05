@@ -165,5 +165,6 @@
     <string name="see_created_recipes">See recipes created by %1$s</string>
     <string name="see_favourite_recipes">See %1$s \'s favourite recipes</string>
     <string name="no_recipes_created">No recipes created yet by this user</string>
+    <string name="no_favourite_recipes">User has no favourite recipes yet</string>
 
 </resources>

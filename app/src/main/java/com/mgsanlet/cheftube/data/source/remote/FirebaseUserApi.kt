@@ -41,11 +41,15 @@ class FirebaseUserApi @Inject constructor(private val mainApi: FirebaseApi) {
         }
     }
 
-    suspend fun insertUserData(id: String, username: String, email: String): DomainResult<Unit, UserError> {
-        try{
-            val user = hashMapOf("username" to username, "email" to email)
+    suspend fun insertUserData(
+        id: String,
+        username: String,
+        email: String
+    ): DomainResult<Unit, UserError> {
+        try {
+            val user = hashMapOf("id" to id, "username" to username, "email" to email)
             mainApi.db.collection("users").document(id).set(user).await()
-        }catch(exception: Exception){
+        } catch (exception: Exception) {
             Log.e("Firestore", "get failed with ", exception)
             return DomainResult.Error(UserError.Unknown(exception.message))
         }
@@ -54,10 +58,18 @@ class FirebaseUserApi @Inject constructor(private val mainApi: FirebaseApi) {
 
     suspend fun updateUserData(id: String, user: DomainUser): DomainResult<Unit, UserError> {
         try {
-            val user = hashMapOf("username" to user.username,
-                                  "bio" to user.bio  )
+            val user = hashMapOf(
+                "id" to id,
+                "username" to user.username,
+                "email" to user.email,
+                "bio" to user.bio,
+                "createdRecipes" to user.createdRecipes,
+                "favouriteRecipes" to user.favouriteRecipes,
+                "followersIds" to user.followersIds,
+                "followingIds" to user.followingIds
+            )
             mainApi.db.collection("users").document(id).set(user).await()
-        }catch(exception: Exception){
+        } catch (exception: Exception) {
             Log.e("Firestore", "get failed with ", exception)
             return DomainResult.Error(UserError.Unknown(exception.message))
         }

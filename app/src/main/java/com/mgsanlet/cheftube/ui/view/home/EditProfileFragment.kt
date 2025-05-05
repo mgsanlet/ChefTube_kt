@@ -1,11 +1,9 @@
 package com.mgsanlet.cheftube.ui.view.home
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.mgsanlet.cheftube.R
@@ -78,7 +76,7 @@ class EditProfileFragment @Inject constructor() : BaseFragment<FragmentEditProfi
 
     override fun setUpListeners() {
         binding.saveButton.setOnClickListener {
-            sharedViewModel.tryUpdateUserData(
+            sharedViewModel.tryUpdateCurrentUserData(
                 binding.usernameEditText.text.toString(),
                 binding.bioEditText.text.toString()
             )

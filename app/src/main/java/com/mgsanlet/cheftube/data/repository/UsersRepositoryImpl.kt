@@ -19,26 +19,20 @@ class UsersRepositoryImpl @Inject constructor(
     private val userApi: FirebaseUserApi
 ) : UsersRepository {
 
-    private var currentUser: DomainUser? = null
+    private var currentUserCache: DomainUser? = null
 
     override suspend fun getCurrentUserData(): DomainResult<DomainUser, UserError> {
-        currentUser?.let {
-            when (val result = userApi.getUserDataById(it.id)) {
+        currentUserCache?.let {
+            return DomainResult.Success(currentUserCache!!)
+        }
+            ?: when (val result = getUserDataById(mainApi.auth.currentUser!!.uid)) {
                 is DomainResult.Success -> {
-                    currentUser =
-                        DomainUser(
-                            id = it.id,
-                            username = result.data.username,
-                            email = result.data.email,
-                            bio = result.data.bio,
-                            createdRecipes = result.data.createdRecipes
-                        )
-                    return DomainResult.Success(currentUser!!)
+                    currentUserCache = result.data
+                    return DomainResult.Success(result.data)
                 }
 
                 is DomainResult.Error -> return DomainResult.Error(result.error)
             }
-        } ?: return DomainResult.Error(UserError.UserNotFound)
     }
 
     override suspend fun getUserDataById(userId: String): DomainResult<DomainUser, UserError> {
@@ -50,7 +44,10 @@ class UsersRepositoryImpl @Inject constructor(
                         username = result.data.username,
                         email = result.data.email,
                         bio = result.data.bio,
-                        createdRecipes = result.data.createdRecipes
+                        createdRecipes = result.data.createdRecipes,
+                        favouriteRecipes = result.data.favouriteRecipes,
+                        followersIds = result.data.followersIds,
+                        followingIds = result.data.followingIds
                     )
                 )
             }
@@ -68,14 +65,15 @@ class UsersRepositoryImpl @Inject constructor(
                 return isAvailableResult
             }
             mainApi.auth.createUserWithEmailAndPassword(email, password).await()
-            val user = mainApi.auth.currentUser ?: throw Exception("User not found after creation")
+            val user =
+                mainApi.auth.currentUser ?: throw Exception("User not found after creation")
 
             val insertDataResult = userApi.insertUserData(user.uid, username, email)
             if (insertDataResult is DomainResult.Error) {
                 return insertDataResult
             }
 
-            currentUser = DomainUser(
+            currentUserCache = DomainUser(
                 id = user.uid,
                 username = username,
                 email = email
@@ -94,19 +92,25 @@ class UsersRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun loginUser(email: String, password: String): DomainResult<Unit, UserError> {
+    override suspend fun loginUser(
+        email: String,
+        password: String
+    ): DomainResult<Unit, UserError> {
         try {
             mainApi.auth.signInWithEmailAndPassword(email, password).await()
             val user = mainApi.auth.currentUser ?: throw Exception("User not found after login")
             when (val result = userApi.getUserDataById(user.uid)) {
                 is DomainResult.Success -> {
-                    currentUser =
+                    currentUserCache =
                         DomainUser(
                             id = user.uid,
                             username = result.data.username,
                             email = email,
                             bio = result.data.bio,
-                            createdRecipes = result.data.createdRecipes
+                            createdRecipes = result.data.createdRecipes,
+                            favouriteRecipes = result.data.favouriteRecipes,
+                            followersIds = result.data.followersIds,
+                            followingIds = result.data.followingIds
                         )
                     return DomainResult.Success(Unit)
                 }
@@ -123,24 +127,10 @@ class UsersRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateCurrentUserData(newUserData: DomainUser): DomainResult<Unit, UserError> {
-        currentUser?.let {
-            if (newUserData.username != it.username &&
-                userApi.isAvailableUsername(newUserData.username) is DomainResult.Error
-            ) {
-
-                return DomainResult.Error(UserError.UsernameInUse)
-            }
-            val newUserData = DomainUser(
-                id = it.id,
-                username = newUserData.username.ifBlank { it.username },
-                email = it.email,
-                bio = newUserData.bio.ifBlank { it.bio },
-                profilePictureUrl = it.profilePictureUrl,
-                createdRecipes = it.createdRecipes
-            )
-            val result = userApi.updateUserData(it.id, newUserData)
+        currentUserCache?.let {
+            var result = updateUserData(newUserData)
             if (result is DomainResult.Success) {
-                currentUser = newUserData
+                currentUserCache = newUserData
                 return DomainResult.Success(Unit)
             } else {
                 return result
@@ -148,19 +138,57 @@ class UsersRepositoryImpl @Inject constructor(
         } ?: throw Exception("User not found after login")
     }
 
+    override suspend fun updateUserData(newUserData: DomainUser): DomainResult<Unit, UserError> {
+        var oldUserData: DomainUser? = null
+        getUserDataById(newUserData.id).fold(
+            onSuccess = { userData ->
+                oldUserData = userData
+            },
+            onError = { error ->
+                return DomainResult.Error(error)
+            }
+        )
+        oldUserData?.let {
+            if (newUserData.username != it.username &&
+                userApi.isAvailableUsername(newUserData.username) is DomainResult.Error
+            ) {
+                return DomainResult.Error(UserError.UsernameInUse)
+            }
+            val updatedUserData = DomainUser(
+                id = it.id,
+                username = newUserData.username.ifBlank { it.username },
+                email = it.email,
+                bio = newUserData.bio.ifBlank { it.bio },
+                profilePictureUrl = it.profilePictureUrl,
+                createdRecipes = it.createdRecipes,
+                favouriteRecipes = it.favouriteRecipes,
+                followersIds = newUserData.followersIds,
+                followingIds = newUserData.followingIds
+            )
+            return userApi.updateUserData(it.id, updatedUserData)
+
+        } ?: return DomainResult.Error(UserError.UserNotFound)
+    }
+
     override suspend fun tryAutoLogin(): DomainResult<Unit, UserError> {
 
         mainApi.auth.currentUser?.let {
-            currentUser = DomainUser(
-                id = it.uid,
-                email = it.email ?: ""
+            var result = getCurrentUserData() //Cacheamos el usuario
+            result.fold(
+                onSuccess = { currentUserData ->
+                    currentUserCache = currentUserData
+                    return DomainResult.Success(Unit)
+                },
+                onError = { error->
+                    logout()
+                    return DomainResult.Error(error)
+                }
             )
-            return DomainResult.Success(Unit)
         } ?: return DomainResult.Error(UserError.UserNotFound)
     }
 
     override fun logout() {
-        currentUser = null
+        currentUserCache = null
         mainApi.auth.signOut()
     }
 }

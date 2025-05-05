@@ -22,6 +22,12 @@ import javax.inject.Inject
 class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBinding>() {
 
     private lateinit var sharedViewModel: ProfileViewModel
+    private var isToggleInitialization: Boolean = true
+
+    override fun onResume() {
+        super.onResume()
+        isToggleInitialization = true
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,6 +83,8 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
                 }
             }
         }
+
+        sharedViewModel.userData.observe(viewLifecycleOwner) { showUserData() }
     }
 
     override fun setUpListeners() {
@@ -87,10 +95,8 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
             )
         }
         binding.followToggle.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                sharedViewModel.followUser()
-            } else {
-                sharedViewModel.unfollowUser()
+            if (!isToggleInitialization){
+                sharedViewModel.followUser(isChecked)
             }
         }
 
@@ -107,11 +113,16 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
             )
         }
         binding.seeFavButton.setOnClickListener {
-//            val recipeFeedFragment = RecipeDetailFragment.newInstance(sharedViewModel.userData.favouriteRecipesIds)
-//            FragmentNavigator.loadFragmentInstance(
-//                null, this,
-//                RecipeFeedFragment(), R.id.fragmentContainerView
-//            )
+            val favouriteRecipes = sharedViewModel.getProfileUserFavouriteRecipes()
+            if (favouriteRecipes.isEmpty()) {
+                Toast.makeText(context, getString(R.string.no_favourite_recipes), Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            val recipeFeedFragment = RecipeFeedFragment.newInstance(favouriteRecipes as ArrayList<String>)
+            FragmentNavigator.loadFragmentInstance(
+                null, this,
+                recipeFeedFragment, R.id.fragmentContainerView
+            )
         }
     }
 
@@ -120,8 +131,10 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
             //binding.profilePictureImageView.loadUrl(user.profilePictureUrl, requireContext())
             binding.usernameTextView.text = it.username
             binding.emailTextView.text = it.email
-            binding.followersTextView.text = getString(R.string.followers, 43) //TODO
-            binding.followingTextView.text = getString(R.string.following, 2) //TODO
+            binding.followToggle.isChecked = sharedViewModel.isUserBeingFollowed()
+            isToggleInitialization = false
+            binding.followersTextView.text = getString(R.string.followers, it.followersIds.size)
+            binding.followingTextView.text = getString(R.string.following, it.followingIds.size)
             binding.bioTextView.text = it.bio
             binding.seeCreatedButton.text = getString(R.string.see_created_recipes, it.username)
             binding.seeFavButton.text = getString(R.string.see_favourite_recipes, it.username)

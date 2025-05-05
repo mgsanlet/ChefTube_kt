@@ -81,13 +81,58 @@
                 android:id="@+id/videoFrame"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_marginBottom="40dp">
+                android:layout_marginBottom="10dp">
 
                 <WebView
                     android:id="@+id/videoWebView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
             </FrameLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/favouriteButtonContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/favouriteNumberTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/favouriteButton"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/favouriteButton"
+                    tools:text="13" />
+
+                <ToggleButton
+                    android:id="@+id/favouriteButton"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/ic_star_selector"
+                    android:backgroundTint="@color/white"
+                    android:checked="false"
+                    android:contentDescription="@string/favourite_icon_cdesc"
+                    android:text=""
+                    android:textOff=""
+                    android:textOn=""
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/favouriteNumberTextView"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="TouchTargetSizeCheck" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:backgroundTint="@color/white"
+                android:id="@+id/divider1"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_marginEnd="1dp"
+                android:background="?android:attr/listDivider"
+                android:layout_marginBottom="10dp"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -105,7 +150,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginBottom="20dp"/>
+                android:layout_marginBottom="10dp"/>
+
+            <View
+                android:backgroundTint="@color/white"
+                android:id="@+id/divider2"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_marginEnd="1dp"
+                android:background="?android:attr/listDivider"
+                android:layout_marginBottom="10dp"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -123,7 +177,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginBottom="20dp"/>
+                android:layout_marginBottom="10dp"/>
         </LinearLayout>
     </ScrollView>
 

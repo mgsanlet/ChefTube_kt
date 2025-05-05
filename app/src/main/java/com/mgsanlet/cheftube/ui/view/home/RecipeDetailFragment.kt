@@ -17,15 +17,16 @@ import androidx.fragment.app.viewModels
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
 import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE
+import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModel
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeState
 import com.mgsanlet.cheftube.ui.viewmodel.home.TimerState
-import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
 
 /**
  * Un fragmento que muestra los detalles de una receta, incluyendo su título, ingredientes,
@@ -35,7 +36,13 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDetailBinding>() {
 
-    private val viewModel: RecipeDetailViewModel by viewModels ()
+    private val viewModel: RecipeDetailViewModel by viewModels()
+    private var isToggleInitialization: Boolean = true
+
+    override fun onResume() {
+        super.onResume()
+        isToggleInitialization = true
+    }
 
     override fun inflateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -44,7 +51,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Cargar la receta después de que el fragment esté creado
-        viewModel.loadRecipe( arguments?.getString(ARG_RECIPE) ?: "")
+        viewModel.loadRecipe(arguments?.getString(ARG_RECIPE) ?: "")
     }
 
     override fun setUpObservers() {
@@ -62,16 +69,22 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
                         showLoading(false)
                     }
                     hideProgressWhenVideoLoaded()
+                    state.recipe.author?.let { setAuthorTagListener(it.id) }
                 }
 
                 is RecipeState.Error -> {
                     showLoading(false)
-                    Toast.makeText(requireContext(), state.error.asMessage(requireContext()), Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        state.error.asMessage(requireContext()),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
 
-        viewModel.timerState.observe(viewLifecycleOwner) { state ->
+        viewModel.timerState.observe(viewLifecycleOwner)
+        { state ->
             when (state) {
                 TimerState.Initial -> {
                     binding.startPauseButton.setText(R.string.start)
@@ -92,7 +105,8 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
             }
         }
 
-        viewModel.timeLeft.observe(viewLifecycleOwner) { time ->
+        viewModel.timeLeft.observe(viewLifecycleOwner)
+        { time ->
             binding.timerTextView.text = time
         }
     }
@@ -117,6 +131,22 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         binding.timerTextView.setOnClickListener {
             if (viewModel.timerState.value == TimerState.Running) viewModel.pauseTimer()
             showSetTimerDialog()
+        }
+
+
+    }
+
+    fun setAuthorTagListener(authorId: String) {
+        binding.authorTag.setOnClickListener {
+            if (authorId.isBlank()) return@setOnClickListener
+            val instance = ProfileFragment.newInstance(authorId)
+            FragmentNavigator.loadFragmentInstance(
+                null,
+                this,
+                instance,
+                R.id.fragmentContainerView
+            )
+
         }
     }
 
@@ -148,10 +178,9 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         binding.videoWebView.settings.javaScriptEnabled = true
         val videoUrl = recipe.videoUrl
         binding.videoWebView.loadUrl(videoUrl)
-
+        binding.favouriteNumberTextView.text = recipe.favouriteCount.toString()
         // Agregar ingredientes dinámicamente al contenedor de ingredientes
         fillIngredients(recipe)
-
         // Agregar pasos dinámicamente al contenedor de pasos
         fillSteps(recipe)
     }
