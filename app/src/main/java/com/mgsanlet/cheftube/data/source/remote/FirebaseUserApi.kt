@@ -1,6 +1,7 @@
 package com.mgsanlet.cheftube.data.source.remote
 
 import android.util.Log
+import com.google.firebase.firestore.FieldValue
 import com.mgsanlet.cheftube.data.model.UserResponse
 import com.mgsanlet.cheftube.domain.model.DomainUser
 import com.mgsanlet.cheftube.domain.util.DomainResult
@@ -74,5 +75,24 @@ class FirebaseUserApi @Inject constructor(private val mainApi: FirebaseApi) {
             return DomainResult.Error(UserError.Unknown(exception.message))
         }
         return DomainResult.Success(Unit)
+    }
+
+    suspend fun updateFavouriteRecipes(
+        currentUserId: String,
+        recipeId: String,
+        isNewFavourite: Boolean
+    ): DomainResult<Unit, UserError> {
+        try {
+            mainApi.db.collection("users").document(currentUserId)
+                .update(
+                    "favouriteRecipes",
+                    if (isNewFavourite) FieldValue.arrayUnion(recipeId)
+                    else FieldValue.arrayRemove(recipeId)
+                ).await()
+
+            return DomainResult.Success(Unit)
+        } catch (exception: Exception) {
+            return DomainResult.Error(UserError.Unknown(exception.message))
+        }
     }
 }

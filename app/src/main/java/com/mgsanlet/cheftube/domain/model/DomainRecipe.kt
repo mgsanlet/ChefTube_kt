@@ -12,6 +12,9 @@ data class DomainRecipe(
     val videoUrl: String = "",
     val ingredients: List<String> = emptyList(),
     val steps: List<String> = emptyList(),
-    val author: DomainUser? = null,
-    val favouriteCount: Int = 0
+    val categories: List<String> = emptyList(),
+    val favouriteCount: Int = 0,
+    val durationMinutes: Int = 0,
+    val difficulty: Int = 0,
+    val author: DomainUser? = null
 )

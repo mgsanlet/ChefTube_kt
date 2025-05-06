@@ -36,9 +36,10 @@ object RepositoryDaggerModule {
     @Provides
     @Singleton
     fun provideRecipesRepository(
+        mainApi: FirebaseApi,
         api: FirebaseRecipeApi
     ): RecipesRepository {
-        return RecipesRepositoryImpl(api)
+        return RecipesRepositoryImpl(mainApi, api)
     }
 
     @Provides

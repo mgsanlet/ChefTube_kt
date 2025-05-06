@@ -161,5 +161,12 @@
     <string name="see_created_recipes">Vedi le ricette create da %1$s</string>
     <string name="see_favourite_recipes">Vedi le ricette preferite da %1$s</string>
     <string name="no_recipes_created">L\'utente non ha ancora creato alcuna ricetta</string>
-
+    <string name="no_favourite_recipes">L\'utente non ha ancora ricette preferite</string>
+    <string-array name="difficulty">
+        <item>Facile</item>
+        <item>Medio</item>
+        <item>Avanzato</item>
+    </string-array>
+    <string name="duration_hours_minutes">Durata: %1$d h. %2$d min.</string>
+    <string name="duration_minutes">Durata: %1$d min.</string>
 </resources>

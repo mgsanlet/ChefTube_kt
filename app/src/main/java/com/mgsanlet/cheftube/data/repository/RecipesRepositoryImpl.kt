@@ -1,5 +1,7 @@
 package com.mgsanlet.cheftube.data.repository
 
+import com.mgsanlet.cheftube.data.model.RecipeResponse
+import com.mgsanlet.cheftube.data.source.remote.FirebaseApi
 import com.mgsanlet.cheftube.data.source.remote.FirebaseRecipeApi
 import com.mgsanlet.cheftube.domain.model.DomainRecipe
 import com.mgsanlet.cheftube.domain.model.DomainUser
@@ -13,6 +15,7 @@ import javax.inject.Singleton
 
 @Singleton
 class RecipesRepositoryImpl @Inject constructor(
+    private val mainApi: FirebaseApi,
     private val api: FirebaseRecipeApi
 ) : RecipesRepository {
     var recipesCache: List<DomainRecipe>? = null
@@ -24,21 +27,8 @@ class RecipesRepositoryImpl @Inject constructor(
         // Si el caché es nulo
         return when (val result = api.getAll()) {
             is Success -> {
-                val domainRecipes = result.data.map { recipe ->
-                    DomainRecipe(
-                        id = recipe.id,
-                        title = recipe.title,
-                        imageUrl = api.getStorageUrlFromPath(recipe.imagePath),
-                        videoUrl = recipe.videoUrl,
-                        ingredients = recipe.ingredients,
-                        steps = recipe.steps,
-                        favouriteCount = recipe.favouriteCount,
-                        author = DomainUser(
-                            id = recipe.authorId,
-                            username = recipe.authorName
-                        )
-                    )
-                }
+                val domainRecipes = result.data.map { it.toDomainRecipe() }
+
                 if (domainRecipes.isEmpty()) {
                     Error(RecipeError.NoResults)
                 } else {
@@ -59,21 +49,7 @@ class RecipesRepositoryImpl @Inject constructor(
                     recipeResponse.ingredients.any { ingredient ->
                         ingredient.lowercase().contains(lowercaseQuery)
                     }
-                }.map { recipeResponse ->
-                    DomainRecipe(
-                        id = recipeResponse.id,
-                        title = recipeResponse.title,
-                        imageUrl = api.getStorageUrlFromPath(recipeResponse.imagePath),
-                        videoUrl = recipeResponse.videoUrl,
-                        ingredients = recipeResponse.ingredients,
-                        steps = recipeResponse.steps,
-                        favouriteCount = recipeResponse.favouriteCount,
-                        author = DomainUser(
-                            id = recipeResponse.authorId,
-                            username = recipeResponse.authorName
-                        )
-                    )
-                }
+                }.map { it.toDomainRecipe() }
 
                 if (filteredRecipes.isEmpty()) {
                     Error(RecipeError.NoResults)
@@ -95,21 +71,7 @@ class RecipesRepositoryImpl @Inject constructor(
         return when (val result = api.getById(recipeId)) {
             is Success -> {
                 try {
-                    val recipe = result.data
-                    val domainRecipe = DomainRecipe(
-                        id = recipe.id,
-                        title = recipe.title,
-                        imageUrl = api.getStorageUrlFromPath(recipe.imagePath),
-                        videoUrl = recipe.videoUrl,
-                        ingredients = recipe.ingredients,
-                        steps = recipe.steps,
-                        favouriteCount = recipe.favouriteCount,
-                        author = DomainUser(
-                            id = recipe.authorId,
-                            username = recipe.authorName
-                        )
-                    )
-                    Success(domainRecipe)
+                    Success(result.data.toDomainRecipe())
                 } catch (e: Exception) {
                     Error(RecipeError.Unknown(e.message))
                 }
@@ -123,26 +85,12 @@ class RecipesRepositoryImpl @Inject constructor(
 
     override suspend fun getByIds(recipeIds: ArrayList<String>): DomainResult<List<DomainRecipe>, RecipeError> {
         recipesCache?.let {
-            return Success( it.filter { recipe -> recipeIds.contains(recipe.id) } )
+            return Success(it.filter { recipe -> recipeIds.contains(recipe.id) })
         }
         // Si el caché es nulo
         return when (val result = api.getByIds(recipeIds)) {
             is Success -> {
-                val filteredRecipes = result.data.map { recipeResponse ->
-                    DomainRecipe(
-                        id = recipeResponse.id,
-                        title = recipeResponse.title,
-                        imageUrl = api.getStorageUrlFromPath(recipeResponse.imagePath),
-                        videoUrl = recipeResponse.videoUrl,
-                        ingredients = recipeResponse.ingredients,
-                        steps = recipeResponse.steps,
-                        favouriteCount = recipeResponse.favouriteCount,
-                        author = DomainUser(
-                            id = recipeResponse.authorId,
-                            username = recipeResponse.authorName
-                        )
-                    )
-                }
+                val filteredRecipes = result.data.map { it.toDomainRecipe() }
 
                 if (filteredRecipes.isEmpty()) {
                     Error(RecipeError.NoResults)
@@ -153,6 +101,32 @@ class RecipesRepositoryImpl @Inject constructor(
 
             is Error -> Error(result.error)
         }
+    }
+
+    override suspend fun updateFavouriteCount(
+        recipeId: String,
+        isNewFavourite: Boolean
+    ): DomainResult<Unit, RecipeError> {
+        return api.updateFavouriteCount(recipeId, isNewFavourite)
+    }
+
+    private suspend fun RecipeResponse.toDomainRecipe(): DomainRecipe {
+        return DomainRecipe(
+            id = this.id,
+            title = this.title,
+            imageUrl = mainApi.getStorageUrlFromPath(this.imagePath),
+            videoUrl = this.videoUrl,
+            ingredients = this.ingredients,
+            steps = this.steps,
+            categories = this.categories,
+            favouriteCount = this.favouriteCount,
+            durationMinutes = this.durationMinutes,
+            difficulty = this.difficulty,
+            author = DomainUser(
+                id = this.authorId,
+                username = this.authorName
+            )
+        )
     }
 
 }

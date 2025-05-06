@@ -1,6 +1,7 @@
 package com.mgsanlet.cheftube.data.source.remote
 
 import android.util.Log
+import com.google.firebase.firestore.FieldValue
 import com.mgsanlet.cheftube.data.model.RecipeResponse
 import com.mgsanlet.cheftube.domain.util.DomainResult
 import com.mgsanlet.cheftube.domain.util.error.RecipeError
@@ -63,15 +64,15 @@ class FirebaseRecipeApi @Inject constructor(private val mainApi: FirebaseApi) {
         }
     }
 
-
-    suspend fun getStorageUrlFromPath(path: String): String {
-        return try {
-            val url = mainApi.storage.reference.child(path).downloadUrl.await()
-            Log.i("Firebase", "Download URL: $url")
-            url.toString()
-        } catch (exception: Exception) {
-            Log.e("Firebase", "Error getting download URL: ", exception)
-            ""
+    suspend fun updateFavouriteCount(recipeId: String, isNewFavourite: Boolean): DomainResult<Unit, RecipeError> {
+        try {
+            mainApi.db.collection("recipes").document(recipeId).update(
+                "favouriteCount",
+                if (isNewFavourite) FieldValue.increment(1) else FieldValue.increment(-1)
+            ).await()
+            return DomainResult.Success(Unit)
+        }catch (exception: Exception) {
+            return DomainResult.Error(RecipeError.Unknown(exception.message))
         }
     }
 }

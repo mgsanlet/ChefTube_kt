@@ -6,18 +6,22 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mgsanlet.cheftube.domain.usecase.recipe.AlternateFavouriteRecipeUseCase
 import com.mgsanlet.cheftube.domain.usecase.recipe.GetRecipeByIdUseCase
+import com.mgsanlet.cheftube.domain.usecase.user.GetCurrentUserDataUseCase
 import com.mgsanlet.cheftube.domain.util.error.RecipeError
-import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
 
 @HiltViewModel
 class RecipeDetailViewModel @Inject constructor(
-    private  val getRecipeById: GetRecipeByIdUseCase
+    private val getRecipeById: GetRecipeByIdUseCase,
+    private val getCurrentUserData: GetCurrentUserDataUseCase,
+    private val alternateFavouriteRecipe: AlternateFavouriteRecipeUseCase
 ) : ViewModel() {
 
     private val _recipeState = MutableLiveData<RecipeState>()
@@ -25,13 +29,15 @@ class RecipeDetailViewModel @Inject constructor(
 
     var authorId: String? = null
 
+    var isFavourite: Boolean = false
+
     // Estado del cronómetro
     private var _timer: CountDownTimer? = null
 
     var timeLeftInMillis: Long = 0
 
     private val _timerState = MutableLiveData<TimerState>()
-    val timerState : LiveData<TimerState> = _timerState
+    val timerState: LiveData<TimerState> = _timerState
 
     private val _timeLeft = MutableLiveData<String>()
     val timeLeft: LiveData<String> = _timeLeft
@@ -49,8 +55,9 @@ class RecipeDetailViewModel @Inject constructor(
                 }
                 result.fold(
                     onSuccess = { recipe ->
-                        _recipeState.value = RecipeState.Success(recipe)
                         authorId = recipe.author?.id
+                        isFavourite = isRecipeFavourite(recipe.id)
+                        _recipeState.value = RecipeState.Success(recipe)
                     },
                     onError = { error ->
                         _recipeState.value = RecipeState.Error(error)
@@ -102,6 +109,37 @@ class RecipeDetailViewModel @Inject constructor(
         val minutes = (millis / 1000).toInt() / 60
         val seconds = (millis / 1000).toInt() % 60
         return String.format("%02d:%02d", minutes, seconds)
+    }
+
+    fun alternateFavourite(favourite: Boolean) {
+        if (_recipeState.value is RecipeState.Success) {
+            val recipe = (_recipeState.value as RecipeState.Success).recipe
+            viewModelScope.launch {
+                alternateFavouriteRecipe(recipe.id, favourite).fold(
+                    onSuccess = {
+                        isFavourite = favourite
+                        _recipeState.value =
+                            RecipeState.Success(recipe.copy(
+                                favouriteCount =
+                                    if (favourite) recipe.favouriteCount + 1
+                                    else recipe.favouriteCount - 1)
+                            )
+                    },
+                    onError = { _recipeState.value = RecipeState.Error(RecipeError.Unknown()) }
+                )
+            }
+        }
+    }
+
+    private fun isRecipeFavourite(recipeId: String): Boolean {
+        var isFavourite = false
+        viewModelScope.launch {
+            getCurrentUserData().fold(
+                onSuccess = { user -> isFavourite = user.favouriteRecipes.contains(recipeId) },
+                onError = { _recipeState.value = RecipeState.Error(RecipeError.Unknown()) }
+            )
+        }
+        return isFavourite
     }
 }
 

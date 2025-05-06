@@ -108,6 +108,9 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0")
 
+    //Views
+    implementation("com.google.android.flexbox:flexbox:3.0.0")
+
 }
 
 kapt {

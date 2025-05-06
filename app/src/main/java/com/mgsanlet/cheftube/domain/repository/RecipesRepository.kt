@@ -10,4 +10,6 @@ interface RecipesRepository {
     suspend fun getById(recipeId: String): DomainResult<Recipe, RecipeError>
     suspend fun getAll(): DomainResult<List<Recipe>, RecipeError>
     suspend fun getByIds(recipeIds: ArrayList<String>): DomainResult<List<Recipe>, RecipeError>
+    suspend fun updateFavouriteCount(recipeId: String, isNewFavourite: Boolean): DomainResult<Unit, RecipeError>
+
 }

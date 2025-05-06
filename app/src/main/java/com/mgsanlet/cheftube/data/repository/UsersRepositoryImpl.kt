@@ -15,8 +15,7 @@ import javax.inject.Singleton
 
 @Singleton
 class UsersRepositoryImpl @Inject constructor(
-    private val mainApi: FirebaseApi,
-    private val userApi: FirebaseUserApi
+    private val mainApi: FirebaseApi, private val userApi: FirebaseUserApi
 ) : UsersRepository {
 
     private var currentUserCache: DomainUser? = null
@@ -24,15 +23,14 @@ class UsersRepositoryImpl @Inject constructor(
     override suspend fun getCurrentUserData(): DomainResult<DomainUser, UserError> {
         currentUserCache?.let {
             return DomainResult.Success(currentUserCache!!)
-        }
-            ?: when (val result = getUserDataById(mainApi.auth.currentUser!!.uid)) {
-                is DomainResult.Success -> {
-                    currentUserCache = result.data
-                    return DomainResult.Success(result.data)
-                }
-
-                is DomainResult.Error -> return DomainResult.Error(result.error)
+        } ?: when (val result = getUserDataById(mainApi.auth.currentUser!!.uid)) {
+            is DomainResult.Success -> {
+                currentUserCache = result.data
+                return DomainResult.Success(result.data)
             }
+
+            is DomainResult.Error -> return DomainResult.Error(result.error)
+        }
     }
 
     override suspend fun getUserDataById(userId: String): DomainResult<DomainUser, UserError> {
@@ -65,8 +63,7 @@ class UsersRepositoryImpl @Inject constructor(
                 return isAvailableResult
             }
             mainApi.auth.createUserWithEmailAndPassword(email, password).await()
-            val user =
-                mainApi.auth.currentUser ?: throw Exception("User not found after creation")
+            val user = mainApi.auth.currentUser ?: throw Exception("User not found after creation")
 
             val insertDataResult = userApi.insertUserData(user.uid, username, email)
             if (insertDataResult is DomainResult.Error) {
@@ -74,9 +71,7 @@ class UsersRepositoryImpl @Inject constructor(
             }
 
             currentUserCache = DomainUser(
-                id = user.uid,
-                username = username,
-                email = email
+                id = user.uid, username = username, email = email
             )
             return DomainResult.Success(Unit)
         } catch (e: Exception) {
@@ -93,25 +88,23 @@ class UsersRepositoryImpl @Inject constructor(
     }
 
     override suspend fun loginUser(
-        email: String,
-        password: String
+        email: String, password: String
     ): DomainResult<Unit, UserError> {
         try {
             mainApi.auth.signInWithEmailAndPassword(email, password).await()
             val user = mainApi.auth.currentUser ?: throw Exception("User not found after login")
             when (val result = userApi.getUserDataById(user.uid)) {
                 is DomainResult.Success -> {
-                    currentUserCache =
-                        DomainUser(
-                            id = user.uid,
-                            username = result.data.username,
-                            email = email,
-                            bio = result.data.bio,
-                            createdRecipes = result.data.createdRecipes,
-                            favouriteRecipes = result.data.favouriteRecipes,
-                            followersIds = result.data.followersIds,
-                            followingIds = result.data.followingIds
-                        )
+                    currentUserCache = DomainUser(
+                        id = user.uid,
+                        username = result.data.username,
+                        email = email,
+                        bio = result.data.bio,
+                        createdRecipes = result.data.createdRecipes,
+                        favouriteRecipes = result.data.favouriteRecipes,
+                        followersIds = result.data.followersIds,
+                        followingIds = result.data.followingIds
+                    )
                     return DomainResult.Success(Unit)
                 }
 
@@ -138,34 +131,29 @@ class UsersRepositoryImpl @Inject constructor(
         } ?: throw Exception("User not found after login")
     }
 
-    override suspend fun updateUserData(newUserData: DomainUser): DomainResult<Unit, UserError> {
+    override suspend fun updateUserData(new: DomainUser): DomainResult<Unit, UserError> {
+        //Obtenemos los datos antiguos según el Id
         var oldUserData: DomainUser? = null
-        getUserDataById(newUserData.id).fold(
-            onSuccess = { userData ->
-                oldUserData = userData
-            },
-            onError = { error ->
-                return DomainResult.Error(error)
-            }
-        )
-        oldUserData?.let {
-            if (newUserData.username != it.username &&
-                userApi.isAvailableUsername(newUserData.username) is DomainResult.Error
-            ) {
+        getUserDataById(new.id).fold(onSuccess = { userData ->
+            oldUserData = userData
+        }, onError = { error ->
+            return DomainResult.Error(error)
+        })
+
+        oldUserData?.let { old ->
+            // Comprobamos que no se esté intentando cambiar el username a uno ya existente
+            if (new.username != old.username && userApi.isAvailableUsername(new.username) is DomainResult.Error) {
                 return DomainResult.Error(UserError.UsernameInUse)
             }
-            val updatedUserData = DomainUser(
-                id = it.id,
-                username = newUserData.username.ifBlank { it.username },
-                email = it.email,
-                bio = newUserData.bio.ifBlank { it.bio },
-                profilePictureUrl = it.profilePictureUrl,
-                createdRecipes = it.createdRecipes,
-                favouriteRecipes = it.favouriteRecipes,
-                followersIds = newUserData.followersIds,
-                followingIds = newUserData.followingIds
+
+            // Actualizamos los datos que pueden cambiar
+            val updatedUserData = old.copy(
+                username = new.username.ifBlank { old.username },
+                bio = new.bio.ifBlank { old.bio },
+                followersIds = new.followersIds,
+                followingIds = new.followingIds
             )
-            return userApi.updateUserData(it.id, updatedUserData)
+            return userApi.updateUserData(old.id, updatedUserData)
 
         } ?: return DomainResult.Error(UserError.UserNotFound)
     }
@@ -175,20 +163,42 @@ class UsersRepositoryImpl @Inject constructor(
         mainApi.auth.currentUser?.let {
             var result = getCurrentUserData() //Cacheamos el usuario
             result.fold(
-                onSuccess = { currentUserData ->
-                    currentUserCache = currentUserData
+                onSuccess = {
                     return DomainResult.Success(Unit)
-                },
-                onError = { error->
+                }, onError = { error ->
                     logout()
                     return DomainResult.Error(error)
-                }
-            )
+                })
         } ?: return DomainResult.Error(UserError.UserNotFound)
     }
 
     override fun logout() {
         currentUserCache = null
         mainApi.auth.signOut()
+    }
+
+    override suspend fun updateFavouriteRecipes(
+        recipeId: String, isNewFavourite: Boolean
+    ): DomainResult<Unit, UserError> {
+        var userResult = getCurrentUserData()
+        if (userResult is DomainResult.Error) {
+            return DomainResult.Error(userResult.error)
+        }
+        var updateResult = userApi.updateFavouriteRecipes(
+            (userResult as DomainResult.Success).data.id, recipeId, isNewFavourite
+        )
+        updateResult.fold(
+            onSuccess = {
+                // Actualizar el caché
+                currentUserCache = null
+                userResult = getCurrentUserData()
+                if (userResult is DomainResult.Error) {
+                    return DomainResult.Error(userResult.error)
+                }
+                return DomainResult.Success(Unit)
+            }, onError = { error ->
+                return DomainResult.Error(error)
+            }
+        )
     }
 }

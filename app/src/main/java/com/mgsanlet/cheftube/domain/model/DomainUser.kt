@@ -10,5 +10,4 @@ data class DomainUser(
     val favouriteRecipes: List<String> = emptyList(),
     val followersIds: List<String> = emptyList(),
     val followingIds: List<String> = emptyList()
-
 )

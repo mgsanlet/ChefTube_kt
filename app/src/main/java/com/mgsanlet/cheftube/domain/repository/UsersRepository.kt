@@ -13,5 +13,6 @@ interface UsersRepository {
     suspend fun tryAutoLogin(): DomainResult<Unit, UserError>
     suspend fun getCurrentUserData(): DomainResult<DomainUser, UserError>
     suspend fun getUserDataById(userId: String): DomainResult<DomainUser, UserError>
+    suspend fun updateFavouriteRecipes(recipeId: String, isNewFavourite: Boolean): DomainResult<Unit, UserError>
     fun logout()
 }

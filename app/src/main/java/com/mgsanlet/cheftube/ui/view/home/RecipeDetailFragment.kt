@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import com.google.android.flexbox.FlexboxLayout
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
 import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE
@@ -52,6 +53,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         super.onViewCreated(view, savedInstanceState)
         // Cargar la receta después de que el fragment esté creado
         viewModel.loadRecipe(arguments?.getString(ARG_RECIPE) ?: "")
+
     }
 
     override fun setUpObservers() {
@@ -133,7 +135,11 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
             showSetTimerDialog()
         }
 
-
+        binding.favouriteToggle.setOnCheckedChangeListener { _, isChecked ->
+            if (!isToggleInitialization) {
+                viewModel.alternateFavourite(isChecked)
+            }
+        }
     }
 
     fun setAuthorTagListener(authorId: String) {
@@ -178,11 +184,48 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         binding.videoWebView.settings.javaScriptEnabled = true
         val videoUrl = recipe.videoUrl
         binding.videoWebView.loadUrl(videoUrl)
+
+        binding.difficultyTextView.setDifficulty(2)
+        binding.durationTextView.setDuration(recipe.durationMinutes)
+        binding.favouriteToggle.isChecked = viewModel.isFavourite
+        isToggleInitialization = false
         binding.favouriteNumberTextView.text = recipe.favouriteCount.toString()
+
+        fillCategories(recipe)
         // Agregar ingredientes dinámicamente al contenedor de ingredientes
         fillIngredients(recipe)
         // Agregar pasos dinámicamente al contenedor de pasos
         fillSteps(recipe)
+    }
+
+    @SuppressLint("SetTextI18n") // No es necesario traducir #
+    private fun fillCategories(recipe: Recipe) {
+        binding.categoryContainer.removeAllViews()
+        recipe.categories.forEach {
+            val categoryTextView = TextView(context).apply {
+                text = "#$it"
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                textSize = 18f
+                background =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.base_field_shapes)
+                backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.dark_green)
+                setPadding(24, 8, 24, 8)
+            }
+
+            // Crear LayoutParams para establecer márgenes
+            val layoutParams = FlexboxLayout.LayoutParams(
+                FlexboxLayout.LayoutParams.WRAP_CONTENT,
+                FlexboxLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setMargins(8, 0, 8, 24)
+            }
+
+            categoryTextView.layoutParams = layoutParams
+
+            // Agregar el TextView al contenedor
+            binding.categoryContainer.addView(categoryTextView)
+        }
     }
 
     private fun fillIngredients(recipe: Recipe) {
@@ -216,7 +259,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
                     )
                 )
             }
-            stepTextView.textSize = 14f
+            stepTextView.textSize = 16f
             binding.stepsLinearLayout.addView(stepTextView)
         }
     }
