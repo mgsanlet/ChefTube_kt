@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/spinner_header"
+    style="@style/AuthFields"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:drawableEndCompat="@drawable/ic_arrow_drop_30"
+    app:drawableTint="@color/white"
+    tools:text="Spinner item"
+    android:layout_weight="1"
+    android:paddingVertical="12dp"
+    android:paddingHorizontal="24dp"
+    android:textColor="@color/white" />

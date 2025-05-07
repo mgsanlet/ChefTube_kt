@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentRecipeFormBinding
 import com.mgsanlet.cheftube.domain.model.DomainRecipe
+import com.mgsanlet.cheftube.ui.adapter.DifficultySpinnerAdapter
 import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE
 import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.asStringList
@@ -48,6 +49,10 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
 
     override fun setUpViewProperties() {
         binding.progressBar.setCustomStyle(requireContext())
+        binding.difficultySpinner.adapter = DifficultySpinnerAdapter(
+            requireContext(),
+            resources.getStringArray(R.array.difficulty).toList()
+        )
     }
 
     override fun setUpObservers() {
@@ -97,32 +102,29 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
             Toast.makeText(context, "TODO", Toast.LENGTH_SHORT).show()
         }
         binding.categoriesAddButton.setOnClickListener {
-            if (binding.categoriesInnerContainer.childCount < 10){
+            if (binding.categoriesInnerContainer.childCount < 10) {
                 binding.categoriesInnerContainer.addView(
-                    createCustomEditText()
+                    createCustomEditText(getString(R.string.new_category))
                 )
-            }else{
+            } else {
                 Toast.makeText(context, "TODO", Toast.LENGTH_SHORT).show()
             }
         }
         binding.ingredientsAddButton.setOnClickListener {
-            if (binding.ingredientsInnerContainer.childCount < 10){
+            if (binding.ingredientsInnerContainer.childCount < 10) {
                 binding.ingredientsInnerContainer.addView(
-                    createCustomEditText()
+                    createCustomEditText(getString(R.string.new_ingredient))
                 )
-            }else{
+            } else {
                 Toast.makeText(context, "TODO", Toast.LENGTH_SHORT).show()
             }
-            binding.ingredientsInnerContainer.addView(
-                createCustomEditText()
-            )
         }
         binding.stepsAddButton.setOnClickListener {
-            if (binding.stepsInnerContainer.childCount < 10){
+            if (binding.stepsInnerContainer.childCount < 10) {
                 binding.stepsInnerContainer.addView(
-                    createCustomEditText()
+                    createCustomEditText(getString(R.string.new_step))
                 )
-            }else{
+            } else {
                 Toast.makeText(context, "TODO", Toast.LENGTH_SHORT).show()
             }
         }
@@ -198,7 +200,7 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
         }
     }
 
-    private fun createCustomEditText(): EditText {
+    private fun createCustomEditText(hintText: String = ""): EditText {
         return EditText(context).apply {
             layoutParams = ViewGroup.MarginLayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -218,6 +220,7 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
                 16.dpToPx(context),
                 10.dpToPx(context)
             )
+            hint = hintText
             textSize = 20f
         }
     }

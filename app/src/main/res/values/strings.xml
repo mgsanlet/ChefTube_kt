@@ -179,6 +179,17 @@
     <string name="video_url">Video url</string>
     <string name="load_image_from_gallery">Select image from your gallery</string>
     <string name="add_recipe_cdesc">Create new recipe</string>
+    <string name="drop_arrow_cdesc">Dropdown arrow icon</string>
+    <string name="remove_last_category">Remove last category\n</string>
+    <string name="add_new_ingredient">Add new ingredient</string>
+    <string name="remove_last_ingredient">Remove last ingredient</string>
+    <string name="add_new_step">Add new step</string>
+    <string name="remove_last_step">Remove last step</string>
+    <string name="new_category">New category</string>
+    <string name="new_ingredient">New ingredient</string>
+    <string name="new_step">New step</string>
+    <string name="paste_link_here">Paste YouTube video link here</string>
+    <string name="check">Check</string>
     <string-array name="difficulty">
         <item>Easy</item>
         <item>Medium</item>

@@ -31,6 +31,7 @@
             android:layout_height="wrap_content">
 
             <TextView
+                android:labelFor="@id/titleEditText"
                 android:id="@+id/titleTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -49,12 +50,14 @@
                 android:id="@+id/titleEditText"
                 style="@style/AuthFields"
                 android:layout_width="match_parent"
+                android:minHeight="50dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="24dp"
                 android:importantForAutofill="no"
                 android:inputType="text"
+                android:hint="5-30 characters"
                 android:padding="10dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
@@ -64,6 +67,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/titleTitle" />
 
             <TextView
+                android:labelFor="@id/videoUrlEditText"
                 android:id="@+id/videoUrlTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -81,13 +85,15 @@
             <EditText
                 android:id="@+id/videoUrlEditText"
                 style="@style/AuthFields"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="24dp"
+                android:hint="@string/paste_link_here"
                 android:importantForAutofill="no"
                 android:inputType="textUri"
+                android:minHeight="50dp"
                 android:padding="10dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
@@ -97,6 +103,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/videoUrlTitle" />
 
             <TextView
+                android:labelFor="@id/loadImageButton"
                 android:id="@+id/imageTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -116,6 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
+                android:contentDescription="@string/load_image_from_gallery"
                 android:src="@drawable/ic_add_image_50"
                 android:backgroundTint="@color/primary_green"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -139,6 +147,7 @@
                 android:visibility="gone"/>
 
             <TextView
+                android:labelFor="@+id/durationEditText"
                 android:id="@+id/durationTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -158,11 +167,13 @@
                 style="@style/AuthFields"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="50dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="24dp"
                 android:importantForAutofill="no"
                 android:inputType="number"
+                android:hint="@string/minutes"
                 android:padding="10dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
@@ -190,7 +201,7 @@
                 android:id="@+id/difficultySpinner"
                 style="@style/AuthFields"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="50dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="24dp"
@@ -238,35 +249,37 @@
 
                 <ImageButton
                     android:id="@+id/categoriesRemoveButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:background="@color/transparent"
                     android:contentDescription="@string/add_new_category"
                     android:src="@drawable/ic_remove_circle"
                     app:layout_constraintBottom_toBottomOf="@+id/categoriesTitle"
                     app:layout_constraintEnd_toStartOf="@+id/categoriesAddButton"
                     app:layout_constraintTop_toTopOf="@+id/categoriesTitle"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <ImageButton
                     android:id="@+id/categoriesAddButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_marginEnd="150dp"
                     android:background="@color/transparent"
-                    android:contentDescription="@string/add_new_category"
+                    android:contentDescription="@string/remove_last_category"
                     android:src="@drawable/ic_add_circle"
                     app:layout_constraintBottom_toBottomOf="@+id/categoriesTitle"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/categoriesTitle"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <LinearLayout
                     android:id="@+id/categoriesInnerContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintTop_toBottomOf="@+id/categoriesRemoveButton"></LinearLayout>
+                    app:layout_constraintTop_toBottomOf="@+id/categoriesRemoveButton" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
@@ -307,35 +320,37 @@
 
                 <ImageButton
                     android:id="@+id/ingredientsRemoveButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:background="@color/transparent"
-                    android:contentDescription="@string/add_new_category"
+                    android:contentDescription="@string/add_new_ingredient"
                     android:src="@drawable/ic_remove_circle"
                     app:layout_constraintBottom_toBottomOf="@+id/ingredientsTitle"
                     app:layout_constraintEnd_toStartOf="@+id/ingredientsAddButton"
                     app:layout_constraintTop_toTopOf="@+id/ingredientsTitle"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <ImageButton
                     android:id="@+id/ingredientsAddButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_marginEnd="150dp"
                     android:background="@color/transparent"
-                    android:contentDescription="@string/add_new_category"
+                    android:contentDescription="@string/remove_last_ingredient"
                     android:src="@drawable/ic_add_circle"
                     app:layout_constraintBottom_toBottomOf="@+id/ingredientsTitle"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/ingredientsTitle"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <LinearLayout
                     android:id="@+id/ingredientsInnerContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintTop_toBottomOf="@+id/ingredientsRemoveButton"></LinearLayout>
+                    app:layout_constraintTop_toBottomOf="@+id/ingredientsRemoveButton" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
@@ -376,35 +391,37 @@
 
                 <ImageButton
                     android:id="@+id/stepsRemoveButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:background="@color/transparent"
-                    android:contentDescription="@string/add_new_category"
+                    android:contentDescription="@string/add_new_step"
                     android:src="@drawable/ic_remove_circle"
                     app:layout_constraintBottom_toBottomOf="@+id/stepsTitle"
                     app:layout_constraintEnd_toStartOf="@+id/stepsAddButton"
                     app:layout_constraintTop_toTopOf="@+id/stepsTitle"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <ImageButton
                     android:id="@+id/stepsAddButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_marginEnd="150dp"
                     android:background="@color/transparent"
-                    android:contentDescription="@string/add_new_category"
+                    android:contentDescription="@string/remove_last_step"
                     android:src="@drawable/ic_add_circle"
                     app:layout_constraintBottom_toBottomOf="@+id/stepsTitle"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/stepsTitle"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <LinearLayout
                     android:id="@+id/stepsInnerContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintTop_toBottomOf="@+id/stepsRemoveButton"></LinearLayout>
+                    app:layout_constraintTop_toBottomOf="@+id/stepsRemoveButton" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -444,10 +461,12 @@
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="16dp"
             android:text="@string/save"
+            android:textColor="@color/white"
             app:backgroundTint="@color/primary_orange"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="TextContrastCheck" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
