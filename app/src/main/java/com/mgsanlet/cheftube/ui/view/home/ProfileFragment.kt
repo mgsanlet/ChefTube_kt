@@ -52,6 +52,10 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
         inflater: LayoutInflater, container: ViewGroup?
     ): FragmentProfileBinding = FragmentProfileBinding.inflate(inflater, container, false)
 
+    override fun setUpViewProperties() {
+        binding.progressBar.setCustomStyle(requireContext())
+    }
+
     override fun setUpObservers() {
         sharedViewModel.uiState.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -122,6 +126,13 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
             FragmentNavigator.loadFragmentInstance(
                 null, this,
                 recipeFeedFragment, R.id.fragmentContainerView
+            )
+        }
+
+        binding.createRecipeButton.setOnClickListener {
+            FragmentNavigator.loadFragment(
+                null, this,
+                RecipeFormFragment(), R.id.fragmentContainerView
             )
         }
     }

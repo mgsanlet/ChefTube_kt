@@ -12,8 +12,10 @@ import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.core.content.ContextCompat
+import androidx.core.view.children
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -90,4 +92,22 @@ fun ImageView.loadUrl(url: String, context: Context){
         .diskCacheStrategy(DiskCacheStrategy.NONE)
         .apply(RequestOptions.bitmapTransform(RoundedCorners(40)))
         .into(this)
+}
+
+fun Int.dpToPx(context: Context): Int {
+    return (this * context.resources.displayMetrics.density).toInt()
+}
+
+fun LinearLayout.removeLastChild(){
+    this.removeView(this.getChildAt(this.childCount - 1))
+}
+
+fun LinearLayout.asStringList(): List<String> {
+    val list = mutableListOf<String>()
+    this.children.forEach {
+        if (it is EditText) {
+            list.add(it.text.toString().trim())
+        }
+    }
+    return list
 }

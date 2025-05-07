@@ -14,7 +14,6 @@
     <string name="username">Nombre de usuario</string>
     <string name="repeat_password">Repite la contraseña</string>
     <string name="repeat_new_password">Repite nueva contraseña</string>
-    <string name="new_password">Nueva contraseña</string>
     <string name="actual_password">Contraseña actual</string>
     <string name="choose_a_ingredient">Ingrediente</string>
     <string name="prompt_email">Email</string>
@@ -171,5 +170,17 @@
 
     <string name="duration_hours_minutes">Duración: %1$d h. %2$d min.</string>
     <string name="duration_minutes">Duración: %1$d min.</string>
+    <string name="recipe_title">Título de la receta</string>
+    <string name="recipe_duration">Duración de la receta (total de minutos)</string>
+    <string name="add_new_category">Añadir categoría</string>
+    <string name="categories">Categorías</string>
+    <string name="difficulty">Dificultad</string>
+    <string name="recipe_duration_short">Duración</string>
+    <string name="total_time">Tiempo total</string>
+    <string name="title">Título</string>
+    <string name="front_recipe_image">Imagen de portada</string>
+    <string name="video_url">URL del vídeo</string>
+    <string name="load_image_from_gallery">Selecciona una imagen de tu galería</string>
+    <string name="add_recipe_cdesc">Crear una nueva receta</string>
 
 </resources>

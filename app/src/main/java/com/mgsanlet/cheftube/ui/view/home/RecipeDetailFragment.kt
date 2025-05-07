@@ -53,7 +53,6 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         super.onViewCreated(view, savedInstanceState)
         // Cargar la receta después de que el fragment esté creado
         viewModel.loadRecipe(arguments?.getString(ARG_RECIPE) ?: "")
-
     }
 
     override fun setUpObservers() {

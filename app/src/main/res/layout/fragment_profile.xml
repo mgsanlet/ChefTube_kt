@@ -227,6 +227,49 @@
             app:layout_constraintEnd_toStartOf="@+id/seeCreatedButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/seeCreatedButton"
+            app:layout_constraintVertical_bias="0.0"
+            app:tint="@color/white" />
+
+        <View
+            android:id="@+id/divider4"
+            android:layout_width="361dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="1dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/seeFavButton" />
+
+        <Button
+            android:id="@+id/createRecipeButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:backgroundTint="@color/primary_green"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/addIcon"
+            app:layout_constraintTop_toBottomOf="@+id/divider4"
+            tools:ignore="TextContrastCheck"
+            android:text="@string/add_recipe_cdesc" />
+
+        <ImageView
+            android:id="@+id/addIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:contentDescription="@string/add_recipe_cdesc"
+            android:src="@drawable/ic_add_circle_35"
+            app:layout_constraintBottom_toBottomOf="@+id/createRecipeButton"
+            app:layout_constraintEnd_toStartOf="@+id/createRecipeButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/createRecipeButton"
             app:tint="@color/white" />
 
         <ProgressBar
