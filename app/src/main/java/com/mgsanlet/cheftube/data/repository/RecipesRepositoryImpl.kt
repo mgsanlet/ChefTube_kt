@@ -22,7 +22,7 @@ class RecipesRepositoryImpl @Inject constructor(
 
     override suspend fun getAll(): DomainResult<List<DomainRecipe>, RecipeError> {
         recipesCache?.let {
-            if (!it.isEmpty()) return Success(it)
+            if (it.isNotEmpty()) return Success(it)
         }
         // Si el caché es nulo
         return when (val result = api.getAll()) {

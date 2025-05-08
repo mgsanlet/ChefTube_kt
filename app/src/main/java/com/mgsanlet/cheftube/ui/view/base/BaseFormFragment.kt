@@ -13,7 +13,7 @@ abstract class BaseFormFragment<T : ViewBinding> : BaseFragment<T>() {
         var hasEmptyFields = false
         for (field in fields) {
 
-            if (field.isEmpty()) {
+            if (field.text.isBlank()) {
                 field.error = getString(R.string.required)
                 hasEmptyFields = true
             }

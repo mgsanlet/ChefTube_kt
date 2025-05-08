@@ -1,6 +1,7 @@
 package com.mgsanlet.cheftube.ui.view.home
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -134,32 +135,7 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
     }
 
     override fun isValidViewInput(): Boolean {
-        var isValid = true
-
-        // Comprobamos requerimientos de longitud y mínimos y mostramos errores
-        if (binding.titleEditText.text.toString().length !in 5..30) {
-            isValid = false
-        }
-        try {
-            if (binding.durationEditText.text.toString().toInt() <= 0) {
-                binding.durationEditText.error = "TODO"
-                isValid = false
-            }
-        } catch (_: Exception) {
-            binding.durationEditText.error = "TODO"
-            isValid = false
-        }
-
-
-        if (binding.categoriesInnerContainer.childCount <= 0) {
-            Toast.makeText(context, "TODO", Toast.LENGTH_SHORT).show()
-            isValid = false
-        }
-
-        if (binding.ingredientsInnerContainer.childCount <= 0) {
-            Toast.makeText(context, "TODO", Toast.LENGTH_SHORT).show()
-            isValid = false
-        }
+        var isValid: Boolean
 
         var requiredFields = listOf(
             binding.titleEditText,
@@ -175,8 +151,40 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
         binding.stepsInnerContainer.children.forEach {
             if (it is EditText) requiredFields = requiredFields.plus(it)
         }
+
         // Comprobamos si hay campos requeridos vacíos y mostramos errores
         isValid = !areFieldsEmpty(requiredFields)
+
+        if (!isValid) return false
+
+        // Comprobamos requerimientos de longitud y mínimos y mostramos errores
+        if (binding.titleEditText.text.toString().length !in 5..30) {
+            binding.titleEditText.error = getString(R.string.invalid_title_length)
+            isValid = false
+        }
+        if (binding.durationEditText.text.isNotBlank()) {
+            if (binding.durationEditText.text.toString().toInt() <= 0) {
+                binding.durationEditText.error = getString(R.string.invalid_minutes)
+                isValid = false
+            }
+        }
+
+        if (binding.ingredientsInnerContainer.childCount <= 0) {
+            val newIngredient = createCustomEditText(getString(R.string.new_ingredient))
+            newIngredient.error = getString(R.string.at_least_1_ingredient)
+            binding.ingredientsInnerContainer.addView(newIngredient)
+            binding.ingredientsInnerContainer.requestFocus()
+            isValid = false
+        }
+
+        if (binding.stepsInnerContainer.childCount <= 0) {
+            val newStep = createCustomEditText(getString(R.string.new_step))
+            newStep.error = getString(R.string.at_least_1_step)
+            binding.stepsInnerContainer.addView(newStep)
+            binding.stepsInnerContainer.requestFocus()
+            isValid = false
+        }
+
         return isValid
     }
 
