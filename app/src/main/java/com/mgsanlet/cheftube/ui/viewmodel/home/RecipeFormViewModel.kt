@@ -21,6 +21,8 @@ class RecipeFormViewModel @Inject constructor(
     private val _recipe = MutableLiveData<DomainRecipe>()
     val recipe: LiveData<DomainRecipe> = _recipe
 
+    var isValidVideoUrl = false
+
     fun loadRecipe(recipeId: String){
         _uiState.value = RecipeFormState.Loading
         viewModelScope.launch {
@@ -49,6 +51,8 @@ class RecipeFormViewModel @Inject constructor(
     ) {
 
     }
+
+
 }
 
 sealed class RecipeFormState {

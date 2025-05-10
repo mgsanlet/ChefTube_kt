@@ -113,6 +113,15 @@ fun ImageView.loadBitmapToCircle(bitmap: Bitmap, context: Context) {
         .into(this)
 }
 
+fun ImageView.loadResourceToCircle(id: Int, context: Context){
+    Glide.with(context)
+        .load(id)
+        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+        .skipMemoryCache(true)
+        .apply(RequestOptions.circleCropTransform())
+        .into(this)
+}
+
 fun Int.dpToPx(context: Context): Int {
     return (this * context.resources.displayMetrics.density).toInt()
 }

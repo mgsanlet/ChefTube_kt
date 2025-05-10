@@ -179,15 +179,20 @@
     <string name="new_category">Nueva categoría</string>
     <string name="new_ingredient">Nuevo ingrediente</string>
     <string name="new_step">Nuevo paso</string>
-    <string name="paste_link_here">Pegue el enlace de video de YouTube aquí</string>
+    <string name="paste_link_here">Pegue el enlace de YouTube</string>
     <string name="check">Check</string>
     <string name="click_to_edit">Haz click para editar</string>
+    <string name="title_5_30_characters">5 – 30 caracteres</string>
+    <string name="invalid_video_url">Video url no válido</string>
+    <string name="maximum_10_steps">Máximo 10 pasos</string>
+    <string name="validate_video_url">Validar video url primero</string>
+    <string name="validation_icon">Icono de validación</string>
     <string name="difficulty">Dificultad</string>
     <string name="recipe_duration_short">Duración</string>
     <string name="total_time">Tiempo total</string>
     <string name="title">Título</string>
     <string name="front_recipe_image">Imagen de portada</string>
-    <string name="video_url">URL del vídeo</string>
+    <string name="video_url">URL del vídeo (Opcional)</string>
     <string name="load_image_from_gallery">Selecciona una imagen de tu galería</string>
     <string name="add_recipe_cdesc">Crear una nueva receta</string>
     <string name="add_new_ingredient">Añadir nuevo ingrediente</string>
@@ -199,5 +204,7 @@
     <string name="invalid_minutes">Minutos no válidos</string>
     <string name="at_least_1_ingredient">Es obligatorio al menos 1 ingrediente</string>
     <string name="at_least_1_step">Es obligatorio al menos 1 paso</string>
+    <string name="maximum_10_categories">Máximo 10 categorías</string>
+    <string name="maximum_10_ingredients">Máximo 10 ingredientes</string>
 
 </resources>

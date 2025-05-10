@@ -3,6 +3,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="black">#1F1F1F</color>
     <color name="primary_green">#46A467</color>
+    <color name="valid_green">#0DFF5F</color>
     <color name="dark_green">#2C6640</color>
     <color name="dark_green_alpha">#DA2C6640</color>
     <color name="primary_orange">#FB9E27</color>

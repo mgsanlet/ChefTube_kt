@@ -189,8 +189,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         
         // Configurar vídeo
         binding.videoWebView.settings.javaScriptEnabled = true
-        val videoUrl = recipe.videoUrl
-        binding.videoWebView.loadUrl(videoUrl)
+        binding.videoWebView.loadUrl(recipe.videoUrl)
 
         binding.difficultyTextView.setDifficulty(2)
         binding.durationTextView.setDuration(recipe.durationMinutes)

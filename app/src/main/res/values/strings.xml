@@ -176,7 +176,7 @@
     <string name="total_time">Total time</string>
     <string name="title">Title</string>
     <string name="front_recipe_image">Front image</string>
-    <string name="video_url">Video url</string>
+    <string name="video_url">Video url (Optional)</string>
     <string name="load_image_from_gallery">Select image from your gallery</string>
     <string name="add_recipe_cdesc">Create new recipe</string>
     <string name="drop_arrow_cdesc">Dropdown arrow icon</string>
@@ -188,14 +188,21 @@
     <string name="new_category">New category</string>
     <string name="new_ingredient">New ingredient</string>
     <string name="new_step">New step</string>
-    <string name="paste_link_here">Paste YouTube video link here</string>
-    <string name="check">Check</string>
+    <string name="paste_link_here">Paste YouTube link</string>
+    <string name="check">Validate</string>
     <string name="invalid_minutes">Invalid minutes</string>
     <string name="at_least_1_ingredient">At least 1 ingredient is required</string>
     <string name="at_least_1_step">At least 1 step is required</string>
     <string name="invalid_title_length">Invalid title length</string>
     <string name="crop_image">Crop your profile picture</string>
     <string name="click_to_edit">Click to edit</string>
+    <string name="title_5_30_characters">5 – 30 characters</string>
+    <string name="invalid_video_url">Invalid video url</string>
+    <string name="maximum_10_categories">Maximum 10 categories</string>
+    <string name="maximum_10_ingredients">Maximum 10 ingredients</string>
+    <string name="maximum_10_steps">Maximum 10 steps</string>
+    <string name="validate_video_url">Validate video url first</string>
+    <string name="validation_icon">Validation icon</string>
     <string-array name="difficulty">
         <item>Easy</item>
         <item>Medium</item>
