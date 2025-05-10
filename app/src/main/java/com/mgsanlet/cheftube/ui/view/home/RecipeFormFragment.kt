@@ -1,19 +1,12 @@
 package com.mgsanlet.cheftube.ui.view.home
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebResourceError
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
@@ -25,7 +18,6 @@ import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE
 import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.asStringList
 import com.mgsanlet.cheftube.ui.util.dpToPx
-import com.mgsanlet.cheftube.ui.util.loadUrl
 import com.mgsanlet.cheftube.ui.util.removeLastChild
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
@@ -60,6 +52,7 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
             requireContext(),
             resources.getStringArray(R.array.difficulty).toList()
         )
+        binding.imageLoaderView.setActivityResultRegistry(requireActivity().activityResultRegistry)
     }
 
     override fun setUpObservers() {
@@ -90,30 +83,31 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
     override fun setUpListeners() {
         binding.saveButton.setOnClickListener {
             if (isValidViewInput()) {
-                if (binding.customVideoLoader.state == VideoUrlState.INITIAL ||
-                    binding.customVideoLoader.state == VideoUrlState.VALID) {
-                    viewModel.trySaveRecipe(
-                        binding.titleEditText.text.toString(),
-                        binding.customVideoLoader.getText(),
-                        binding.recipeImageView.toString(),
-                        binding.durationEditText.text.toString(),
-                        binding.difficultySpinner.selectedItemPosition,
-                        binding.categoriesInnerContainer.asStringList(),
-                        binding.ingredientsInnerContainer.asStringList(),
-                        binding.stepsInnerContainer.asStringList()
-                    )
-                } else {
-                    binding.customVideoLoader.setError(getString(R.string.invalid_video_url))
-                    binding.customVideoLoader.requestFocus()
+                if (binding.videoLoaderView.state != VideoUrlState.INITIAL &&
+                    binding.videoLoaderView.state != VideoUrlState.VALID
+                ) {
+                    binding.videoLoaderView.setError(getString(R.string.invalid_video_url))
+                    binding.videoLoaderView.requestFocus()
+                    return@setOnClickListener
                 }
+                if (!binding.imageLoaderView.validateNotInitial()) {
+                    return@setOnClickListener
+                }
+
+                viewModel.trySaveRecipe(
+                    binding.titleEditText.text.toString(),
+                    binding.videoLoaderView.getText(),
+                    binding.imageLoaderView.getNewImage(),
+                    binding.durationEditText.text.toString(),
+                    binding.difficultySpinner.selectedItemPosition,
+                    binding.categoriesInnerContainer.asStringList(),
+                    binding.ingredientsInnerContainer.asStringList(),
+                    binding.stepsInnerContainer.asStringList()
+                )
             }
         }
         binding.cancelButton.setOnClickListener {
             (activity as? HomeActivity)?.onBackPressedDispatcher?.onBackPressed()
-        }
-
-        binding.loadImageButton.setOnClickListener {
-            Toast.makeText(context, "TODO", Toast.LENGTH_SHORT).show()
         }
 
         binding.categoriesAddButton.setOnClickListener {
@@ -148,7 +142,11 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
                     createCustomEditText(getString(R.string.new_step))
                 )
             } else {
-                Toast.makeText(context, getString(R.string.maximum_10_steps), Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    context,
+                    getString(R.string.maximum_10_steps),
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             }
         }
@@ -212,8 +210,8 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
 
     private fun showRecipeData(recipe: DomainRecipe) {
         binding.titleEditText.setText(recipe.title)
-        binding.customVideoLoader.setText(recipe.videoUrl)
-        binding.recipeImageView.loadUrl(recipe.imageUrl, requireContext())
+        binding.videoLoaderView.setText(recipe.videoUrl)
+        binding.imageLoaderView.loadUrl(recipe.imageUrl)
         binding.durationEditText.setText(recipe.durationMinutes)
         binding.difficultySpinner.setSelection(recipe.difficulty)
         fillContainer(binding.categoriesInnerContainer, recipe.categories)

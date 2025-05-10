@@ -183,7 +183,7 @@
     <string name="validation_icon">Icona di convalida</string>
     <string name="difficulty">Difficoltà</string>
     <string name="recipe_duration_short">Durata</string>
-    <string name="total_time">Tempo totale</string>
+    <string name="total_time">Tempo totale (Minuti)</string>
     <string name="title">Titolo</string>
     <string name="front_recipe_image">Immagine di copertina</string>
     <string name="video_url">Video URL (Opzionale)</string>

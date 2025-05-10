@@ -11,7 +11,6 @@ import com.mgsanlet.cheftube.databinding.FragmentProfileBinding
 import com.mgsanlet.cheftube.ui.util.Constants.ARG_USER_ID
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.util.asMessage
-import com.mgsanlet.cheftube.ui.util.loadUrl
 import com.mgsanlet.cheftube.ui.util.loadUrlToCircle
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
@@ -28,9 +27,14 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
 
     override fun onResume() {
         super.onResume()
-        isToggleInitialization = true
         // Recargar los datos del usuario cuando se vuelva al fragmento
-        sharedViewModel.loadCurrentUserData()
+        isToggleInitialization = true
+        // Actualizar los datos del usuario
+        arguments?.let {
+            it.getString(ARG_USER_ID)?.let {
+                sharedViewModel.loadUserDataById(it)
+            } ?: sharedViewModel.loadCurrentUserData()
+        } ?: sharedViewModel.loadCurrentUserData()
     }
 
     override fun onCreateView(
@@ -46,7 +50,7 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
         super.onViewCreated(view, savedInstanceState)
         binding.progressBar.setCustomStyle(requireContext())
         arguments?.let {
-            it.getString(ARG_USER_ID)?.let{
+            it.getString(ARG_USER_ID)?.let {
                 sharedViewModel.loadUserDataById(it)
             } ?: sharedViewModel.loadCurrentUserData()
         } ?: sharedViewModel.loadCurrentUserData()
@@ -74,6 +78,7 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
                     showLoading(false)
                     showUserData()
                 }
+
                 else -> {}
             }
         }
@@ -91,8 +96,6 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
                 }
             }
         }
-
-        sharedViewModel.userData.observe(viewLifecycleOwner) { showUserData() }
     }
 
     override fun setUpListeners() {
@@ -103,18 +106,25 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
             )
         }
         binding.followToggle.setOnCheckedChangeListener { _, isChecked ->
-            if (!isToggleInitialization){
+            if (!isToggleInitialization) {
                 sharedViewModel.followUser(isChecked)
+                var currentFollowers = binding.followersTextView.text.toString().substringBefore(" ").toInt()
+                binding.followersTextView.text = getString(
+                    R.string.followers,
+                    currentFollowers + if (isChecked) 1 else -1
+                )
             }
         }
 
         binding.seeCreatedButton.setOnClickListener {
             val createdRecipes = sharedViewModel.getProfileUserCreatedRecipes()
             if (createdRecipes.isEmpty()) {
-                Toast.makeText(context, getString(R.string.no_recipes_created), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, getString(R.string.no_recipes_created), Toast.LENGTH_LONG)
+                    .show()
                 return@setOnClickListener
             }
-            val recipeFeedFragment = RecipeFeedFragment.newInstance(createdRecipes as ArrayList<String>)
+            val recipeFeedFragment =
+                RecipeFeedFragment.newInstance(createdRecipes as ArrayList<String>)
             FragmentNavigator.loadFragmentInstance(
                 null, this,
                 recipeFeedFragment, R.id.fragmentContainerView
@@ -123,10 +133,12 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
         binding.seeFavButton.setOnClickListener {
             val favouriteRecipes = sharedViewModel.getProfileUserFavouriteRecipes()
             if (favouriteRecipes.isEmpty()) {
-                Toast.makeText(context, getString(R.string.no_favourite_recipes), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, getString(R.string.no_favourite_recipes), Toast.LENGTH_LONG)
+                    .show()
                 return@setOnClickListener
             }
-            val recipeFeedFragment = RecipeFeedFragment.newInstance(favouriteRecipes as ArrayList<String>)
+            val recipeFeedFragment =
+                RecipeFeedFragment.newInstance(favouriteRecipes as ArrayList<String>)
             FragmentNavigator.loadFragmentInstance(
                 null, this,
                 recipeFeedFragment, R.id.fragmentContainerView
@@ -155,7 +167,12 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
 
             // Cargar imagen de perfil
             if (user.profilePictureUrl.isNotBlank()) {
-                binding.profilePictureImageView.loadUrlToCircle(user.profilePictureUrl, requireContext())
+                binding.profilePictureImageView.loadUrlToCircle(
+                    user.profilePictureUrl,
+                    requireContext()
+                )
+            } else {
+                binding.profilePictureImageView.setImageResource(R.drawable.account_default_image)
             }
         }
     }

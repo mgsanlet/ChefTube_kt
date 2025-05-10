@@ -173,7 +173,7 @@
     <string name="categories">Categories</string>
     <string name="difficulty">Difficulty</string>
     <string name="recipe_duration_short">Duration</string>
-    <string name="total_time">Total time</string>
+    <string name="total_time">Total time (Minutes)</string>
     <string name="title">Title</string>
     <string name="front_recipe_image">Front image</string>
     <string name="video_url">Video url (Optional)</string>

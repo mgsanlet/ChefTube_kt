@@ -113,6 +113,15 @@ fun ImageView.loadBitmapToCircle(bitmap: Bitmap, context: Context) {
         .into(this)
 }
 
+fun ImageView.loadBitmap(bitmap: Bitmap, context: Context) {
+    Glide.with(context)
+        .load(bitmap)
+        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+        .skipMemoryCache(true)
+        .apply(RequestOptions.bitmapTransform(RoundedCorners(40)))
+        .into(this)
+}
+
 fun ImageView.loadResourceToCircle(id: Int, context: Context){
     Glide.with(context)
         .load(id)
