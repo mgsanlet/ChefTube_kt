@@ -190,6 +190,10 @@
     <string name="new_step">New step</string>
     <string name="paste_link_here">Paste YouTube video link here</string>
     <string name="check">Check</string>
+    <string name="invalid_minutes">Invalid minutes</string>
+    <string name="at_least_1_ingredient">At least 1 ingredient is required</string>
+    <string name="at_least_1_step">At least 1 step is required</string>
+    <string name="invalid_title_length">Invalid title length</string>
     <string name="crop_image">Crop your profile picture</string>
     <string name="click_to_edit">Click to edit</string>
     <string-array name="difficulty">

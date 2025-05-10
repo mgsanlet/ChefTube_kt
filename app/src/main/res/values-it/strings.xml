@@ -192,5 +192,9 @@
     <string name="new_ingredient">Nuovo ingrediente</string>
     <string name="new_step">Nuovo passo</string>
     <string name="paste_link_here">Incolla qui il link video di YouTube</string>
+    <string name="invalid_title_length">Lunghezza del titolo non valida</string>
     <string name="crop_image">Ritaglia la tua immagine del profilo</string>
+    <string name="invalid_minutes">Minuti non validi</string>
+    <string name="at_least_1_ingredient">È richiesto almeno 1 ingrediente</string>
+    <string name="at_least_1_step">È richiesto almeno 1 passaggio</string>
 </resources>

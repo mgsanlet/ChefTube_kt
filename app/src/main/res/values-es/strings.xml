@@ -194,6 +194,10 @@
     <string name="remove_last_ingredient">Eliminar último ingrediente</string>
     <string name="drop_arrow_cdesc">Icono de flecha desplegable</string>
     <string name="remove_last_category">Eliminar última categoría</string>
+    <string name="invalid_title_length">Longitud del título inválida</string>
     <string name="crop_image">Recorta tu imagen de perfil</string>
+    <string name="invalid_minutes">Minutos no válidos</string>
+    <string name="at_least_1_ingredient">Es obligatorio al menos 1 ingrediente</string>
+    <string name="at_least_1_step">Es obligatorio al menos 1 paso</string>
 
 </resources>
