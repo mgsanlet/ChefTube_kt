@@ -10,6 +10,7 @@ import com.mgsanlet.cheftube.databinding.ItemRecipeBinding
 import com.mgsanlet.cheftube.domain.model.DomainRecipe
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.util.loadUrl
+import com.mgsanlet.cheftube.ui.util.loadUrlToCircle
 import com.mgsanlet.cheftube.ui.view.home.ProfileFragment
 import com.mgsanlet.cheftube.ui.view.home.RecipeDetailFragment
 import com.mgsanlet.cheftube.ui.view.home.RecipeFeedFragment
@@ -39,14 +40,16 @@ class RecipeFeedAdapter(
         val recipe = recipeList[position]
         val binding = holder.binding
 
-        binding.titleTextView.setText(recipe.title)
+        binding.titleTextView.text = recipe.title
         // Cargar imágenes de recetas con esquinas redondeadas usando Glide
         binding.imageView.loadUrl(recipe.imageUrl, mContext)
         binding.imageView.setOnClickListener { navToRecipeDetail(recipe.id) }
 
         recipe.author?.let { author ->
             binding.authorTextView.text = author.username
-            //binding.authorImageView.loadUrl(author.avatarUrl, mContext)
+            if (author.profilePictureUrl.isNotBlank()) {
+                binding.authorImageView.loadUrlToCircle(author.profilePictureUrl, mContext)
+            }
             binding.authorTag.setOnClickListener {
                 navToAuthorProfile(author.id)
             }

@@ -2,7 +2,6 @@ package com.mgsanlet.cheftube.data.repository
 
 import com.mgsanlet.cheftube.data.model.RecipeResponse
 import com.mgsanlet.cheftube.data.source.remote.FirebaseApi
-import com.mgsanlet.cheftube.data.source.remote.FirebaseRecipeApi
 import com.mgsanlet.cheftube.domain.model.DomainRecipe
 import com.mgsanlet.cheftube.domain.model.DomainUser
 import com.mgsanlet.cheftube.domain.repository.RecipesRepository
@@ -15,17 +14,20 @@ import javax.inject.Singleton
 
 @Singleton
 class RecipesRepositoryImpl @Inject constructor(
-    private val mainApi: FirebaseApi,
-    private val api: FirebaseRecipeApi
+    private val api: FirebaseApi
 ) : RecipesRepository {
     var recipesCache: List<DomainRecipe>? = null
+
+    override suspend fun clearCache() {
+        recipesCache = null
+    }
 
     override suspend fun getAll(): DomainResult<List<DomainRecipe>, RecipeError> {
         recipesCache?.let {
             if (!it.isEmpty()) return Success(it)
         }
         // Si el caché es nulo
-        return when (val result = api.getAll()) {
+        return when (val result = api.getAllRecipes()) {
             is Success -> {
                 val domainRecipes = result.data.map { it.toDomainRecipe() }
 
@@ -42,7 +44,7 @@ class RecipesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun filterRecipesByIngredient(ingredientQuery: String): DomainResult<List<DomainRecipe>, RecipeError> {
-        return when (val result = api.getAll()) {
+        return when (val result = api.getAllRecipes()) {
             is Success -> {
                 val lowercaseQuery = ingredientQuery.lowercase()
                 val filteredRecipes = result.data.filter { recipeResponse ->
@@ -68,7 +70,7 @@ class RecipesRepositoryImpl @Inject constructor(
             if (recipe != null) return Success(recipe)
         }
         // Si el caché es nulo
-        return when (val result = api.getById(recipeId)) {
+        return when (val result = api.getRecipeById(recipeId)) {
             is Success -> {
                 try {
                     Success(result.data.toDomainRecipe())
@@ -88,7 +90,7 @@ class RecipesRepositoryImpl @Inject constructor(
             return Success(it.filter { recipe -> recipeIds.contains(recipe.id) })
         }
         // Si el caché es nulo
-        return when (val result = api.getByIds(recipeIds)) {
+        return when (val result = api.getRecipesByIds(recipeIds)) {
             is Success -> {
                 val filteredRecipes = result.data.map { it.toDomainRecipe() }
 
@@ -107,14 +109,31 @@ class RecipesRepositoryImpl @Inject constructor(
         recipeId: String,
         isNewFavourite: Boolean
     ): DomainResult<Unit, RecipeError> {
-        return api.updateFavouriteCount(recipeId, isNewFavourite)
+        val result = api.updateRecipeFavouriteCount(recipeId, isNewFavourite)
+        
+        // Actualizar el cache si existe
+        recipesCache?.let { cache ->
+            val index = cache.indexOfFirst { it.id == recipeId }
+            if (index != -1) {
+                val currentRecipe = cache[index]
+                val updatedRecipe = currentRecipe.copy(
+                    favouriteCount = if (isNewFavourite) currentRecipe.favouriteCount + 1
+                    else currentRecipe.favouriteCount - 1
+                )
+                recipesCache = cache.toMutableList().apply {
+                    set(index, updatedRecipe)
+                }
+            }
+        }
+
+        return result
     }
 
     private suspend fun RecipeResponse.toDomainRecipe(): DomainRecipe {
         return DomainRecipe(
             id = this.id,
             title = this.title,
-            imageUrl = mainApi.getStorageUrlFromPath(this.imagePath),
+            imageUrl = api.getStorageUrlFromPath(this.imagePath),
             videoUrl = this.videoUrl,
             ingredients = this.ingredients,
             steps = this.steps,
@@ -124,7 +143,10 @@ class RecipesRepositoryImpl @Inject constructor(
             difficulty = this.difficulty,
             author = DomainUser(
                 id = this.authorId,
-                username = this.authorName
+                username = this.authorName,
+                profilePictureUrl = api.getStorageUrlFromPath(
+                    if (this.authorHasProfilePicture) "profile_pictures/${this.authorId}.jpg"
+                    else "")
             )
         )
     }

@@ -13,5 +13,6 @@ data class RecipeResponse(
     val difficulty: Int = 0,
     // Author
     val authorId: String = "",
-    val authorName: String = ""
+    val authorName: String = "",
+    val authorHasProfilePicture: Boolean = false
 )

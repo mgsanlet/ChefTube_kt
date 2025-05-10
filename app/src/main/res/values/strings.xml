@@ -190,6 +190,8 @@
     <string name="new_step">New step</string>
     <string name="paste_link_here">Paste YouTube video link here</string>
     <string name="check">Check</string>
+    <string name="crop_image">Crop your profile picture</string>
+    <string name="click_to_edit">Click to edit</string>
     <string-array name="difficulty">
         <item>Easy</item>
         <item>Medium</item>

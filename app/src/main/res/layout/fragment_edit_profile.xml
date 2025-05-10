@@ -22,9 +22,9 @@
 
     <ImageView
         android:id="@+id/profilePictureImageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="64dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="88dp"
         android:contentDescription="@string/user_avatar_cdesc"
         android:src="@drawable/account_default_image"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,12 +32,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/clickToEditTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/click_to_edit"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/profilePictureImageView"
+        app:layout_constraintStart_toStartOf="@+id/profilePictureImageView"
+        app:layout_constraintTop_toBottomOf="@+id/profilePictureImageView" />
+
     <EditText
         android:id="@+id/usernameEditText"
         style="@style/AuthFields"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="15dp"
         android:layout_weight="1"
         android:autofillHints="null"
         android:background="?android:attr/editTextBackground"
@@ -51,7 +63,7 @@
         app:layout_constraintDimensionRatio=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profilePictureImageView"
+        app:layout_constraintTop_toBottomOf="@+id/clickToEditTextView"
         tools:ignore="VisualLintTextFieldSize" />
 
     <EditText

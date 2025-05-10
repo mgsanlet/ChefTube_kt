@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.mgsanlet.cheftube.R
-import com.mgsanlet.cheftube.data.source.remote.FirebaseRecipeApi
 import com.mgsanlet.cheftube.ui.util.hideSystemBars
 import com.mgsanlet.cheftube.ui.view.home.HomeActivity
 import dagger.hilt.android.AndroidEntryPoint

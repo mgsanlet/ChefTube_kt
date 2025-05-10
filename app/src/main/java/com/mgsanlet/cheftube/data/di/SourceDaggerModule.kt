@@ -3,8 +3,6 @@ package com.mgsanlet.cheftube.data.di
 import android.content.Context
 import com.mgsanlet.cheftube.data.source.local.PreferencesManager
 import com.mgsanlet.cheftube.data.source.remote.FirebaseApi
-import com.mgsanlet.cheftube.data.source.remote.FirebaseRecipeApi
-import com.mgsanlet.cheftube.data.source.remote.FirebaseUserApi
 import com.mgsanlet.cheftube.data.source.remote.OpenFoodFactsApi
 import com.mgsanlet.cheftube.data.util.Constants.Api.OFF_API_BASE_URL
 import dagger.Module
@@ -74,18 +72,4 @@ object SourceDaggerModule {
     fun provideFirebaseApi(): FirebaseApi {
         return FirebaseApi()
     }
-
-    @Provides
-    @Singleton
-    fun provideFirebaseRecipeApi(mainApi: FirebaseApi): FirebaseRecipeApi {
-        return FirebaseRecipeApi(mainApi)
-    }
-
-    @Provides
-    @Singleton
-    fun provideFirebaseUserApi(mainApi: FirebaseApi): FirebaseUserApi {
-        return FirebaseUserApi(mainApi)
-    }
-
-
 }

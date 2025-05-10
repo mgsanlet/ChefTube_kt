@@ -4,6 +4,7 @@ data class UserResponse(
     val username: String = "",
     val email: String = "",
     val bio: String = "",
+    val hasProfilePicture: Boolean = false,
     val createdRecipes: List<String> = emptyList(),
     val favouriteRecipes: List<String> = emptyList(),
     val followersIds: List<String> = emptyList(),

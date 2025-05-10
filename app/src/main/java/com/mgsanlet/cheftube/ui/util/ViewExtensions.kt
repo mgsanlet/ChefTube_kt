@@ -1,6 +1,7 @@
 package com.mgsanlet.cheftube.ui.util
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.PorterDuff
@@ -88,9 +89,27 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
 fun ImageView.loadUrl(url: String, context: Context){
     Glide.with(context)
         .load(url)
+        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
         .skipMemoryCache(true)
-        .diskCacheStrategy(DiskCacheStrategy.NONE)
         .apply(RequestOptions.bitmapTransform(RoundedCorners(40)))
+        .into(this)
+}
+
+fun ImageView.loadUrlToCircle(url: String, context: Context){
+    Glide.with(context)
+        .load(url)
+        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+        .skipMemoryCache(true)
+        .apply(RequestOptions.circleCropTransform())
+        .into(this)
+}
+
+fun ImageView.loadBitmapToCircle(bitmap: Bitmap, context: Context) {
+    Glide.with(context)
+        .load(bitmap)
+        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+        .skipMemoryCache(true)
+        .apply(RequestOptions.circleCropTransform())
         .into(this)
 }
 

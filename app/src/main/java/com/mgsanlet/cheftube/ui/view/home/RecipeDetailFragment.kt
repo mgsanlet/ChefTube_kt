@@ -20,6 +20,8 @@ import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
 import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.util.asMessage
+import com.mgsanlet.cheftube.ui.util.loadUrl
+import com.mgsanlet.cheftube.ui.util.loadUrlToCircle
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModel
@@ -179,6 +181,12 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
         binding.authorTextView.text = recipe.author?.username ?: ""
         binding.titleTextView.text = recipe.title
+        
+        // Cargar imagen de perfil del autor
+        recipe.author?.profilePictureUrl?.takeIf { it.isNotBlank() }?.let {
+            binding.authorImageView.loadUrlToCircle(it, requireContext())
+        }
+        
         // Configurar vídeo
         binding.videoWebView.settings.javaScriptEnabled = true
         val videoUrl = recipe.videoUrl

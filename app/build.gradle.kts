@@ -83,6 +83,7 @@ dependencies {
 
     // Image Loading
     implementation(libs.glide)
+    implementation("com.github.yalantis:ucrop:2.2.8")
 
     // Data Binding
     implementation("androidx.databinding:databinding-runtime:8.2.2")

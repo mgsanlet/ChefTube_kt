@@ -172,6 +172,8 @@
     <string name="recipe_duration">Durata della ricetta (minuti totali)</string>
     <string name="add_new_category">Aggiungi nuova categoria</string>
     <string name="categories">Categorie</string>
+    <string name="check">Check</string>
+    <string name="click_to_edit">Fai clic per modificare</string>
     <string name="difficulty">Difficoltà</string>
     <string name="recipe_duration_short">Durata</string>
     <string name="total_time">Tempo totale</string>
@@ -180,4 +182,15 @@
     <string name="video_url">Video URL</string>
     <string name="load_image_from_gallery">Seleziona l\'immagine dalla tua galleria</string>
     <string name="add_recipe_cdesc">Crea una nuova ricetta</string>
+    <string name="drop_arrow_cdesc">Icona freccia giù</string>
+    <string name="remove_last_category">Rimuovi l\'ultima categoria</string>
+    <string name="add_new_ingredient">Aggiungi nuovo ingrediente</string>
+    <string name="remove_last_ingredient">Rimuovi l\'ultimo ingrediente</string>
+    <string name="add_new_step">Aggiungi nuovo passaggio</string>
+    <string name="remove_last_step">Rimuovi ultimo passaggio</string>
+    <string name="new_category">Nuova categoria</string>
+    <string name="new_ingredient">Nuovo ingrediente</string>
+    <string name="new_step">Nuovo passo</string>
+    <string name="paste_link_here">Incolla qui il link video di YouTube</string>
+    <string name="crop_image">Ritaglia la tua immagine del profilo</string>
 </resources>

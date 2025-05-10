@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.mgsanlet.cheftube.domain.model.DomainUser
 import com.mgsanlet.cheftube.domain.usecase.user.GetCurrentUserDataUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.GetUserDataByIdUseCase
+import com.mgsanlet.cheftube.domain.usecase.user.SaveProfilePictureUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.UpdateCurrentUserDataUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.UpdateUserDataUseCase
 import com.mgsanlet.cheftube.domain.util.DomainResult
@@ -20,7 +21,8 @@ class ProfileViewModel @Inject constructor(
     private val getUserDataById: GetUserDataByIdUseCase,
     private val getCurrentUserData: GetCurrentUserDataUseCase,
     private val updateCurrentUserData: UpdateCurrentUserDataUseCase,
-    private val updateUserData: UpdateUserDataUseCase
+    private val updateUserData: UpdateUserDataUseCase,
+    private val saveProfilePicture: SaveProfilePictureUseCase
 ) : ViewModel() {
     private val _uiState = MutableLiveData<ProfileState>()
     val uiState: LiveData<ProfileState> = _uiState
@@ -28,6 +30,7 @@ class ProfileViewModel @Inject constructor(
     val userData: LiveData<DomainUser> = _userData
     private val _isCurrentUserProfile = MutableLiveData<Boolean>()
     val isCurrentUserProfile: LiveData<Boolean> = _isCurrentUserProfile
+    private var newProfilePicture: ByteArray? = null
 
     fun loadUserDataById(userId: String) {
         _uiState.value = ProfileState.Loading
@@ -70,6 +73,11 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun setNewProfilePicture(newPicture: ByteArray) {
+        newProfilePicture = newPicture
+        loadCurrentUserData()
+    }
+
     fun tryUpdateCurrentUserData(newUsername: String, newBio: String) {
         _uiState.value = ProfileState.Loading
 
@@ -79,11 +87,26 @@ class ProfileViewModel @Inject constructor(
         ) ?: throw Exception("Null logged user")
 
         viewModelScope.launch {
+            // Primero actualizamos los datos del usuario
             updateCurrentUserData(newUserData).fold(
                 onSuccess = {
-                    _userData.value = newUserData
-                    _uiState.value = ProfileState.SaveSuccess
-                    _uiState.value = ProfileState.LoadSuccess
+                    // Si hay nueva imagen, la guardamos
+                    newProfilePicture?.let { picture ->
+                        saveProfilePicture(picture).fold(
+                            onSuccess = {
+                                // Recargar los datos del usuario para obtener la nueva URL de la imagen
+                                loadCurrentUserData()
+                                _uiState.value = ProfileState.SaveSuccess
+                                _uiState.value = ProfileState.LoadSuccess
+                            },
+                            onError = { error -> _uiState.value = ProfileState.Error(error) }
+                        )
+                    } ?: run {
+                        // Si no hay nueva imagen, ya tenemos los datos actualizados
+                        _userData.value = newUserData
+                        _uiState.value = ProfileState.SaveSuccess
+                        _uiState.value = ProfileState.LoadSuccess
+                    }
                 },
                 onError = { error -> _uiState.value = ProfileState.Error(error) }
             )

@@ -6,8 +6,6 @@ import com.mgsanlet.cheftube.data.repository.RecipesRepositoryImpl
 import com.mgsanlet.cheftube.data.repository.UsersRepositoryImpl
 import com.mgsanlet.cheftube.data.source.local.PreferencesManager
 import com.mgsanlet.cheftube.data.source.remote.FirebaseApi
-import com.mgsanlet.cheftube.data.source.remote.FirebaseRecipeApi
-import com.mgsanlet.cheftube.data.source.remote.FirebaseUserApi
 import com.mgsanlet.cheftube.data.source.remote.OpenFoodFactsApi
 import com.mgsanlet.cheftube.data.util.PatternValidatorImpl
 import com.mgsanlet.cheftube.domain.repository.LanguagesRepository
@@ -27,19 +25,17 @@ object RepositoryDaggerModule {
     @Provides
     @Singleton
     fun provideUsersRepository(
-        api: FirebaseApi,
-        userApi: FirebaseUserApi
+        api: FirebaseApi
     ): UsersRepository {
-        return UsersRepositoryImpl(api, userApi)
+        return UsersRepositoryImpl(api)
     }
 
     @Provides
     @Singleton
     fun provideRecipesRepository(
-        mainApi: FirebaseApi,
-        api: FirebaseRecipeApi
+        api: FirebaseApi
     ): RecipesRepository {
-        return RecipesRepositoryImpl(mainApi, api)
+        return RecipesRepositoryImpl(api)
     }
 
     @Provides

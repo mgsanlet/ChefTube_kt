@@ -50,6 +50,10 @@
         <activity
             android:name=".ui.view.home.HomeActivity"
             android:exported="true"/>
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+
     </application>
 
 </manifest>

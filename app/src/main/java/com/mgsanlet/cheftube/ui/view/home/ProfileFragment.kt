@@ -11,6 +11,8 @@ import com.mgsanlet.cheftube.databinding.FragmentProfileBinding
 import com.mgsanlet.cheftube.ui.util.Constants.ARG_USER_ID
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.util.asMessage
+import com.mgsanlet.cheftube.ui.util.loadUrl
+import com.mgsanlet.cheftube.ui.util.loadUrlToCircle
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileState
@@ -27,6 +29,8 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
     override fun onResume() {
         super.onResume()
         isToggleInitialization = true
+        // Recargar los datos del usuario cuando se vuelva al fragmento
+        sharedViewModel.loadCurrentUserData()
     }
 
     override fun onCreateView(
@@ -138,17 +142,21 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
     }
 
     private fun showUserData() {
-        sharedViewModel.userData.value?.let {
-            //binding.profilePictureImageView.loadUrl(user.profilePictureUrl, requireContext())
-            binding.usernameTextView.text = it.username
-            binding.emailTextView.text = it.email
+        sharedViewModel.userData.value?.let { user ->
+            binding.usernameTextView.text = user.username
+            binding.emailTextView.text = user.email
             binding.followToggle.isChecked = sharedViewModel.isUserBeingFollowed()
             isToggleInitialization = false
-            binding.followersTextView.text = getString(R.string.followers, it.followersIds.size)
-            binding.followingTextView.text = getString(R.string.following, it.followingIds.size)
-            binding.bioTextView.text = it.bio
-            binding.seeCreatedButton.text = getString(R.string.see_created_recipes, it.username)
-            binding.seeFavButton.text = getString(R.string.see_favourite_recipes, it.username)
+            binding.followersTextView.text = getString(R.string.followers, user.followersIds.size)
+            binding.followingTextView.text = getString(R.string.following, user.followingIds.size)
+            binding.bioTextView.text = user.bio
+            binding.seeCreatedButton.text = getString(R.string.see_created_recipes, user.username)
+            binding.seeFavButton.text = getString(R.string.see_favourite_recipes, user.username)
+
+            // Cargar imagen de perfil
+            if (user.profilePictureUrl.isNotBlank()) {
+                binding.profilePictureImageView.loadUrlToCircle(user.profilePictureUrl, requireContext())
+            }
         }
     }
 
