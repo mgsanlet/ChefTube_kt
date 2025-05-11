@@ -27,6 +27,8 @@ class RecipeVideoLoaderView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
+    private var embedVideoUrl: String? = null
+
     private val binding: RecipeVideoLoaderViewBinding = RecipeVideoLoaderViewBinding.inflate(
         LayoutInflater.from(context),
         this,
@@ -78,9 +80,9 @@ class RecipeVideoLoaderView @JvmOverloads constructor(
 
             override fun afterTextChanged(s: Editable?) {
                 val url = binding.videoUrlEditText.text.toString()
-                if (url.isNotBlank()){
+                if (url.isNotBlank()) {
                     loadVideoUrl(url)
-                }else{
+                } else {
                     setState(VideoUrlState.INITIAL)
                 }
             }
@@ -154,28 +156,32 @@ class RecipeVideoLoaderView @JvmOverloads constructor(
 
             else -> null
         }
-        return youtubeId?.let {
+        youtubeId?.let {
             if (YOUTUBE_ID_REGEX.toRegex().matches(it)) {
-                "https://www.youtube.com/embed/$it"
+                embedVideoUrl = "https://www.youtube.com/embed/$it"
+                return embedVideoUrl
             } else {
-                null
-            } }
+                return null
+            }
+        } ?: return null
     }
 
     fun setText(text: String) {
         binding.videoUrlEditText.setText(text)
-        if (text.isNotBlank()){
+        if (text.isNotBlank()) {
             loadVideoUrl(text)
-        }else{
+        } else {
             setState(VideoUrlState.INITIAL)
         }
     }
 
-    fun getText(): String{
+    fun getText(): String {
         return binding.videoUrlEditText.text.toString()
     }
 
-    fun setError(error: String = ""){
+    fun getEmbedVideoUrl(): String? = embedVideoUrl
+
+    fun setError(error: String = "") {
         binding.videoUrlEditText.error = error
     }
 }

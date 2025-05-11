@@ -8,6 +8,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.mgsanlet.cheftube.data.model.RecipeResponse
 import com.mgsanlet.cheftube.data.model.UserResponse
+import com.mgsanlet.cheftube.domain.model.DomainRecipe
 import com.mgsanlet.cheftube.domain.model.DomainUser
 import com.mgsanlet.cheftube.domain.util.DomainResult
 import com.mgsanlet.cheftube.domain.util.error.RecipeError
@@ -104,7 +105,7 @@ class FirebaseApi {
                 userData.createdRecipes.forEach { recipeId ->
                     val recipeRef = db.collection("recipes").document(recipeId)
                     batch.update(recipeRef, "authorName", userData.username)
-                    batch.update(recipeRef, "authorProfilePicturePath", userData.profilePictureUrl)
+                    batch.update(recipeRef, "authorHasProfilePicture",userData.profilePictureUrl.isNotBlank())
                 }
                 batch.commit().await()
             }
@@ -243,6 +244,46 @@ class FirebaseApi {
                 "favouriteCount",
                 if (isNewFavourite) FieldValue.increment(1) else FieldValue.increment(-1)
             )
+            batch.commit().await()
+            return DomainResult.Success(Unit)
+        } catch (exception: Exception) {
+            return DomainResult.Error(RecipeError.Unknown(exception.message))
+        }
+    }
+
+    suspend fun saveRecipe(
+        finalId: String,
+        newRecipeData: DomainRecipe,
+        newImage: ByteArray?,
+        currentUserData: DomainUser
+    ): DomainResult<Unit, RecipeError> {
+        try {
+            val batch = db.batch()
+            val recipeRef = db.collection("recipes").document(finalId)
+            val recipe = hashMapOf(
+                "id" to finalId,
+                "title" to newRecipeData.title,
+                "videoUrl" to newRecipeData.videoUrl,
+                "ingredients" to newRecipeData.ingredients,
+                "steps" to newRecipeData.steps,
+                "categories" to newRecipeData.categories,
+                "favouriteCount" to newRecipeData.favouriteCount,
+                "durationMinutes" to newRecipeData.durationMinutes,
+                "difficulty" to newRecipeData.difficulty,
+
+                "authorId" to currentUserData.id,
+                "authorName" to currentUserData.username,
+                "authorHasProfilePicture" to currentUserData.profilePictureUrl.isNotBlank()
+            )
+            batch.set(recipeRef, recipe)
+            newImage?.let{
+                val storageRef = storage.reference.child("recipe_images/$finalId.jpg")
+                storageRef.putBytes(it).await()
+            }
+
+            val userRef = db.collection("users").document(currentUserData.id)
+            batch.update(userRef, "createdRecipes", FieldValue.arrayUnion(finalId))
+
             batch.commit().await()
             return DomainResult.Success(Unit)
         } catch (exception: Exception) {

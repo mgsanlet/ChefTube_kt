@@ -20,7 +20,6 @@ import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
 import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.util.asMessage
-import com.mgsanlet.cheftube.ui.util.loadUrl
 import com.mgsanlet.cheftube.ui.util.loadUrlToCircle
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
@@ -141,6 +140,19 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
                 viewModel.alternateFavourite(isChecked)
             }
         }
+
+        binding.editButton.setOnClickListener {
+            try {
+                val instance = RecipeFormFragment.newInstance(arguments?.getString(ARG_RECIPE)!!)
+                FragmentNavigator.loadFragmentInstance(null, this, instance, R.id.fragmentContainerView)
+            } catch (e: Exception) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.unknown_error),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
     }
 
     fun setAuthorTagListener(authorId: String) {
@@ -181,19 +193,20 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
         binding.authorTextView.text = recipe.author?.username ?: ""
         binding.titleTextView.text = recipe.title
-        
+
         // Cargar imagen de perfil del autor
         recipe.author?.profilePictureUrl?.takeIf { it.isNotBlank() }?.let {
             binding.authorImageView.loadUrlToCircle(it, requireContext())
         }
-        
+
         // Configurar vídeo
         binding.videoWebView.settings.javaScriptEnabled = true
         binding.videoWebView.loadUrl(recipe.videoUrl)
 
-        binding.difficultyTextView.setDifficulty(2)
+        binding.difficultyTextView.setDifficulty(recipe.difficulty)
         binding.durationTextView.setDuration(recipe.durationMinutes)
         binding.favouriteToggle.isChecked = viewModel.isFavourite
+        binding.editButton.visibility = if (viewModel.isRecipeByAuthor) View.VISIBLE else View.GONE
         isToggleInitialization = false
         binding.favouriteNumberTextView.text = recipe.favouriteCount.toString()
 

@@ -30,6 +30,7 @@ class RecipeDetailViewModel @Inject constructor(
     var authorId: String? = null
 
     var isFavourite: Boolean = false
+    var isRecipeByAuthor: Boolean = false
 
     // Estado del cronómetro
     private var _timer: CountDownTimer? = null
@@ -57,6 +58,7 @@ class RecipeDetailViewModel @Inject constructor(
                     onSuccess = { recipe ->
                         authorId = recipe.author?.id
                         isFavourite = isRecipeFavourite(recipe.id)
+                        isRecipeByAuthor = isRecipeByAuthor(recipe.id)
                         _recipeState.value = RecipeState.Success(recipe)
                     },
                     onError = { error ->
@@ -140,6 +142,17 @@ class RecipeDetailViewModel @Inject constructor(
             )
         }
         return isFavourite
+    }
+
+    private fun isRecipeByAuthor(recipeId: String): Boolean {
+        var isByAuthor = false
+        viewModelScope.launch {
+            getCurrentUserData().fold(
+                onSuccess = { user -> isByAuthor = user.createdRecipes.contains(recipeId) },
+                onError = { _recipeState.value = RecipeState.Error(RecipeError.Unknown()) }
+            )
+        }
+        return isByAuthor
     }
 }
 

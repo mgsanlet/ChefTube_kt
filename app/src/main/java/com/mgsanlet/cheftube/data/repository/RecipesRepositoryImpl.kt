@@ -9,6 +9,7 @@ import com.mgsanlet.cheftube.domain.util.DomainResult
 import com.mgsanlet.cheftube.domain.util.DomainResult.Error
 import com.mgsanlet.cheftube.domain.util.DomainResult.Success
 import com.mgsanlet.cheftube.domain.util.error.RecipeError
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -110,7 +111,7 @@ class RecipesRepositoryImpl @Inject constructor(
         isNewFavourite: Boolean
     ): DomainResult<Unit, RecipeError> {
         val result = api.updateRecipeFavouriteCount(recipeId, isNewFavourite)
-        
+
         // Actualizar el cache si existe
         recipesCache?.let { cache ->
             val index = cache.indexOfFirst { it.id == recipeId }
@@ -129,11 +130,50 @@ class RecipesRepositoryImpl @Inject constructor(
         return result
     }
 
+    override suspend fun saveRecipe(
+        newRecipeData: DomainRecipe,
+        newImage: ByteArray?,
+        currentUserData: DomainUser
+    ): DomainResult<String?, RecipeError> {
+
+        var newId: String? = null
+        var finalId = newRecipeData.id
+        if (finalId.isBlank()) {
+            finalId = UUID.randomUUID().toString()
+            newId = finalId
+        }
+        val result = api.saveRecipe(finalId, newRecipeData, newImage, currentUserData)
+        if (result is Success) {
+            recipesCache?.let { cache ->
+
+                val finalRecipeData = newRecipeData.copy(
+                    id = finalId,
+                    imageUrl = api.getStorageUrlFromPath("recipe_images/$finalId.jpg"),
+                    author = currentUserData
+                )
+
+                val index = cache.indexOfFirst { it.id == finalId }
+                recipesCache = if (index != -1) {
+                    cache.toMutableList().apply {
+                        set(index, finalRecipeData)
+                    }
+                } else {
+                    cache.toMutableList().apply {
+                        add(finalRecipeData)
+                    }
+                }
+            }
+            return Success(newId)
+        } else {
+            return Error((result as Error).error)
+        }
+    }
+
     private suspend fun RecipeResponse.toDomainRecipe(): DomainRecipe {
         return DomainRecipe(
             id = this.id,
             title = this.title,
-            imageUrl = api.getStorageUrlFromPath(this.imagePath),
+            imageUrl = api.getStorageUrlFromPath("recipe_images/${this.id}.jpg"),
             videoUrl = this.videoUrl,
             ingredients = this.ingredients,
             steps = this.steps,
@@ -144,9 +184,11 @@ class RecipesRepositoryImpl @Inject constructor(
             author = DomainUser(
                 id = this.authorId,
                 username = this.authorName,
-                profilePictureUrl = api.getStorageUrlFromPath(
-                    if (this.authorHasProfilePicture) "profile_pictures/${this.authorId}.jpg"
-                    else "")
+                profilePictureUrl = if (this.authorHasProfilePicture) api.getStorageUrlFromPath(
+                    "profile_pictures/${this.authorId}.jpg"
+                )
+                else ""
+
             )
         )
     }

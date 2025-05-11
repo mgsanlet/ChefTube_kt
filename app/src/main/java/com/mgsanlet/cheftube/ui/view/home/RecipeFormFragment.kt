@@ -13,8 +13,11 @@ import androidx.fragment.app.viewModels
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentRecipeFormBinding
 import com.mgsanlet.cheftube.domain.model.DomainRecipe
+import com.mgsanlet.cheftube.domain.util.error.RecipeError
+import com.mgsanlet.cheftube.domain.util.error.UserError
 import com.mgsanlet.cheftube.ui.adapter.DifficultySpinnerAdapter
 import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE
+import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.asStringList
 import com.mgsanlet.cheftube.ui.util.dpToPx
@@ -65,17 +68,31 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
                     viewModel.recipe.value?.let { showRecipeData(it) }
                 }
 
-                is RecipeFormState.Error ->
+                is RecipeFormState.Error -> {
+                    showLoading(false)
+                    var errorMessage = ""
                     when (state.error) {
+                        is RecipeError -> errorMessage = state.error.asMessage(requireContext())
 
-                        else -> Toast.makeText(
-                            context,
-                            state.error.asMessage(requireContext()),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        is UserError -> errorMessage = state.error.asMessage(requireContext())
                     }
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                }
 
-                is RecipeFormState.SaveSuccess -> TODO()
+                is RecipeFormState.SaveSuccess -> {
+                    Toast.makeText(context, getString(R.string.data_saved), Toast.LENGTH_LONG)
+                        .show()
+                    try {
+                        val detailFragment = RecipeDetailFragment.newInstance(
+                            state.newRecipeId ?: (viewModel.recipe.value!!.id)
+                        )
+                        FragmentNavigator.loadFragmentInstance(
+                            null, this, detailFragment, R.id.fragmentContainerView
+                        )
+                    } catch (e: Exception) {
+                        Toast.makeText(context, getString(R.string.unknown_error), Toast.LENGTH_LONG).show()
+                    }
+                }
             }
         }
     }
@@ -96,9 +113,9 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
 
                 viewModel.trySaveRecipe(
                     binding.titleEditText.text.toString(),
-                    binding.videoLoaderView.getText(),
+                    binding.videoLoaderView.getEmbedVideoUrl() ?: binding.videoLoaderView.getText(),
                     binding.imageLoaderView.getNewImage(),
-                    binding.durationEditText.text.toString(),
+                    binding.durationEditText.text.toString().toInt(),
                     binding.difficultySpinner.selectedItemPosition,
                     binding.categoriesInnerContainer.asStringList(),
                     binding.ingredientsInnerContainer.asStringList(),
@@ -212,7 +229,7 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
         binding.titleEditText.setText(recipe.title)
         binding.videoLoaderView.setText(recipe.videoUrl)
         binding.imageLoaderView.loadUrl(recipe.imageUrl)
-        binding.durationEditText.setText(recipe.durationMinutes)
+        binding.durationEditText.setText(recipe.durationMinutes.toString())
         binding.difficultySpinner.setSelection(recipe.difficulty)
         fillContainer(binding.categoriesInnerContainer, recipe.categories)
         fillContainer(binding.ingredientsInnerContainer, recipe.ingredients)
