@@ -203,6 +203,9 @@
     <string name="maximum_10_steps">Maximum 10 steps</string>
     <string name="validate_video_url">Validate video url first</string>
     <string name="validation_icon">Validation icon</string>
+    <string name="comments">Comments</string>
+    <string name="leave_a_comment">Leave a comment…</string>
+    <string name="send_comment">Send comment</string>
     <string-array name="difficulty">
         <item>Easy</item>
         <item>Medium</item>

@@ -13,6 +13,7 @@ data class DomainRecipe(
     val ingredients: List<String> = emptyList(),
     val steps: List<String> = emptyList(),
     val categories: List<String> = emptyList(),
+    val comments: List<DomainComment> = emptyList(),
     val favouriteCount: Int = 0,
     val durationMinutes: Int = 0,
     val difficulty: Int = 0,

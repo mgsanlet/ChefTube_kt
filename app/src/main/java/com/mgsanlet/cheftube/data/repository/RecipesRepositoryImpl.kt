@@ -1,7 +1,9 @@
 package com.mgsanlet.cheftube.data.repository
 
+import com.mgsanlet.cheftube.data.model.CommentResponse
 import com.mgsanlet.cheftube.data.model.RecipeResponse
 import com.mgsanlet.cheftube.data.source.remote.FirebaseApi
+import com.mgsanlet.cheftube.domain.model.DomainComment
 import com.mgsanlet.cheftube.domain.model.DomainRecipe
 import com.mgsanlet.cheftube.domain.model.DomainUser
 import com.mgsanlet.cheftube.domain.repository.RecipesRepository
@@ -178,6 +180,7 @@ class RecipesRepositoryImpl @Inject constructor(
             ingredients = this.ingredients,
             steps = this.steps,
             categories = this.categories,
+            comments = this.comments.map { it.toDomainComment() },
             favouriteCount = this.favouriteCount,
             durationMinutes = this.durationMinutes,
             difficulty = this.difficulty,
@@ -190,6 +193,21 @@ class RecipesRepositoryImpl @Inject constructor(
                 else ""
 
             )
+        )
+    }
+
+    private suspend fun CommentResponse.toDomainComment(): DomainComment {
+        return DomainComment(
+            author = DomainUser(
+                id = this.authorId,
+                username = this.authorName,
+                profilePictureUrl = if (this.authorHasProfilePicture) api.getStorageUrlFromPath(
+                    "profile_pictures/${this.authorId}.jpg"
+                )
+                else ""
+            ),
+            content = this.content,
+            timestamp = this.timestamp
         )
     }
 
