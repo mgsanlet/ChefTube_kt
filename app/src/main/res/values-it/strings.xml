@@ -204,4 +204,7 @@
     <string name="invalid_minutes">Minuti non validi</string>
     <string name="at_least_1_ingredient">È richiesto almeno 1 ingrediente</string>
     <string name="at_least_1_step">È richiesto almeno 1 passaggio</string>
+    <string name="comments">Commenti</string>
+    <string name="leave_a_comment">Lascia un commento…</string>
+    <string name="send_comment">Send comment</string>
 </resources>

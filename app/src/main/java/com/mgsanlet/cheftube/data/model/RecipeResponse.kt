@@ -7,6 +7,7 @@ data class RecipeResponse(
     val ingredients: List<String> = emptyList(),
     val steps: List<String> = emptyList(),
     val categories: List<String> = emptyList(),
+    val comments: List<CommentResponse> = emptyList(),
     val favouriteCount: Int = 0,
     val durationMinutes: Int = 0,
     val difficulty: Int = 0,

@@ -206,5 +206,8 @@
     <string name="at_least_1_step">Es obligatorio al menos 1 paso</string>
     <string name="maximum_10_categories">Máximo 10 categorías</string>
     <string name="maximum_10_ingredients">Máximo 10 ingredientes</string>
+    <string name="comments">Comentarios</string>
+    <string name="leave_a_comment">Deja un comentario…</string>
+    <string name="send_comment">Send comment</string>
 
 </resources>
