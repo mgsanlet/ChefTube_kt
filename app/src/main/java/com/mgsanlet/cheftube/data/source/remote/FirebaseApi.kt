@@ -260,6 +260,16 @@ class FirebaseApi {
         try {
             val batch = db.batch()
             val recipeRef = db.collection("recipes").document(finalId)
+
+            val comments = newRecipeData.comments.map {
+                hashMapOf(
+                    "authorId" to it.author.id,
+                    "authorName" to it.author.username,
+                    "authorHasProfilePicture" to it.author.profilePictureUrl.isNotBlank(),
+                    "content" to it.content,
+                    "timestamp" to it.timestamp
+                )
+            }
             val recipe = hashMapOf(
                 "id" to finalId,
                 "title" to newRecipeData.title,
@@ -273,7 +283,8 @@ class FirebaseApi {
 
                 "authorId" to currentUserData.id,
                 "authorName" to currentUserData.username,
-                "authorHasProfilePicture" to currentUserData.profilePictureUrl.isNotBlank()
+                "authorHasProfilePicture" to currentUserData.profilePictureUrl.isNotBlank(),
+                "comments" to comments
             )
             batch.set(recipeRef, recipe)
             newImage?.let{
@@ -287,6 +298,34 @@ class FirebaseApi {
             batch.commit().await()
             return DomainResult.Success(Unit)
         } catch (exception: Exception) {
+            return DomainResult.Error(RecipeError.Unknown(exception.message))
+        }
+    }
+
+    suspend fun postComment(
+        recipeId: String,
+        commentContent: String,
+        user: DomainUser
+    ): DomainResult<Unit, RecipeError> {
+        val recipeRef = db.collection("recipes").document(recipeId)
+        return try {
+            val batch = db.batch()
+            batch.update(
+                recipeRef,
+                "comments",
+                FieldValue.arrayUnion(
+                    hashMapOf(
+                        "authorId" to user.id,
+                        "authorName" to user.username,
+                        "authorHasProfilePicture" to user.profilePictureUrl.isNotBlank(),
+                        "content" to commentContent,
+                        "timestamp" to System.currentTimeMillis()
+                    )
+                )
+            )
+            batch.commit().await()
+            return DomainResult.Success(Unit)
+        }catch (exception: Exception) {
             return DomainResult.Error(RecipeError.Unknown(exception.message))
         }
     }

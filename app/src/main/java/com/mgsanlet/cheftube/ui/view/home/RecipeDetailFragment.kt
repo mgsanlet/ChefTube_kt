@@ -153,6 +153,11 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
                 ).show()
             }
         }
+
+        binding.commentsView.setOnCommentSentListener { comment ->
+            if (comment.isBlank()) return@setOnCommentSentListener
+            viewModel.postComment(comment)
+        }
     }
 
     fun setAuthorTagListener(authorId: String) {
@@ -209,12 +214,12 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         binding.editButton.visibility = if (viewModel.isRecipeByAuthor) View.VISIBLE else View.GONE
         isToggleInitialization = false
         binding.favouriteNumberTextView.text = recipe.favouriteCount.toString()
-
+        
+        // Agregar items de listas de forma dinámica
         fillCategories(recipe)
-        // Agregar ingredientes dinámicamente al contenedor de ingredientes
         fillIngredients(recipe)
-        // Agregar pasos dinámicamente al contenedor de pasos
         fillSteps(recipe)
+        fillComments(recipe)
     }
 
     @SuppressLint("SetTextI18n") // No es necesario traducir #
@@ -281,6 +286,10 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
             stepTextView.textSize = 16f
             binding.stepsLinearLayout.addView(stepTextView)
         }
+    }
+    
+    private fun fillComments(recipe: Recipe) {
+        binding.commentsView.setComments(recipe.comments, parentFragmentManager)
     }
 
     /**

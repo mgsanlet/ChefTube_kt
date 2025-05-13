@@ -6,8 +6,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mgsanlet.cheftube.domain.model.DomainComment
 import com.mgsanlet.cheftube.domain.usecase.recipe.AlternateFavouriteRecipeUseCase
 import com.mgsanlet.cheftube.domain.usecase.recipe.GetRecipeByIdUseCase
+import com.mgsanlet.cheftube.domain.usecase.recipe.PostCommentUseCase
+import com.mgsanlet.cheftube.domain.usecase.recipe.SaveRecipeUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.GetCurrentUserDataUseCase
 import com.mgsanlet.cheftube.domain.util.error.RecipeError
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +24,8 @@ import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
 class RecipeDetailViewModel @Inject constructor(
     private val getRecipeById: GetRecipeByIdUseCase,
     private val getCurrentUserData: GetCurrentUserDataUseCase,
-    private val alternateFavouriteRecipe: AlternateFavouriteRecipeUseCase
+    private val alternateFavouriteRecipe: AlternateFavouriteRecipeUseCase,
+    private val postComment: PostCommentUseCase
 ) : ViewModel() {
 
     private val _recipeState = MutableLiveData<RecipeState>()
@@ -153,6 +157,32 @@ class RecipeDetailViewModel @Inject constructor(
             )
         }
         return isByAuthor
+    }
+
+    fun postComment(comment: String) {
+        if (_recipeState.value is RecipeState.Success) {
+            viewModelScope.launch {
+                getCurrentUserData().fold(
+                    onSuccess = { user ->
+                        val currentRecipe = (_recipeState.value as RecipeState.Success).recipe
+                        val newComment = DomainComment(
+                            author = user,
+                            content = comment,
+                            timestamp = System.currentTimeMillis()
+                        )
+                        val updatedComments = currentRecipe.comments + newComment
+                        val updatedRecipe = currentRecipe.copy(comments = updatedComments)
+                        postComment(updatedRecipe.id, comment, user).fold(
+                            onSuccess = {
+                                _recipeState.value = RecipeState.Success(updatedRecipe)
+                            },
+                            onError = { _recipeState.value = RecipeState.Error(RecipeError.Unknown()) }
+                        )
+                    },
+                    onError = { _recipeState.value = RecipeState.Error(RecipeError.Unknown()) }
+                )
+            }
+        }
     }
 }
 

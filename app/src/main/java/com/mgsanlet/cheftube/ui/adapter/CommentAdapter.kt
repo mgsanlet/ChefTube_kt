@@ -7,15 +7,11 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.ItemCommentBinding
-import com.mgsanlet.cheftube.databinding.ItemRecipeBinding
 import com.mgsanlet.cheftube.domain.model.DomainComment
-import com.mgsanlet.cheftube.domain.model.DomainRecipe
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
-import com.mgsanlet.cheftube.ui.util.loadUrl
 import com.mgsanlet.cheftube.ui.util.loadUrlToCircle
 import com.mgsanlet.cheftube.ui.view.home.ProfileFragment
 import com.mgsanlet.cheftube.ui.view.home.RecipeDetailFragment
-import com.mgsanlet.cheftube.ui.view.home.RecipeFeedFragment
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -43,17 +39,21 @@ class CommentAdapter(
 
         binding.commentContentTextView.text = comment.content
 
-        val dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(comment.timestamp), ZoneId.systemDefault())
-        val dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val dateTime =
+            LocalDateTime.ofInstant(Instant.ofEpochMilli(comment.timestamp), ZoneId.systemDefault())
+        val dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy   HH:mm")
         binding.timestampTextView.text = dateTime.format(dateFormatter)
 
-            binding.authorTextView.text = comment.author.username
-            if (comment.author.profilePictureUrl.isNotBlank()) {
-                binding.authorImageView.loadUrlToCircle(comment.author.profilePictureUrl, mContext)
-            }
-            binding.authorTag.setOnClickListener {
-                navToAuthorProfile(comment.author.id)
-            }
+        binding.authorTextView.text = comment.author.username
+        if (comment.author.profilePictureUrl.isNotBlank()) {
+            binding.authorImageView.loadUrlToCircle(comment.author.profilePictureUrl, mContext)
+        }
+        binding.authorImageView.setOnClickListener {
+            navToAuthorProfile(comment.author.id)
+        }
+        binding.authorTextView.setOnClickListener {
+            navToAuthorProfile(comment.author.id)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -63,7 +63,7 @@ class CommentAdapter(
     private fun navToAuthorProfile(authorId: String) {
         // Obtener el fragmento visible actual
         val currentFragment =
-            fragmentManager.findFragmentById(R.id.fragmentContainerView) as RecipeFeedFragment?
+            fragmentManager.findFragmentById(R.id.fragmentContainerView) as RecipeDetailFragment?
         if (currentFragment != null && currentFragment.isVisible) {
             val profileFragment = ProfileFragment.newInstance(authorId)
 

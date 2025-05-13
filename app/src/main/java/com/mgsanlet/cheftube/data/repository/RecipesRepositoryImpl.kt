@@ -171,6 +171,14 @@ class RecipesRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun postComment(
+        recipeId: String,
+        commentContent: String,
+        currentUserData: DomainUser
+    ): DomainResult<Unit, RecipeError> {
+        return api.postComment(recipeId, commentContent, currentUserData)
+    }
+
     private suspend fun RecipeResponse.toDomainRecipe(): DomainRecipe {
         return DomainRecipe(
             id = this.id,

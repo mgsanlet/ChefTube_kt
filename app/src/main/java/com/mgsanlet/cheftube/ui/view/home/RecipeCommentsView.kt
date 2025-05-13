@@ -6,11 +6,12 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.RecipeCommentsViewBinding
-import com.mgsanlet.cheftube.databinding.RecipeVideoLoaderViewBinding
 import com.mgsanlet.cheftube.domain.model.DomainComment
 import com.mgsanlet.cheftube.ui.adapter.CommentAdapter
+import com.mgsanlet.cheftube.ui.util.dpToPx
 
 class RecipeCommentsView @JvmOverloads constructor(
     context: Context,
@@ -18,19 +19,20 @@ class RecipeCommentsView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    init {
-        setUpListeners()
-    }
-
     private val binding: RecipeCommentsViewBinding = RecipeCommentsViewBinding.inflate(
         LayoutInflater.from(context),
         this,
         true
     )
 
+    init {
+        setUpListeners()
+    }
+
     private fun setUpListeners(){
         binding.expandToggleButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
+                binding.commentEditText.requestFocus()
                 binding.commentsBody.visibility = VISIBLE
                 binding.expandToggleButton.setBackgroundResource(R.drawable.ic_expand_up_25)
             } else {
@@ -41,14 +43,23 @@ class RecipeCommentsView @JvmOverloads constructor(
     }
 
     fun setComments(comments: List<DomainComment>, fragmentManager: FragmentManager) {
-        binding.commentsBody.removeAllViews()
-        binding.commentRecycler.setLayoutManager(LinearLayoutManager(context))
-        binding.commentRecycler.adapter = CommentAdapter(context, comments, fragmentManager)
+        if (comments.isEmpty()) {
+            binding.commentRecycler.visibility = GONE
+        }else{
+            binding.commentRecycler.visibility = VISIBLE
+            val layoutManager = LinearLayoutManager(context)
+            layoutManager.reverseLayout = true
+            layoutManager.stackFromEnd = true
+            binding.commentRecycler.layoutManager = layoutManager
+            binding.commentRecycler.adapter = CommentAdapter(context, comments, fragmentManager)
+        }
     }
 
-    fun setOnCommentSentListener(listener: (String) -> Unit){
-        binding.sendCommentButton.setOnClickListener { listener }
+    fun setOnCommentSentListener(listener: (String) -> Unit) {
+        binding.sendCommentButton.setOnClickListener {
+            val commentText = binding.commentEditText.text.toString()
+            listener(commentText)
+            binding.commentEditText.text?.clear()
+        }
     }
-
-
 }

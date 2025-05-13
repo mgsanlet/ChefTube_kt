@@ -14,7 +14,7 @@ class SaveRecipeUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         newRecipeData: DomainRecipe,
-        newImage: ByteArray?
+        newImage: ByteArray? = null
     ): DomainResult<String?, DomainError> {
 
         var currentUserData = DomainUser()
