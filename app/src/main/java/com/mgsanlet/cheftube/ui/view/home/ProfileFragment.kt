@@ -87,11 +87,13 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
             when (isCurrent) {
                 true -> {
                     binding.editButton.visibility = View.VISIBLE
+                    binding.settingsButton.visibility = View.VISIBLE
                     binding.followToggle.visibility = View.INVISIBLE
                 }
 
                 false -> {
                     binding.editButton.visibility = View.INVISIBLE
+                    binding.settingsButton.visibility = View.INVISIBLE
                     binding.followToggle.visibility = View.VISIBLE
                 }
             }
@@ -103,6 +105,12 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
             FragmentNavigator.loadFragment(
                 null, this,
                 EditProfileFragment(), R.id.fragmentContainerView
+            )
+        }
+        binding.settingsButton.setOnClickListener {
+            FragmentNavigator.loadFragment(
+                null, this,
+                ManageAccountFragment(), R.id.fragmentContainerView
             )
         }
         binding.followToggle.setOnCheckedChangeListener { _, isChecked ->

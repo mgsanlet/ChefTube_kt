@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/black"
+    tools:ignore="Overdraw">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/warning_this_action_cannot_be_undone"
+        android:textColor="@color/primary_red"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:paddingBottom="8dp"
+        app:drawableStartCompat="@drawable/ic_warning_24"
+        app:drawableTint="@color/primary_red" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/all_data_deleted"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:lineSpacingExtra="4dp"
+        android:paddingBottom="16dp" />
+
+    <EditText
+        style="@style/AuthFields"
+        android:autofillHints="password"
+        android:hint="@string/confirm_password_to_continue"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:inputType="textPassword"
+        android:padding="10dp"
+        android:textSize="16sp"/>
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/confirmCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:buttonTint="@color/primary_red"
+        android:text="@string/this_action_cannot_be_undone"
+        android:textColor="@color/white" />
+
+</LinearLayout>

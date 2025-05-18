@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.util.asMessage
-import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileState
 import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileViewModel
@@ -41,7 +40,6 @@ class ManageAccountFragment @Inject constructor() : BaseFragment<FragmentManageA
             when (state) {
                 is ProfileState.Error -> {
                     val errorMessage = state.error.asMessage(requireContext())
-                    showLoading(false)
                     when (state.error) {
 
 
@@ -49,11 +47,9 @@ class ManageAccountFragment @Inject constructor() : BaseFragment<FragmentManageA
                     }
                 }
 
-                is ProfileState.Loading -> showLoading(true)
+                is ProfileState.Loading -> {}
 
-                is ProfileState.LoadSuccess -> {
-                    showLoading(false)
-                }
+                is ProfileState.LoadSuccess -> {}
 
                 is ProfileState.SaveSuccess -> {
                     FragmentNavigator.loadFragment(
@@ -67,17 +63,5 @@ class ManageAccountFragment @Inject constructor() : BaseFragment<FragmentManageA
 
     override fun setUpListeners() {
 
-    }
-
-    override fun setUpViewProperties() {
-        binding.progressBar.setCustomStyle(requireContext())
-    }
-
-    private fun showLoading(show: Boolean) {
-        if (show) {
-            binding.progressBar.visibility = View.VISIBLE
-        } else {
-            binding.progressBar.visibility = View.GONE
-        }
     }
 }

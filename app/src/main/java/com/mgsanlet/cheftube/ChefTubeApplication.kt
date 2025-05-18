@@ -5,7 +5,6 @@ import com.google.firebase.FirebaseApp
 import com.mgsanlet.cheftube.ui.util.LocaleManager
 import com.yariksoffice.lingver.Lingver
 import dagger.hilt.android.HiltAndroidApp
-import kotlinx.coroutines.SupervisorJob
 import java.util.Locale
 import javax.inject.Inject
 
@@ -14,8 +13,6 @@ class ChefTubeApplication : Application() {
 
     @Inject
     lateinit var localeManager: LocaleManager
-
-    private val job = SupervisorJob()
 
     override fun onCreate() {
         super.onCreate()

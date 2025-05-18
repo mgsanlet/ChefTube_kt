@@ -10,7 +10,6 @@ import com.mgsanlet.cheftube.domain.model.DomainComment
 import com.mgsanlet.cheftube.domain.usecase.recipe.AlternateFavouriteRecipeUseCase
 import com.mgsanlet.cheftube.domain.usecase.recipe.GetRecipeByIdUseCase
 import com.mgsanlet.cheftube.domain.usecase.recipe.PostCommentUseCase
-import com.mgsanlet.cheftube.domain.usecase.recipe.SaveRecipeUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.GetCurrentUserDataUseCase
 import com.mgsanlet.cheftube.domain.util.error.RecipeError
 import dagger.hilt.android.lifecycle.HiltViewModel

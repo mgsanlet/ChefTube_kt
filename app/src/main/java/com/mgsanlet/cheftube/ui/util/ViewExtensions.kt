@@ -57,10 +57,6 @@ fun ProgressBar.setCustomStyle(context: Context){
     }
 }
 
-fun EditText.isEmpty(): Boolean{
-    return this.text.trim().isEmpty()
-}
-
 fun Snackbar.showWithCustomStyle(context: Context){
     this.setBackgroundTint(ContextCompat.getColor(context, R.color.dark_green))
     this.setTextColor(ContextCompat.getColor(context, R.color.white))
@@ -107,24 +103,6 @@ fun ImageView.loadUrlToCircle(url: String, context: Context){
 fun ImageView.loadBitmapToCircle(bitmap: Bitmap, context: Context) {
     Glide.with(context)
         .load(bitmap)
-        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-        .skipMemoryCache(true)
-        .apply(RequestOptions.circleCropTransform())
-        .into(this)
-}
-
-fun ImageView.loadBitmap(bitmap: Bitmap, context: Context) {
-    Glide.with(context)
-        .load(bitmap)
-        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-        .skipMemoryCache(true)
-        .apply(RequestOptions.bitmapTransform(RoundedCorners(40)))
-        .into(this)
-}
-
-fun ImageView.loadResourceToCircle(id: Int, context: Context){
-    Glide.with(context)
-        .load(id)
         .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
         .skipMemoryCache(true)
         .apply(RequestOptions.circleCropTransform())

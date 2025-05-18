@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp"
-    android:background="@color/dark_green">
+    android:background="@color/dark_green"
+    tools:ignore="Overdraw">
 
     <!-- Título del diálogo -->
     <TextView
@@ -56,10 +57,12 @@
 
         <EditText
             android:id="@+id/queryEditText"
+
             style="@style/AuthFields"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:autofillHints="search"
             android:hint="@string/write_your_search"
             android:inputType="text"
             android:minHeight="50dp"
@@ -74,6 +77,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:autofillHints="minutes"
             android:hint="@string/range_hint_high"
             android:inputType="number"
             android:minHeight="50dp"

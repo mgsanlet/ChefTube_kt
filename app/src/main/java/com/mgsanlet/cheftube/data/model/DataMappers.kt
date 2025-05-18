@@ -1,7 +1,6 @@
 package com.mgsanlet.cheftube.data.model
 
 import com.mgsanlet.cheftube.domain.model.DomainProduct
-import com.mgsanlet.cheftube.domain.model.DomainRecipe
 
 fun ProductResponse.toDomainProduct(): DomainProduct {
     val defaultName = product!!.product_name ?: "Unknown Product"

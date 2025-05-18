@@ -26,12 +26,13 @@ class DurationTextView  @JvmOverloads constructor(
         currentHours = minutes / 60
         currentMinutes = minutes % 60
         text = if (currentHours > 0){
-            context.getString(R.string.duration_hours_minutes, currentHours, currentMinutes )
+            if (currentMinutes > 0){
+                context.getString(R.string.duration_hours_minutes, currentHours, currentMinutes )
+            }else{
+                context.getString(R.string.duration_hours, currentHours )
+            }
         }else{
             context.getString(R.string.duration_minutes, currentMinutes)
         }
     }
-
-    fun getHours(): Int = currentHours
-    fun getMinutes(): Int = currentMinutes
 }

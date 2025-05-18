@@ -3,7 +3,6 @@ package com.mgsanlet.cheftube.ui.view.base
 import android.widget.EditText
 import androidx.viewbinding.ViewBinding
 import com.mgsanlet.cheftube.R
-import com.mgsanlet.cheftube.ui.util.isEmpty
 
 abstract class BaseFormFragment<T : ViewBinding> : BaseFragment<T>() {
 

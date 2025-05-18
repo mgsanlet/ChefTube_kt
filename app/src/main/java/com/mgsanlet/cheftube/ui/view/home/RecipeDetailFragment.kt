@@ -1,6 +1,7 @@
 package com.mgsanlet.cheftube.ui.view.home
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
@@ -144,8 +145,13 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         binding.editButton.setOnClickListener {
             try {
                 val instance = RecipeFormFragment.newInstance(arguments?.getString(ARG_RECIPE)!!)
-                FragmentNavigator.loadFragmentInstance(null, this, instance, R.id.fragmentContainerView)
-            } catch (e: Exception) {
+                FragmentNavigator.loadFragmentInstance(
+                    null,
+                    this,
+                    instance,
+                    R.id.fragmentContainerView
+                )
+            } catch (_: Exception) {
                 Toast.makeText(
                     requireContext(),
                     getString(R.string.unknown_error),
@@ -157,6 +163,14 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         binding.commentsView.setOnCommentSentListener { comment ->
             if (comment.isBlank()) return@setOnCommentSentListener
             viewModel.postComment(comment)
+        }
+
+        binding.shareButton.setOnClickListener {
+            viewModel.recipeState.value?.let { state ->
+                if (state is RecipeState.Success) {
+                    shareRecipe(state.recipe)
+                }
+            }
         }
     }
 
@@ -214,7 +228,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         binding.editButton.visibility = if (viewModel.isRecipeByAuthor) View.VISIBLE else View.GONE
         isToggleInitialization = false
         binding.favouriteNumberTextView.text = recipe.favouriteCount.toString()
-        
+
         // Agregar items de listas de forma dinámica
         fillCategories(recipe)
         fillIngredients(recipe)
@@ -287,9 +301,80 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
             binding.stepsLinearLayout.addView(stepTextView)
         }
     }
-    
+
     private fun fillComments(recipe: Recipe) {
         binding.commentsView.setComments(recipe.comments, parentFragmentManager)
+    }
+
+    private fun shareRecipe(recipe: Recipe) {
+        val shareText = buildString {
+            // Título y encabezado
+            appendLine("*${recipe.title}*")
+            appendLine("${getString(R.string.recipe_shared_from_cheftube)}\n")
+            
+            // Detalles de la receta
+            appendLine("⏱️ ${getFormattedRecipeDuration(recipe)}")
+            recipe.author?.username?.let { username ->
+                appendLine("👨‍🍳 *${getString(R.string.author)}*: $username")
+            }
+
+            // Categorías
+            if (recipe.categories.isNotEmpty()) {
+                appendLine("\n🏷️ *${getString(R.string.categories)}*")
+                recipe.categories.forEach { category ->
+                    appendLine("• #$category")
+                }
+            }
+
+            // Ingredientes
+            appendLine("\n🛒 *${getString(R.string.ingredients)}*")
+            recipe.ingredients.forEach { ingredient ->
+                appendLine("• $ingredient")
+            }
+
+            // Pasos
+            appendLine("\n📝 *${getString(R.string.steps)}*")
+            recipe.steps.forEachIndexed { index, step ->
+                appendLine("\n*${index + 1}.* $step")
+            }
+            // Video
+            if (recipe.videoUrl.isNotBlank()) {
+                val videoId = extractYouTubeIdFromEmbed(recipe.videoUrl)
+                if (videoId != null) {
+                    appendLine("\n▶️ https://www.youtube.com/watch?v=$videoId")
+                }
+            }
+        }
+
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(
+                Intent.EXTRA_SUBJECT,
+                "${getString(R.string.recipe_shared_from_cheftube)}: ${recipe.title}"
+            )
+            putExtra(Intent.EXTRA_TEXT, shareText)
+        }
+
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_recipe_using)))
+    }
+
+    private fun getFormattedRecipeDuration(recipe: Recipe): String {
+        val currentHours = recipe.durationMinutes / 60
+        val currentMinutes = recipe.durationMinutes % 60
+        return if (currentHours > 0) {
+            if (currentMinutes > 0) {
+                getString(R.string.duration_hours_minutes, currentHours, currentMinutes)
+            } else {
+                getString(R.string.duration_hours, currentHours)
+            }
+        } else {
+            getString(R.string.duration_minutes, currentMinutes)
+        }
+    }
+    
+    private fun extractYouTubeIdFromEmbed(url: String): String? {
+        return url.substringAfter("embed/").substringBefore("?")
     }
 
     /**

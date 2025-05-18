@@ -17,8 +17,4 @@ sealed class DomainResult<out D, out E : RootError> {
             is Error -> onError(error)
         }
     }
-
-    fun isSuccess(): Boolean = this is Success
-
-    fun isError(): Boolean = this is Error
 }

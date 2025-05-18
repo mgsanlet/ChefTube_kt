@@ -10,7 +10,7 @@
     android:background="@drawable/bg_food"
 
     tools:context=".ui.view.auth.AuthActivity"
-    tools:ignore="VisualLintTextFieldSize">
+    tools:ignore="Overdraw,VisualLintTextFieldSize">
 
     <ImageView
         android:layout_width="150dp"

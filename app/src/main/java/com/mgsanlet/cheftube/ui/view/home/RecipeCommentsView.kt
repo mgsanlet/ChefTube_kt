@@ -6,12 +6,10 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.RecipeCommentsViewBinding
 import com.mgsanlet.cheftube.domain.model.DomainComment
 import com.mgsanlet.cheftube.ui.adapter.CommentAdapter
-import com.mgsanlet.cheftube.ui.util.dpToPx
 
 class RecipeCommentsView @JvmOverloads constructor(
     context: Context,

@@ -35,6 +35,4 @@ class DifficultyTextView @JvmOverloads constructor(
         setBackgroundColor(backgroundColors[state])
 
     }
-
-    fun getDifficulty(): Int = currentState
 }
