@@ -113,11 +113,11 @@ class UsersRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateCurrentUserData(new: DomainUser): DomainResult<Unit, UserError> {
+    override suspend fun updateCurrentUserData(newUserData: DomainUser): DomainResult<Unit, UserError> {
         currentUserCache?.let {
-            var result = updateUserData(new)
+            var result = updateUserData(newUserData)
             if (result is DomainResult.Success) {
-                currentUserCache = new
+                currentUserCache = newUserData
                 return DomainResult.Success(Unit)
             } else {
                 return result

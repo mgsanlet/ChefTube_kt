@@ -14,11 +14,11 @@ import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentRecipeFeedBinding
 import com.mgsanlet.cheftube.domain.util.error.RecipeError
 import com.mgsanlet.cheftube.ui.adapter.RecipeFeedAdapter
-import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE
 import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE_LIST
 import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
+import com.mgsanlet.cheftube.ui.view.dialog.SearchDialog
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedState
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,9 +35,15 @@ import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
 class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeedBinding>() {
 
     private val viewModel: RecipeFeedViewModel by viewModels()
+    private lateinit var searchDialog: SearchDialog
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        searchDialog = SearchDialog(requireContext())
+        searchDialog.setOnSearchQuerySubmittedListener { searchParams ->
+            viewModel.performSearch(searchParams)
+        }
         arguments?.let{
             val recipeIds = it.getStringArrayList(ARG_RECIPE_LIST)
             recipeIds?.let{
@@ -84,7 +90,9 @@ class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeed
     }
 
     override fun setUpListeners() {
-        binding.searchButton.setOnClickListener { showSearchDialog() }
+        binding.searchButton.setOnClickListener {
+            searchDialog.show()
+        }
     }
 
     override fun setUpViewProperties() {
@@ -123,27 +131,7 @@ class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeed
         }
     }
 
-    private fun showSearchDialog() {
-        val searchDialogBuilder = AlertDialog.Builder(requireContext())
 
-        // Inflar un diseño personalizado para el diálogo de búsqueda
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_search, null)
-        searchDialogBuilder.setView(dialogView)
-
-        // Obtener una referencia a los elementos de la interfaz de usuario en el diseño personalizado
-        val input = dialogView.findViewById<EditText>(R.id.queryEditText)
-        val okButton = dialogView.findViewById<Button>(R.id.okButton)
-
-        val searchDialog = searchDialogBuilder.create()
-        searchDialog.show()
-
-        okButton.setOnClickListener {
-            val query = input.text.toString().trim { it <= ' ' }
-            // Filtrar las recetas según la consulta de entrada
-            viewModel.handleSearchByIngredient(query)
-            searchDialog.dismiss() // Descartar el diálogo después de la búsqueda
-        }
-    }
 
     companion object {
 

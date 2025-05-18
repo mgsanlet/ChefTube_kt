@@ -45,7 +45,7 @@
     <string name="dialog_title">Select Language</string>
     <string name="no_results">No results</string>
     <string name="results">Results: </string>
-    <string name="search_recipe">Search recipe:</string>
+    <string name="search_recipe">Search recipe by:</string>
     <string name="ingredients">Ingredients</string>
     <string name="steps">Recipe steps</string>
     <string name="scan_prompt">Scan barcode</string>
@@ -54,7 +54,6 @@
     <string name="minutes">Minutes</string>
     <string name="seconds">Seconds</string>
     <string name="powered_by_open_food_facts_api">Powered by Open Food Facts API</string>
-
 
     <!-- IMAGE ALTS -->
     <string name="app_name" translatable="false">ChefTube</string>
@@ -206,10 +205,21 @@
     <string name="comments">Comments</string>
     <string name="leave_a_comment">Leave a comment…</string>
     <string name="send_comment">Send comment</string>
+    <string name="write_your_search">Write search term</string>
+    <string name="range_hint_high">To… (Included)</string>
+    <string name="range_hint_low">From… (Included)</string>
+    <string name="duration_range_error">Invalid range</string>
     <string-array name="difficulty">
         <item>Easy</item>
         <item>Medium</item>
         <item>Advanced</item>
+    </string-array>
+    <string-array name="search_criteria">
+        <item>Title</item>
+        <item>Ingredient</item>
+        <item>Duration minutes</item>
+        <item>Category</item>
+        <item>Difficulty</item>
     </string-array>
 
 </resources>

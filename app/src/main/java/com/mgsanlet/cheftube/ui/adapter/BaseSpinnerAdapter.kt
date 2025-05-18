@@ -8,7 +8,7 @@ import android.widget.ArrayAdapter
 import com.mgsanlet.cheftube.databinding.DifficultySpinnerDropdownItemBinding
 import com.mgsanlet.cheftube.databinding.DifficultySpinnerHeaderBinding
 
-class DifficultySpinnerAdapter(
+class BaseSpinnerAdapter(
     context: Context,
     private val items: List<String>
 ) : ArrayAdapter<String>(context, 0, items) {

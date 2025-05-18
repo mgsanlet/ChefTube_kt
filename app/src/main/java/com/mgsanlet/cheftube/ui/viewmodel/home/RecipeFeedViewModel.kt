@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mgsanlet.cheftube.domain.model.SearchParams
+import com.mgsanlet.cheftube.domain.usecase.recipe.FilterRecipesUseCase
 import com.mgsanlet.cheftube.domain.usecase.recipe.GetAllRecipesUseCase
-import com.mgsanlet.cheftube.domain.usecase.recipe.FilterRecipesByIngredientUseCase
 import com.mgsanlet.cheftube.domain.usecase.recipe.GetRecipesByIdUseCase
+import com.mgsanlet.cheftube.domain.util.DomainResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,7 +19,7 @@ import com.mgsanlet.cheftube.domain.util.error.RecipeError
 class RecipeFeedViewModel @Inject constructor(
     private val getAllRecipes: GetAllRecipesUseCase,
     private val getRecipesById: GetRecipesByIdUseCase,
-    private val filterRecipesByIngredient: FilterRecipesByIngredientUseCase
+    private val filterRecipes: FilterRecipesUseCase
 ) : ViewModel() {
     private val _uiState = MutableLiveData<RecipeFeedState>()
     val uiState: LiveData<RecipeFeedState> = _uiState
@@ -53,19 +55,23 @@ class RecipeFeedViewModel @Inject constructor(
         }
     }
 
-    fun handleSearchByIngredient(ingredientQuery: String) {
+    fun performSearch(params: SearchParams) {
         _uiState.value = RecipeFeedState.Loading
         viewModelScope.launch {
-            val result = filterRecipesByIngredient(ingredientQuery)
-            result.fold(
-                onSuccess = { recipeList ->
-                    _uiState.value = RecipeFeedState.SomeResults(recipeList)
-                },
-                onError = { error ->
-                    _uiState.value = RecipeFeedState.Error(error)
-                }
-            )
+            val result = filterRecipes(params)
+            handleFilterResult(result)
         }
+    }
+    
+    private fun handleFilterResult(result: DomainResult<List<Recipe>, RecipeError>) {
+        result.fold(
+            onSuccess = { recipeList ->
+                _uiState.value = RecipeFeedState.SomeResults(recipeList)
+            },
+            onError = { error ->
+                _uiState.value = RecipeFeedState.Error(error)
+            }
+        )
     }
 }
 

@@ -44,6 +44,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/black_bg_box_shape"
+        android:backgroundTint="@color/dark_green"
+        android:backgroundTintMode="src_over"
         android:src="@drawable/ic_search_wh"
         android:scaleType="fitXY"
         android:contentDescription="@string/search_icon"

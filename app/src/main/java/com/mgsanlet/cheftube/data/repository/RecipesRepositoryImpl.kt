@@ -6,10 +6,12 @@ import com.mgsanlet.cheftube.data.source.remote.FirebaseApi
 import com.mgsanlet.cheftube.domain.model.DomainComment
 import com.mgsanlet.cheftube.domain.model.DomainRecipe
 import com.mgsanlet.cheftube.domain.model.DomainUser
+import com.mgsanlet.cheftube.domain.model.SearchParams
 import com.mgsanlet.cheftube.domain.repository.RecipesRepository
 import com.mgsanlet.cheftube.domain.util.DomainResult
 import com.mgsanlet.cheftube.domain.util.DomainResult.Error
 import com.mgsanlet.cheftube.domain.util.DomainResult.Success
+import com.mgsanlet.cheftube.domain.util.FilterCriterion
 import com.mgsanlet.cheftube.domain.util.error.RecipeError
 import java.util.UUID
 import javax.inject.Inject
@@ -46,15 +48,46 @@ class RecipesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun filterRecipesByIngredient(ingredientQuery: String): DomainResult<List<DomainRecipe>, RecipeError> {
-        return when (val result = api.getAllRecipes()) {
+    override suspend fun filterRecipes(params: SearchParams): DomainResult<List<DomainRecipe>, RecipeError> {
+        return when (val result = getAll()) {
             is Success -> {
-                val lowercaseQuery = ingredientQuery.lowercase()
-                val filteredRecipes = result.data.filter { recipeResponse ->
-                    recipeResponse.ingredients.any { ingredient ->
-                        ingredient.lowercase().contains(lowercaseQuery)
+                val filteredRecipes = when (params.criterion) {
+                    FilterCriterion.TITLE -> {
+                        val lowercaseQuery = params.query.lowercase()
+                        result.data.filter { recipe ->
+                            recipe.title.lowercase().contains(lowercaseQuery)
+                        }
                     }
-                }.map { it.toDomainRecipe() }
+                    FilterCriterion.INGREDIENT -> {
+                        val lowercaseQuery = params.query.lowercase()
+                        result.data.filter { recipe ->
+                            recipe.ingredients.any { ingredient ->
+                                ingredient.lowercase().contains(lowercaseQuery)
+                            }
+                        }
+                    }
+                    FilterCriterion.DURATION -> {
+                        val min = params.minDuration.toIntOrNull() ?: 0
+                        val max = params.maxDuration.toIntOrNull() ?: Int.MAX_VALUE
+                        result.data.filter { recipe ->
+                            val duration = recipe.durationMinutes
+                            duration in min..max
+                        }
+                    }
+                    FilterCriterion.CATEGORY -> {
+                        val lowercaseQuery = params.query.lowercase()
+                        result.data.filter { recipe ->
+                            recipe.categories.any { category ->
+                                category.lowercase().contains(lowercaseQuery)
+                            }
+                        }
+                    }
+                    FilterCriterion.DIFFICULTY -> {
+                        result.data.filter { recipe ->
+                            recipe.difficulty == params.difficulty
+                        }
+                    }
+                }
 
                 if (filteredRecipes.isEmpty()) {
                     Error(RecipeError.NoResults)
@@ -62,7 +95,6 @@ class RecipesRepositoryImpl @Inject constructor(
                     Success(filteredRecipes)
                 }
             }
-
             is Error -> Error(result.error)
         }
     }

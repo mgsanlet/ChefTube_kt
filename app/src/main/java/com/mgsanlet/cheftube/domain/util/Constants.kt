@@ -7,3 +7,11 @@ object Constants {
     const val PASSWORD_REGEX = "^(?=.*[a-zA-Z])(?=.*\\d).+$"
     const val SUPPORT_EMAIL = "support@cheftube.com"
 }
+
+enum class FilterCriterion {
+    TITLE,
+    INGREDIENT,
+    DURATION,
+    CATEGORY,
+    DIFFICULTY
+}

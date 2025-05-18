@@ -48,7 +48,7 @@
     <!-- TESTI SEMPLICI -->
     <string name="dialog_title">Seleziona la lingua</string>
     <string name="no_results">Nessun risultato</string>
-    <string name="search_recipe">Cerca ricetta:</string>
+    <string name="search_recipe">Cerca ricetta per:</string>
     <string name="ingredients">Ingredienti</string>
     <string name="steps">Fasi della ricetta</string>
     <string name="scan_prompt">Scansiona il codice a barre</string>
@@ -62,6 +62,18 @@
     <string name="home">Home</string>
     <string name="scanner">Scanner</string>
     <string name="recipe_image">Immagine della ricetta</string>
+
+    <!-- CRITERI DI RICERCA -->
+    <string-array name="search_criteria">
+        <item>Titolo</item>
+        <item>Ingrediente</item>
+        <item>Durata minuti</item>
+        <item>Categoria</item>
+        <item>Difficoltà</item>
+    </string-array>
+    <string name="range_hint_high">Fino a… (Incluso)</string>
+    <string name="range_hint_low">Da… (Incluso)</string>
+    <string name="write_your_search">Inserisci il termine di ricerca</string>
 
     <!-- RICETTE -->
     <string name="recipe_01">Lenticchie con prosciutto</string>
@@ -181,6 +193,7 @@
     <string name="maximum_10_steps">Massimo 10 passaggi</string>
     <string name="validate_video_url">Convalida prima l\'URL video</string>
     <string name="validation_icon">Icona di convalida</string>
+    <string name="duration_range_error">Rango non valido</string>
     <string name="difficulty">Difficoltà</string>
     <string name="recipe_duration_short">Durata</string>
     <string name="total_time">Tempo totale (Minuti)</string>

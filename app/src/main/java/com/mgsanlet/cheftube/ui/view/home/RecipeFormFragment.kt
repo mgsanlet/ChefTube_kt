@@ -15,7 +15,7 @@ import com.mgsanlet.cheftube.databinding.FragmentRecipeFormBinding
 import com.mgsanlet.cheftube.domain.model.DomainRecipe
 import com.mgsanlet.cheftube.domain.util.error.RecipeError
 import com.mgsanlet.cheftube.domain.util.error.UserError
-import com.mgsanlet.cheftube.ui.adapter.DifficultySpinnerAdapter
+import com.mgsanlet.cheftube.ui.adapter.BaseSpinnerAdapter
 import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.util.asMessage
@@ -51,7 +51,7 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
 
     override fun setUpViewProperties() {
         binding.progressBar.setCustomStyle(requireContext())
-        binding.difficultySpinner.adapter = DifficultySpinnerAdapter(
+        binding.difficultySpinner.adapter = BaseSpinnerAdapter(
             requireContext(),
             resources.getStringArray(R.array.difficulty).toList()
         )

@@ -1,62 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:padding="16dp"
-    android:background="@color/primary_green">
+    android:background="@color/dark_green">
 
+    <!-- Título del diálogo -->
     <TextView
-
+        android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-
+        android:layout_marginTop="16dp"
         android:text="@string/search_recipe"
-        android:textSize="24sp"
         android:textColor="@color/white"
-        android:textStyle="bold" />
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
+    <!-- Spinner de criterio -->
+    <Spinner
+        android:id="@+id/searchCriteriaSpinner"
+        style="@style/AuthFields"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
+
+    <View
+        android:id="@+id/divider"
         android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/listDivider"
+        android:backgroundTint="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchCriteriaSpinner" />
+
+    <!-- Layout para los campos de entrada -->
+    <LinearLayout
+        android:id="@+id/inputFieldsLayout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider">
 
         <EditText
             android:id="@+id/queryEditText"
             style="@style/AuthFields"
-
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_weight="1"
-
-            android:autofillHints="null"
-            android:background="?android:attr/editTextBackground"
-            android:hint="@string/choose_a_ingredient"
+            android:layout_marginBottom="8dp"
+            android:hint="@string/write_your_search"
             android:inputType="text"
-            android:minHeight="48dp"
+            android:minHeight="50dp"
             android:padding="10dp"
-            android:textColorHint="#FFFDE7"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textSize="16sp" />
 
-            tools:ignore="VisualLintTextFieldSize" />
-
-        <Button
-            android:id="@+id/okButton"
-            style="@style/AuthBtns"
-
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/rangeEditText"
+            style="@style/AuthFields"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
+            android:layout_marginBottom="8dp"
+            android:hint="@string/range_hint_high"
+            android:inputType="number"
+            android:minHeight="50dp"
             android:padding="10dp"
-            android:text="@string/ok"
-            android:textColor="@color/white"
-            app:backgroundTint="@null"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textSize="16sp"
+            android:visibility="gone" />
 
-            tools:ignore="TextContrastCheck" />
-
+        <Spinner
+            android:id="@+id/difficultySpinner"
+            style="@style/AuthFields"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:entries="@array/difficulty"
+            android:visibility="gone" />
     </LinearLayout>
 
-</LinearLayout>
+    <!-- Contenedor de botones -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/buttonsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/inputFieldsLayout">
+
+        <Button
+            android:id="@+id/cancelButton"
+            style="@style/AuthBtns"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:text="@string/cancel"
+            app:backgroundTint="@color/dark_red"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/searchButton"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/searchButton"
+            style="@style/AuthBtns"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/search_icon"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/primary_orange"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
