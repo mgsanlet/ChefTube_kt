@@ -176,6 +176,28 @@ class FirebaseApi {
         }
     }
 
+    suspend fun deleteUserData(userId: String): DomainResult<Unit, UserError> {
+        return try {
+            // Eliminar la imagen de perfil si existe
+            val storagePath = "profile_pictures/$userId.jpg"
+            val storageRef = storage.reference.child(storagePath)
+            try {
+                storageRef.delete().await()
+            } catch (e: Exception) {
+                // Si hay un error al eliminar la imagen, lo registramos pero continuamos
+                Log.e("FirebaseStorage", "Error deleting profile picture: ", e)
+            }
+            
+            // Eliminar el documento del usuario
+            db.collection("users").document(userId).delete().await()
+            
+            DomainResult.Success(Unit)
+        } catch (e: Exception) {
+            Log.e("Firestore", "Error deleting user data: ", e)
+            DomainResult.Error(UserError.Unknown(e.message))
+        }
+    }
+
     // RECIPE
 
     suspend fun getAllRecipes(): DomainResult<List<RecipeResponse>, RecipeError> {

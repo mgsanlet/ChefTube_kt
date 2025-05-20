@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.ui.view.dialog
+package com.mgsanlet.cheftube.ui.view.dialogs
 
 import android.content.Context
 import android.util.AttributeSet

@@ -15,7 +15,7 @@ import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE_LIST
 import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
-import com.mgsanlet.cheftube.ui.view.dialog.SearchDialog
+import com.mgsanlet.cheftube.ui.view.dialogs.SearchDialog
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedState
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedViewModel
 import dagger.hilt.android.AndroidEntryPoint

@@ -176,4 +176,24 @@
     <string name="permanently_delete">Permanently delete your account and all data</string>
     <string name="update_your_account_password">Update your account password</string>
     <string name="update_your_email_address">Update your email address</string>
+    <string name="error_occurred">An error occurred</string>
+    <string name="delete_account_confirmation_message">Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.</string>
+    <string name="delete">Delete</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_passwords_dont_match">Passwords don\'t match</string>
+    <string name="error_password_too_short">Password must be at least 6 characters</string>
+    <string name="please_confirm_deletion">Please confirm account deletion</string>
+    <string name="invalid_email_format">Please enter a valid email address</string>
+    <string name="email_updated_successfully">Email updated successfully</string>
+    <string name="password_updated_successfully">Password updated successfully</string>
+    <string name="account_deleted_successfully">Account deleted successfully</string>
+    
+    <!-- Delete Account Dialog -->
+    <string name="delete_account_confirmation">Are you sure you want to delete your account? This action cannot be undone.</string>
+    <string name="i_understand_this_action_cannot_be_undone">I understand that this action cannot be undone</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="password">Password</string>
+    <string name="save">Save</string>
 </resources>

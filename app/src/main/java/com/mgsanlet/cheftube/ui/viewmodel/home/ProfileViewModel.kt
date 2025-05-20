@@ -5,10 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mgsanlet.cheftube.domain.model.DomainUser
+import com.mgsanlet.cheftube.domain.usecase.user.DeleteAccountUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.GetCurrentUserDataUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.GetUserDataByIdUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.SaveProfilePictureUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.UpdateCurrentUserDataUseCase
+import com.mgsanlet.cheftube.domain.usecase.user.UpdateEmailUseCase
+import com.mgsanlet.cheftube.domain.usecase.user.UpdatePasswordUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.UpdateUserDataUseCase
 import com.mgsanlet.cheftube.domain.util.DomainResult
 import com.mgsanlet.cheftube.domain.util.error.UserError
@@ -22,7 +25,10 @@ class ProfileViewModel @Inject constructor(
     private val getCurrentUserData: GetCurrentUserDataUseCase,
     private val updateCurrentUserData: UpdateCurrentUserDataUseCase,
     private val updateUserData: UpdateUserDataUseCase,
-    private val saveProfilePicture: SaveProfilePictureUseCase
+    private val saveProfilePicture: SaveProfilePictureUseCase,
+    private val updateEmail: UpdateEmailUseCase,
+    private val updatePassword: UpdatePasswordUseCase,
+    private val deleteAccount: DeleteAccountUseCase
 ) : ViewModel() {
     private val _uiState = MutableLiveData<ProfileState>()
     val uiState: LiveData<ProfileState> = _uiState
@@ -186,12 +192,62 @@ class ProfileViewModel @Inject constructor(
         return _userData.value?.favouriteRecipes ?: emptyList()
     }
 
+    fun updateUserEmail(newEmail: String, password: String) {
+        viewModelScope.launch {
+            updateEmail(newEmail, password).fold(
+                onSuccess = {
+                    // Recargar los datos del usuario para asegurar que todo esté actualizado
+                    loadCurrentUserData()
+                    _uiState.value = ProfileState.EmailUpdated
+                },
+                onError = { error ->
+                    _uiState.value = ProfileState.Error(error)
+                }
+            )
+        }
+    }
+
+    fun updateUserPassword(
+        currentPassword: String,
+        newPassword: String,
+        confirmPassword: String
+    ) {
+        viewModelScope.launch {
+            _uiState.value = ProfileState.Loading
+            
+            updatePassword(currentPassword, newPassword, confirmPassword).fold(
+                onSuccess = {
+                    _uiState.value = ProfileState.PasswordUpdated
+                },
+                onError = { error ->
+                    _uiState.value = ProfileState.Error(error)
+                }
+            )
+        }
+    }
+
+    fun deleteUserAccount(password: String) {
+        _uiState.value = ProfileState.Loading
+        viewModelScope.launch {
+            deleteAccount(password).fold(
+                onSuccess = {
+                    _uiState.value = ProfileState.AccountDeleted
+                },
+                onError = { error ->
+                    _uiState.value = ProfileState.Error(error)
+                }
+            )
+        }
+    }
 }
 
 sealed class ProfileState {
     data object Loading : ProfileState()
     data object LoadSuccess : ProfileState()
     data object SaveSuccess : ProfileState()
+    data object EmailUpdated : ProfileState()
+    data object PasswordUpdated : ProfileState()
+    data object AccountDeleted : ProfileState()
     data class Error(val error: UserError) : ProfileState()
 }
 

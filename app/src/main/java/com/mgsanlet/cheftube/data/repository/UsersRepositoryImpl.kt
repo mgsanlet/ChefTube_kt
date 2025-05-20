@@ -166,6 +166,96 @@ class UsersRepositoryImpl @Inject constructor(
         } ?: return DomainResult.Error(UserError.UserNotFound)
     }
 
+    override suspend fun updateEmail(newEmail: String, password: String): DomainResult<Unit, UserError> {
+        return try {
+            val user = api.auth.currentUser ?: throw Exception("User not found after login")
+
+            // Reautenticar al usuario
+            val credential = com.google.firebase.auth.EmailAuthProvider
+                .getCredential(user.email ?: "", password)
+            user.reauthenticate(credential).await()
+
+            // Actualizar el correo electrónico
+            user.verifyBeforeUpdateEmail(newEmail).await()
+
+
+            // Actualizar el correo en la base de datos
+            val currentUser = getCurrentUserData().fold(
+                onSuccess = { it },
+                onError = { return DomainResult.Error(it) }
+            )
+            val updatedUser = currentUser.copy(email = newEmail)
+            api.updateUserData(currentUser.id, updatedUser)
+
+            // Actualizar caché
+            currentUserCache = updatedUser
+
+            DomainResult.Success(Unit)
+        } catch (_: com.google.firebase.auth.FirebaseAuthUserCollisionException) {
+            DomainResult.Error(UserError.EmailInUse)
+        } catch (_: FirebaseAuthInvalidCredentialsException) {
+            DomainResult.Error(UserError.WrongCredentials)
+        } catch (_: FirebaseAuthInvalidUserException) {
+            DomainResult.Error(UserError.UserNotFound)
+        } catch (e: Exception) {
+            DomainResult.Error(UserError.Unknown(e.message))
+        }
+    }
+
+    override suspend fun updatePassword(currentPassword: String, newPassword: String): DomainResult<Unit, UserError> {
+        return try {
+            // Reautenticar al usuario
+            val user = api.auth.currentUser
+            val email = user?.email ?: return DomainResult.Error(UserError.UserNotFound)
+
+            // Reautenticar con el correo y contraseña actuales
+            val credential = com.google.firebase.auth.EmailAuthProvider.getCredential(email, currentPassword)
+            user.reauthenticate(credential).await()
+
+            // Actualizar la contraseña
+            user.updatePassword(newPassword).await()
+
+            DomainResult.Success(Unit)
+        } catch (_: FirebaseAuthInvalidCredentialsException) {
+            DomainResult.Error(UserError.WrongCredentials)
+        } catch (_: FirebaseAuthInvalidUserException) {
+            DomainResult.Error(UserError.UserNotFound)
+        } catch (e: Exception) {
+            DomainResult.Error(UserError.Unknown(e.message))
+        }
+    }
+
+    override suspend fun deleteAccount(password: String): DomainResult<Unit, UserError> {
+        return try {
+            // Reautenticar al usuario
+            val user = api.auth.currentUser ?: throw Exception("User not found after login")
+            val email = user.email ?: return DomainResult.Error(UserError.UserNotFound)
+            
+            val credential = com.google.firebase.auth.EmailAuthProvider.getCredential(email, password)
+            user.reauthenticate(credential).await()
+            
+            // Eliminar los datos del usuario de Firestore y Storage
+            val deleteDataResult = api.deleteUserData(user.uid)
+            if (deleteDataResult is DomainResult.Error) {
+                return deleteDataResult
+            }
+            
+            // Eliminar la cuenta de autenticación
+            user.delete().await()
+            
+            // Limpiar caché
+            currentUserCache = null
+
+            DomainResult.Success(Unit)
+        } catch (_: FirebaseAuthInvalidCredentialsException) {
+            DomainResult.Error(UserError.WrongCredentials)
+        } catch (_: FirebaseAuthInvalidUserException) {
+            DomainResult.Error(UserError.UserNotFound)
+        } catch (e: Exception) {
+            DomainResult.Error(UserError.Unknown(e.message))
+        }
+    }
+
     override fun logout() {
         currentUserCache = null
         api.auth.signOut()
