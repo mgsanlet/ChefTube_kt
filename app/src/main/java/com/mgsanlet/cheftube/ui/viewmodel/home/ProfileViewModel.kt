@@ -10,7 +10,6 @@ import com.mgsanlet.cheftube.domain.usecase.user.GetCurrentUserDataUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.GetUserDataByIdUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.SaveProfilePictureUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.UpdateCurrentUserDataUseCase
-import com.mgsanlet.cheftube.domain.usecase.user.UpdateEmailUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.UpdatePasswordUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.UpdateUserDataUseCase
 import com.mgsanlet.cheftube.domain.util.DomainResult
@@ -26,7 +25,6 @@ class ProfileViewModel @Inject constructor(
     private val updateCurrentUserData: UpdateCurrentUserDataUseCase,
     private val updateUserData: UpdateUserDataUseCase,
     private val saveProfilePicture: SaveProfilePictureUseCase,
-    private val updateEmail: UpdateEmailUseCase,
     private val updatePassword: UpdatePasswordUseCase,
     private val deleteAccount: DeleteAccountUseCase
 ) : ViewModel() {
@@ -81,7 +79,7 @@ class ProfileViewModel @Inject constructor(
 
     fun setNewProfilePicture(newPicture: ByteArray) {
         newProfilePicture = newPicture
-        loadCurrentUserData()
+        //loadCurrentUserData()
     }
 
     fun tryUpdateCurrentUserData(newUsername: String, newBio: String) {

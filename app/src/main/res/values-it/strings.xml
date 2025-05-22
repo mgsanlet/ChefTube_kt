@@ -178,5 +178,6 @@
     <string name="i_understand_this_action_cannot_be_undone">Capisco che questa azione non può essere annullata</string>
     <string name="delete">Elimina</string>
     <string name="password">Password</string>
-
+    <string name="recovering_last_session">Recuperando l\'ultima sessione…</string>
+    <string name="welcome_message">Benvenuto su ChefTube! 👋</string>
 </resources>

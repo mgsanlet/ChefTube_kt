@@ -3,18 +3,19 @@ package com.mgsanlet.cheftube.ui.view.home
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.flexbox.FlexboxLayout
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
@@ -22,13 +23,16 @@ import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.loadUrlToCircle
-import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
+import com.mgsanlet.cheftube.ui.view.dialogs.LoadingDialog
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModel
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeState
 import com.mgsanlet.cheftube.ui.viewmodel.home.TimerState
-import com.mgsanlet.cheftube.ui.view.dialogs.LoadingDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
 
@@ -42,6 +46,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
 
     private val viewModel: RecipeDetailViewModel by viewModels()
     private var isToggleInitialization: Boolean = true
+    private var progressCheckJob: Job? = null
 
     override fun onResume() {
         super.onResume()
@@ -173,6 +178,17 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
                 }
             }
         }
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            binding.commentsView.setOnExpandDownClickListener {
+                scrollToCommentsView()
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun scrollToCommentsView() {
+        binding.scrollView.scrollToDescendant(binding.commentsView)
     }
 
     fun setAuthorTagListener(authorId: String) {
@@ -190,12 +206,17 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
     }
 
     private fun hideProgressWhenVideoLoaded() {
-        if (binding.videoWebView.progress == 100) {
-            showLoading(false)
-        } else {
-            Handler(Looper.getMainLooper()).postDelayed({
-                hideProgressWhenVideoLoaded()
-            }, 200)
+        // Cancel any existing progress check
+        progressCheckJob?.cancel()
+
+        progressCheckJob = viewLifecycleOwner.lifecycleScope.launch {
+            while (isActive) {
+                if (binding.videoWebView.progress == 100) {
+                    showLoading(false)
+                    break
+                }
+                delay(200)
+            }
         }
     }
 
@@ -308,7 +329,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
             // Título y encabezado
             appendLine("*${recipe.title}*")
             appendLine("${getString(R.string.recipe_shared_from_cheftube)}\n")
-            
+
             // Detalles de la receta
             appendLine("⏱️ ${getFormattedRecipeDuration(recipe)}")
             recipe.author?.username?.let { username ->
@@ -369,7 +390,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
             getString(R.string.duration_minutes, currentMinutes)
         }
     }
-    
+
     private fun extractYouTubeIdFromEmbed(url: String): String? {
         return url.substringAfter("embed/").substringBefore("?")
     }
@@ -430,6 +451,8 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
     }
 
     override fun onDestroyView() {
+        progressCheckJob?.cancel()
+        progressCheckJob = null
         LoadingDialog.dismiss(parentFragmentManager)
         super.onDestroyView()
     }

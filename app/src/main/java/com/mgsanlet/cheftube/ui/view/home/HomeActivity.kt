@@ -53,6 +53,8 @@ class HomeActivity : AppCompatActivity() {
 
         // Configurar BottomNavigationView
         setUpBottomNav()
+        Toast.makeText(applicationContext, getString(R.string.welcome_message), Toast.LENGTH_SHORT)
+            .show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

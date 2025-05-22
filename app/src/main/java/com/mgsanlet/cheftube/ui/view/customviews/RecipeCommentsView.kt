@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mgsanlet.cheftube.R
@@ -60,4 +61,13 @@ class RecipeCommentsView @JvmOverloads constructor(
             binding.commentEditText.text?.clear()
         }
     }
+
+    fun setOnExpandDownClickListener(listener: () -> Unit) {
+        binding.expandToggleButton.setOnClickListener {
+            if (binding.commentsBody.isVisible) {
+                listener()
+            }
+        }
+    }
+
 }

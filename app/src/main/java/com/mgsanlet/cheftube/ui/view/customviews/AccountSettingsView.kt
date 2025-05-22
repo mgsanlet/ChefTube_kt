@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.AccountSettingsViewBinding
+import androidx.core.view.isVisible
 
 class AccountSettingsView @JvmOverloads constructor(
     context: Context,
@@ -44,6 +45,14 @@ class AccountSettingsView @JvmOverloads constructor(
     fun setOnDeleteClickListener(listener: () -> Unit) {
         binding.deleteAccountButton.setOnClickListener {
             listener()
+        }
+    }
+
+    fun setOnExpandDownClickListener(listener: () -> Unit) {
+        binding.expandToggleButton.setOnClickListener {
+            if (binding.accountBody.isVisible) {
+                listener()
+            }
         }
     }
 }

@@ -173,41 +173,6 @@ class UsersRepositoryImpl @Inject constructor(
         } ?: return DomainResult.Error(UserError.UserNotFound)
     }
 
-    override suspend fun updateEmail(newEmail: String, password: String): DomainResult<Unit, UserError> {
-        return try {
-            val user = api.auth.currentUser ?: throw Exception("User not found after login")
-
-            // Reautenticar al usuario
-            val credential = com.google.firebase.auth.EmailAuthProvider
-                .getCredential(user.email ?: "", password)
-            user.reauthenticate(credential).await()
-
-            // Actualizar el correo electrónico
-            user.updateEmail(newEmail).await()
-
-            // Actualizar el correo en la base de datos
-            val currentUser = getCurrentUserData().fold(
-                onSuccess = { it },
-                onError = { return DomainResult.Error(it) }
-            )
-            val updatedUser = currentUser.copy(email = newEmail)
-            api.updateUserData(currentUser.id, updatedUser)
-
-            // Actualizar caché
-            currentUserCache = updatedUser
-
-            DomainResult.Success(Unit)
-        } catch (_: FirebaseAuthUserCollisionException) {
-            DomainResult.Error(UserError.EmailInUse)
-        } catch (_: FirebaseAuthInvalidCredentialsException) {
-            DomainResult.Error(UserError.WrongCredentials)
-        } catch (_: FirebaseAuthInvalidUserException) {
-            DomainResult.Error(UserError.UserNotFound)
-        } catch (e: Exception) {
-            DomainResult.Error(UserError.Unknown(e.message))
-        }
-    }
-
     override suspend fun updatePassword(currentPassword: String, newPassword: String): DomainResult<Unit, UserError> {
         return try {
             // Reautenticar al usuario

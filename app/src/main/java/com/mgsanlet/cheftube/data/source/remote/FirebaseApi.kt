@@ -3,6 +3,7 @@ package com.mgsanlet.cheftube.data.source.remote
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.WriteBatch
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -105,7 +106,11 @@ class FirebaseApi {
                 userData.createdRecipes.forEach { recipeId ->
                     val recipeRef = db.collection("recipes").document(recipeId)
                     batch.update(recipeRef, "authorName", userData.username)
-                    batch.update(recipeRef, "authorHasProfilePicture",userData.profilePictureUrl.isNotBlank())
+                    batch.update(
+                        recipeRef,
+                        "authorHasProfilePicture",
+                        userData.profilePictureUrl.isNotBlank()
+                    )
                 }
                 batch.commit().await()
             }
@@ -187,10 +192,60 @@ class FirebaseApi {
                 // Si hay un error al eliminar la imagen, lo registramos pero continuamos
                 Log.e("FirebaseStorage", "Error deleting profile picture: ", e)
             }
-            
+
+            // Obtener la lista de recetas favoritas del usuario
+            val userDoc = db.collection("users").document(userId).get().await()
+            val favoriteRecipes = userDoc.get("favouriteRecipes") as? List<String> ?: emptyList()
+
+            // Crear un solo batch para todas las operaciones de escritura
+            val batch = db.batch()
+
+            // Obtener y eliminar las recetas creadas por el usuario
+            val userRecipes =
+                db.collection("recipes").whereEqualTo("authorId", userId).get().await()
+            userRecipes.documents.forEach { document ->
+                deleteRecipeAndReferences(
+                    document.id,
+                    batch
+                )
+            }
+
+            // Actualizar el contador de favoritos en las recetas que el usuario tenía como favoritas
+            favoriteRecipes.forEach { recipeId ->
+                val recipeRef = db.collection("recipes").document(recipeId)
+                batch.update(recipeRef, "favouriteCount", FieldValue.increment(-1))
+            }
+
+            // Obtener recetas con comentarios del usuario
+            val recipesWithComments =
+                db.collection("recipes").whereArrayContains("comments.authorId", userId).get()
+                    .await()
+            recipesWithComments.documents.forEach { document ->
+                val recipe = document.toObject(RecipeResponse::class.java)
+                val updatedComments = recipe?.comments?.filterNot { it.authorId == userId }
+                batch.update(document.reference, "comments", updatedComments)
+            }
+
+            // Obtener y actualizar seguidores
+            val followers =
+                db.collection("users").whereArrayContains("followersIds", userId).get().await()
+            followers.documents.forEach { document ->
+                batch.update(document.reference, "followersIds", FieldValue.arrayRemove(userId))
+            }
+
+            // Obtener y actualizar seguidos
+            val following =
+                db.collection("users").whereArrayContains("followingIds", userId).get().await()
+            following.documents.forEach { document ->
+                batch.update(document.reference, "followingIds", FieldValue.arrayRemove(userId))
+            }
+
             // Eliminar el documento del usuario
-            db.collection("users").document(userId).delete().await()
-            
+            batch.delete(db.collection("users").document(userId))
+
+            // Ejecutar todas las operaciones en un solo batch
+            batch.commit().await()
+
             DomainResult.Success(Unit)
         } catch (e: Exception) {
             Log.e("Firestore", "Error deleting user data: ", e)
@@ -309,7 +364,7 @@ class FirebaseApi {
                 "comments" to comments
             )
             batch.set(recipeRef, recipe)
-            newImage?.let{
+            newImage?.let {
                 val storageRef = storage.reference.child("recipe_images/$finalId.jpg")
                 storageRef.putBytes(it).await()
             }
@@ -347,8 +402,83 @@ class FirebaseApi {
             )
             batch.commit().await()
             return DomainResult.Success(Unit)
-        }catch (exception: Exception) {
+        } catch (exception: Exception) {
             return DomainResult.Error(RecipeError.Unknown(exception.message))
         }
     }
+
+    /**
+     * Elimina una receta y todas sus referencias en la base de datos
+     * @param recipeId ID de la receta a eliminar
+     * @param batch Lote de operaciones al que se agregarán las operaciones de eliminación (opcional).
+     *              Si es nulo, se creará y ejecutará un nuevo batch automáticamente.
+     * @return DomainResult.Success(Unit) si la operación fue exitosa, o DomainResult.Error en caso contrario
+     */
+    private suspend fun deleteRecipeAndReferences(
+        recipeId: String,
+        batch: WriteBatch? = null
+    ): DomainResult<Unit, RecipeError> {
+        return try {
+            var localBatch = batch
+            var shouldCommit = false
+
+            // Si no se proporciona un batch, creamos uno local
+            if (localBatch == null) {
+                localBatch = db.batch()
+                shouldCommit = true
+            }
+
+            // Obtener la receta para obtener información del autor
+            val recipeDoc = db.collection("recipes").document(recipeId).get().await()
+            val recipe =
+                recipeDoc.toObject(RecipeResponse::class.java) ?: return DomainResult.Error(
+                    RecipeError.RecipeNotFound
+                )
+
+            // 1. Eliminar la imagen de la receta del almacenamiento
+            val storagePath = "recipe_images/$recipeId.jpg"
+            val storageRef = storage.reference.child(storagePath)
+            try {
+                storageRef.delete().await()
+            } catch (e: Exception) {
+                Log.e("FirebaseStorage", "Error deleting recipe image: ", e)
+            }
+
+            // 2. Eliminar la receta
+            localBatch.delete(recipeDoc.reference)
+
+            // 3. Eliminar la receta de las listas de favoritos de los usuarios
+            val usersWithFavourite = db.collection("users")
+                .whereArrayContains("favouriteRecipes", recipeId)
+                .get().await()
+
+            usersWithFavourite.documents.forEach { userDoc ->
+                localBatch.update(
+                    userDoc.reference, "favouriteRecipes",
+                    FieldValue.arrayRemove(recipeId)
+                )
+            }
+
+            // 4. Actualizar la lista de recetas creadas del autor
+            if (recipe.authorId.isNotBlank()) {
+                val authorRef = db.collection("users").document(recipe.authorId)
+                localBatch.update(
+                    authorRef, "createdRecipes",
+                    FieldValue.arrayRemove(recipeId)
+                )
+            }
+
+            // Si creamos un batch local, lo ejecutamos
+            if (shouldCommit) {
+                localBatch.commit().await()
+            }
+
+            DomainResult.Success(Unit)
+
+        } catch (e: Exception) {
+            Log.e("FirebaseApi", "Error deleting recipe $recipeId: ", e)
+            DomainResult.Error(RecipeError.Unknown(e.message))
+        }
+    }
+
 }

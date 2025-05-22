@@ -70,6 +70,11 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
                 }
 
                 is LoginState.AlreadyLogged -> {
+                    Toast.makeText(
+                        context,
+                        getString(R.string.recovering_last_session),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     (activity as? AuthActivity)?.navToHomePage()
                 }
             }
@@ -79,6 +84,7 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.tryAutoLogin()
+
     }
 
     override fun setUpListeners() {

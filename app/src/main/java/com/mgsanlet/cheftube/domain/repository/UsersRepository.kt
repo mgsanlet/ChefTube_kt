@@ -15,7 +15,6 @@ interface UsersRepository {
     suspend fun getUserDataById(userId: String): DomainResult<DomainUser, UserError>
     suspend fun updateFavouriteRecipes(recipeId: String, isNewFavourite: Boolean): DomainResult<Unit, UserError>
     suspend fun saveProfilePicture(profilePicture: ByteArray): DomainResult<Unit, UserError>
-    suspend fun updateEmail(newEmail: String, password: String): DomainResult<Unit, UserError>
     suspend fun updatePassword(currentPassword: String, newPassword: String): DomainResult<Unit, UserError>
     suspend fun deleteAccount(password: String): DomainResult<Unit, UserError>
 

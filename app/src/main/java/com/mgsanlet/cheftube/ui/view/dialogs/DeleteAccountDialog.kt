@@ -99,16 +99,13 @@ class DeleteAccountDialog(val fragment: EditProfileFragment) : BaseAccountDialog
     }
 
     private fun deleteAccount(password: String) {
-        showLoading(true)
         enableButtons(false)
-
         viewModel.deleteUserAccount(password)
 
         // Observar los cambios en el ViewModel
         viewModel.uiState.observe(fragment.viewLifecycleOwner) { state ->
             when (state) {
                 is ProfileState.AccountDeleted -> {
-                    showLoading(false)
                     enableButtons(true)
                     view?.hideKeyboard()
                     onAccountDeletedListener?.invoke()
@@ -116,7 +113,6 @@ class DeleteAccountDialog(val fragment: EditProfileFragment) : BaseAccountDialog
                 }
 
                 is ProfileState.Error -> {
-                    showLoading(false)
                     enableButtons(true)
                     passwordEditText.error = state.error.asMessage(fragment.requireContext())
                 }

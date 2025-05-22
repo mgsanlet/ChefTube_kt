@@ -1,5 +1,6 @@
 package com.mgsanlet.cheftube.ui.view.home
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -130,9 +131,12 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
 
         binding.categoriesAddButton.setOnClickListener {
             if (binding.categoriesInnerContainer.childCount < 10) {
-                binding.categoriesInnerContainer.addView(
-                    createCustomEditText(getString(R.string.new_category))
-                )
+                val newView = createCustomEditText(getString(R.string.new_category))
+                binding.categoriesInnerContainer.addView(newView)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                    binding.scrollView.scrollToDescendant(newView)
+                }
+                newView.requestFocus()
             } else {
                 Toast.makeText(
                     context,
@@ -143,9 +147,12 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
         }
         binding.ingredientsAddButton.setOnClickListener {
             if (binding.ingredientsInnerContainer.childCount < 10) {
-                binding.ingredientsInnerContainer.addView(
-                    createCustomEditText(getString(R.string.new_ingredient))
-                )
+                val newView = createCustomEditText(getString(R.string.new_ingredient))
+                binding.ingredientsInnerContainer.addView(newView)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                    binding.scrollView.scrollToDescendant(newView)
+                }
+                newView.requestFocus()
             } else {
                 Toast.makeText(
                     context,
@@ -156,9 +163,12 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
         }
         binding.stepsAddButton.setOnClickListener {
             if (binding.stepsInnerContainer.childCount < 10) {
-                binding.stepsInnerContainer.addView(
-                    createCustomEditText(getString(R.string.new_step))
-                )
+                val newView = createCustomEditText(getString(R.string.new_step))
+                binding.stepsInnerContainer.addView(newView)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                    binding.scrollView.scrollToDescendant(newView)
+                }
+                newView.requestFocus()
             } else {
                 Toast.makeText(
                     context,

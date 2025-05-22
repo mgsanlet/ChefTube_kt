@@ -14,6 +14,7 @@ import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.loadUrlToCircle
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
+import com.mgsanlet.cheftube.ui.view.dialogs.LoadingDialog
 import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileState
 import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,7 +49,6 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.progressBar.setCustomStyle(requireContext())
         arguments?.let {
             it.getString(ARG_USER_ID)?.let {
                 sharedViewModel.loadUserDataById(it)
@@ -60,22 +60,15 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
         inflater: LayoutInflater, container: ViewGroup?
     ): FragmentProfileBinding = FragmentProfileBinding.inflate(inflater, container, false)
 
-    override fun setUpViewProperties() {
-        binding.progressBar.setCustomStyle(requireContext())
-    }
-
     override fun setUpObservers() {
         sharedViewModel.uiState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is ProfileState.Error -> {
                     val errorMessage = state.error.asMessage(requireContext())
-                    showLoading(false)
                     Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 }
 
-                is ProfileState.Loading -> showLoading(true)
                 is ProfileState.LoadSuccess -> {
-                    showLoading(false)
                     showUserData()
                 }
 
@@ -88,11 +81,15 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
                 true -> {
                     binding.editButton.visibility = View.VISIBLE
                     binding.followToggle.visibility = View.INVISIBLE
+                    binding.createRecipeButton.visibility = View.VISIBLE
+                    binding.addIcon.visibility = View.VISIBLE
                 }
 
                 false -> {
                     binding.editButton.visibility = View.INVISIBLE
                     binding.followToggle.visibility = View.VISIBLE
+                    binding.createRecipeButton.visibility = View.INVISIBLE
+                    binding.addIcon.visibility = View.INVISIBLE
                 }
             }
         }
@@ -174,14 +171,6 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
             } else {
                 binding.profilePictureImageView.setImageResource(R.drawable.account_default_image)
             }
-        }
-    }
-
-    private fun showLoading(show: Boolean) {
-        if (show) {
-            binding.progressBar.visibility = View.VISIBLE
-        } else {
-            binding.progressBar.visibility = View.GONE
         }
     }
 

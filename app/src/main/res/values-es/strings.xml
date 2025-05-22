@@ -180,5 +180,6 @@
     <string name="i_understand_this_action_cannot_be_undone">Entiendo que esta acción no se puede deshacer</string>
     <string name="delete">Eliminar</string>
     <string name="password">Contraseña</string>
-
+    <string name="recovering_last_session">Recuperando la última sesión…</string>
+    <string name="welcome_message">¡Bienvenido a ChefTube! 👋</string>
 </resources>

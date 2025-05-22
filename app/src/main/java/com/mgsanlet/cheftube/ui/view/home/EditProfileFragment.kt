@@ -5,12 +5,14 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentEditProfileBinding
@@ -158,6 +160,17 @@ class EditProfileFragment @Inject constructor() : BaseFragment<FragmentEditProfi
             }
             dialog.show(parentFragmentManager, DeleteAccountDialog.TAG)
         }
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q){
+            binding.accountSettingsView.setOnExpandDownClickListener {
+                scrollToAccountSettings()
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun scrollToAccountSettings() {
+        binding.scrollView.scrollToDescendant(binding.accountSettingsView)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

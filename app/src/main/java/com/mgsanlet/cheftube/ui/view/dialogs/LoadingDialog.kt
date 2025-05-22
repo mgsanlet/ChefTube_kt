@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
 import android.widget.ProgressBar
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
@@ -25,17 +27,31 @@ class LoadingDialog(private val context: Context) : DialogFragment() {
         builder.setView(dialogView)
             .setCancelable(false)
 
-        val dialog = builder.create()
+        val dialog = object : Dialog(requireContext(), theme) {
+            override fun onBackPressed() {
+                // No hacer nada al presionar atrás
+            }
+        }
         
-        // Configurar el diálogo para que use WRAP_CONTENT
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setCanceledOnTouchOutside(false)
+        
         dialog.window?.let { window ->
             window.setBackgroundDrawableResource(android.R.color.transparent)
             window.setLayout(
                 150.dpToPx(context),
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
+            // Asegurarse de que el diálogo no se pueda descartar
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+            )
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         }
         
+        dialog.setContentView(dialogView)
         return dialog
     }
 
@@ -43,7 +59,7 @@ class LoadingDialog(private val context: Context) : DialogFragment() {
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.dialog_loading, null, false)
         val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
-        progressBar.setCustomStyle(context)
+        progressBar?.setCustomStyle(context)
         return view
     }
 
