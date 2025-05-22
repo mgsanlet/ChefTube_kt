@@ -7,18 +7,6 @@
     android:background="@color/dark_green"
     tools:ignore="Overdraw">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_gravity="center"
-        android:indeterminate="true"
-        app:layout_constraintBottom_toTopOf="@+id/submitContainer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone"/>
-
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
@@ -81,7 +69,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/titleEditText"
                 tools:ignore="TextContrastCheck" />
 
-            <com.mgsanlet.cheftube.ui.view.home.RecipeVideoLoaderView
+            <com.mgsanlet.cheftube.ui.view.customviews.RecipeVideoLoaderView
                 android:id="@+id/videoLoaderView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -108,7 +96,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/videoLoaderView"
                 tools:ignore="TextContrastCheck" />
 
-            <com.mgsanlet.cheftube.ui.view.home.RecipeImageLoaderView
+            <com.mgsanlet.cheftube.ui.view.customviews.RecipeImageLoaderView
                 android:id="@+id/imageLoaderView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

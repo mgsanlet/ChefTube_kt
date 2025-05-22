@@ -11,6 +11,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -107,6 +108,16 @@ fun ImageView.loadBitmapToCircle(bitmap: Bitmap, context: Context) {
         .skipMemoryCache(true)
         .apply(RequestOptions.circleCropTransform())
         .into(this)
+}
+
+/**
+ * Oculta el teclado suavemente
+ */
+fun View.hideKeyboard() {
+    context?.let { context ->
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(windowToken, 0)
+    }
 }
 
 fun Int.dpToPx(context: Context): Int {

@@ -137,17 +137,7 @@
             app:layout_constraintTop_toBottomOf="@+id/password2EditText"
             tools:ignore="TextContrastCheck" />
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="6dp"
-            android:indeterminate="true"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/password2EditText" />
+
 
         <ImageButton
             android:id="@+id/backbutton"

@@ -56,7 +56,6 @@ class RecipeFeedViewModel @Inject constructor(
     }
 
     fun performSearch(params: SearchParams) {
-        _uiState.value = RecipeFeedState.Loading
         viewModelScope.launch {
             val result = filterRecipes(params)
             handleFilterResult(result)

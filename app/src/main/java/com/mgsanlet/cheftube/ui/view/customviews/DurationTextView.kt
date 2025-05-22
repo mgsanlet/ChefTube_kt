@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.ui.util
+package com.mgsanlet.cheftube.ui.view.customviews
 
 import android.content.Context
 import android.util.AttributeSet

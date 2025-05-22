@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.ui.view.home
+package com.mgsanlet.cheftube.ui.view.customviews
 
 import android.app.Activity
 import android.content.Context
@@ -7,7 +7,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
@@ -111,13 +110,13 @@ class RecipeImageLoaderView @JvmOverloads constructor(
     }
 
     fun setError() {
-        binding.validationImageView.visibility = View.VISIBLE
-        binding.requiredTextView.visibility = View.VISIBLE
+        binding.validationImageView.visibility = VISIBLE
+        binding.requiredTextView.visibility = VISIBLE
     }
 
     fun clearError() {
-        binding.validationImageView.visibility = View.GONE
-        binding.requiredTextView.visibility = View.GONE
+        binding.validationImageView.visibility = GONE
+        binding.requiredTextView.visibility = GONE
     }
 
     fun loadUrl(url: String) {

@@ -1,4 +1,4 @@
-package com.mgsanlet.cheftube.ui.view.home
+package com.mgsanlet.cheftube.ui.view.customviews
 
 import android.annotation.SuppressLint
 import android.content.Context

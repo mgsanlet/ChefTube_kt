@@ -27,6 +27,7 @@ import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeDetailViewModel
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeState
 import com.mgsanlet.cheftube.ui.viewmodel.home.TimerState
+import com.mgsanlet.cheftube.ui.view.dialogs.LoadingDialog
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
@@ -186,10 +187,6 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
             )
 
         }
-    }
-
-    override fun setUpViewProperties() {
-        binding.progressBar.setCustomStyle(requireContext())
     }
 
     private fun hideProgressWhenVideoLoaded() {
@@ -424,12 +421,17 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
 
     private fun showLoading(show: Boolean) {
         if (show) {
-            binding.progressBar.visibility = View.VISIBLE
             binding.recipeContent.visibility = View.GONE
+            LoadingDialog.show(requireContext(), parentFragmentManager)
         } else {
-            binding.progressBar.visibility = View.GONE
             binding.recipeContent.visibility = View.VISIBLE
+            LoadingDialog.dismiss(parentFragmentManager)
         }
+    }
+
+    override fun onDestroyView() {
+        LoadingDialog.dismiss(parentFragmentManager)
+        super.onDestroyView()
     }
 
     companion object {

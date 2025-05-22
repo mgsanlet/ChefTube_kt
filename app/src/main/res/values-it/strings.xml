@@ -163,7 +163,6 @@
     <string name="error_updating_password">Errore nell\'aggiornamento della password</string>
     <string name="error_deleting_account">Errore nell\'eliminazione dell\'account</string>
     <string name="passwords_dont_match">Le password non corrispondono</string>
-    <string name="invalid_email_format">Si prega di inserire un indirizzo email valido</string>
     <string name="password_too_short">La password deve contenere almeno 6 caratteri</string>
     <string name="all_data_deleted">Tutti i tuoi dati, comprese ricette, preferiti e commenti, verranno eliminati permanentemente.</string>
     <string name="warning_this_action_cannot_be_undone">Attenzione: Questa azione non può essere annullata</string>
@@ -171,5 +170,13 @@
     <string name="permanently_delete">Elimina permanentemente il tuo account e tutti i dati</string>
     <string name="update_your_account_password">Aggiorna la password del tuo account</string>
     <string name="update_your_email_address">Aggiorna il tuo indirizzo email</string>
+    <string name="delete_account_confirmation_message">Sei sicuro di voler eliminare il tuo account? Questa azione non può essere annullata e tutti i tuoi dati saranno eliminati permanentemente.</string>
+    <string name="please_confirm_deletion">Per favore, conferma l\'eliminazione dell\'account</string>
+    <string name="email_updated_successfully">Email aggiornata con successo</string>
+    <string name="password_updated_successfully">Password aggiornata con successo</string>
+    <string name="account_deleted_successfully">Account eliminato con successo</string>
+    <string name="i_understand_this_action_cannot_be_undone">Capisco che questa azione non può essere annullata</string>
+    <string name="delete">Elimina</string>
+    <string name="password">Password</string>
 
 </resources>

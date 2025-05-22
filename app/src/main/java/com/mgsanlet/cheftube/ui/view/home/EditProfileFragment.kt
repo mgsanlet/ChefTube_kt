@@ -20,7 +20,11 @@ import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.loadBitmapToCircle
 import com.mgsanlet.cheftube.ui.util.loadUrlToCircle
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
+import com.mgsanlet.cheftube.ui.view.auth.AuthActivity
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
+import com.mgsanlet.cheftube.ui.view.dialogs.DeleteAccountDialog
+import com.mgsanlet.cheftube.ui.view.dialogs.LoadingDialog
+import com.mgsanlet.cheftube.ui.view.dialogs.UpdatePasswordDialog
 import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileState
 import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileViewModel
 import com.yalantis.ucrop.UCrop
@@ -61,6 +65,10 @@ class EditProfileFragment @Inject constructor() : BaseFragment<FragmentEditProfi
                         is UserError.UsernameInUse -> binding.usernameEditText.error = errorMessage
                         is UserError.InvalidUsernamePattern -> binding.usernameEditText.error =
                             errorMessage
+                        // Estos errores los manejan los diálogos de gestión de cuenta
+                        is UserError.WrongCredentials -> {}
+                        is UserError.PasswordTooShort -> {}
+                        is UserError.InvalidPasswordPattern -> {}
 
                         else -> Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                     }
@@ -73,6 +81,7 @@ class EditProfileFragment @Inject constructor() : BaseFragment<FragmentEditProfi
                 }
 
                 is ProfileState.SaveSuccess -> {
+                    showLoading(false)
                     Toast.makeText(activity, getString(R.string.data_saved), Toast.LENGTH_SHORT)
                         .show()
                     FragmentNavigator.loadFragment(
@@ -80,6 +89,18 @@ class EditProfileFragment @Inject constructor() : BaseFragment<FragmentEditProfi
                         ProfileFragment(), R.id.fragmentContainerView
                     )
                 }
+
+                is ProfileState.PasswordUpdated -> {
+                    showToast(R.string.password_updated_successfully)
+                    showLoading(false)
+                }
+                is ProfileState.AccountDeleted -> {
+                    // Navegar a la pantalla de inicio de sesión
+                    startActivity(Intent(requireContext(), AuthActivity::class.java))
+                    requireActivity().finish()
+                }
+
+                else -> { showLoading(false) }
             }
         }
     }
@@ -120,10 +141,23 @@ class EditProfileFragment @Inject constructor() : BaseFragment<FragmentEditProfi
             intent.type = "image/*"
             imagePicker.launch(intent)
         }
-    }
 
-    override fun setUpViewProperties() {
-        binding.progressBar.setCustomStyle(requireContext())
+        binding.accountSettingsView.setOnPasswordClickListener {
+            val dialog = UpdatePasswordDialog(this)
+            dialog.setOnPasswordUpdatedListener {
+                // Mostrar mensaje de éxito
+                showToast(R.string.password_updated_successfully)
+            }
+            dialog.show(parentFragmentManager, UpdatePasswordDialog.TAG)
+        }
+
+        binding.accountSettingsView.setOnDeleteClickListener {
+            val dialog = DeleteAccountDialog(this)
+            dialog.setOnAccountDeletedListener {
+                // La navegación se maneja en el observer del estado AccountDeleted
+            }
+            dialog.show(parentFragmentManager, DeleteAccountDialog.TAG)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -139,7 +173,7 @@ class EditProfileFragment @Inject constructor() : BaseFragment<FragmentEditProfi
 
                     // Guardar la imagen en el ViewModel
                     sharedViewModel.setNewProfilePicture(byteArray)
-                    
+
                     // Actualizar la vista previa
                     binding.profilePictureImageView.loadBitmapToCircle(bitmap, requireContext())
                 }
@@ -151,7 +185,7 @@ class EditProfileFragment @Inject constructor() : BaseFragment<FragmentEditProfi
         sharedViewModel.userData.value?.let { user ->
             binding.usernameEditText.setText(user.username)
             binding.bioEditText.setText(user.bio)
-            
+
             // Cargar imagen de perfil
             if (user.profilePictureUrl.isNotEmpty()) {
                 binding.profilePictureImageView.loadUrlToCircle(user.profilePictureUrl, requireContext())
@@ -161,9 +195,15 @@ class EditProfileFragment @Inject constructor() : BaseFragment<FragmentEditProfi
 
     private fun showLoading(show: Boolean) {
         if (show) {
-            binding.progressBar.visibility = View.VISIBLE
+            LoadingDialog.show(requireContext(), parentFragmentManager)
         } else {
-            binding.progressBar.visibility = View.GONE
+            LoadingDialog.dismiss(parentFragmentManager)
         }
+    }
+
+    override fun onDestroyView() {
+        LoadingDialog.dismiss(parentFragmentManager)
+        super.onDestroyView()
+
     }
 }

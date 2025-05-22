@@ -13,6 +13,7 @@ import com.mgsanlet.cheftube.domain.util.error.RecipeError
 import com.mgsanlet.cheftube.ui.adapter.RecipeFeedAdapter
 import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE_LIST
 import com.mgsanlet.cheftube.ui.util.asMessage
+import com.mgsanlet.cheftube.ui.util.hideKeyboard
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.view.dialogs.SearchDialog
@@ -21,6 +22,7 @@ import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFeedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
+import com.mgsanlet.cheftube.ui.view.dialogs.LoadingDialog
 
 /**
  * Un fragmento que muestra una lista de recetas. Cada receta se muestra con su título y una imagen.
@@ -39,6 +41,7 @@ class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeed
 
         searchDialog = SearchDialog(requireContext())
         searchDialog.setOnSearchQuerySubmittedListener { searchParams ->
+            view?.hideKeyboard()
             viewModel.performSearch(searchParams)
         }
         arguments?.let{
@@ -69,19 +72,21 @@ class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeed
                     showResultNumber(state.recipeList.size)
                 }
 
-                is RecipeFeedState.Error ->
+                is RecipeFeedState.Error -> {
+                    showLoading(false)
                     when (state.error) {
                         is RecipeError.NoResults -> {
                             showNoResults()
-                            showLoading(false)
                         }
-
-                        else -> Toast.makeText(
-                            context,
-                            state.error.asMessage(requireContext()),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        else -> {
+                            Toast.makeText(
+                                context,
+                                state.error.asMessage(requireContext()),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
+                }
             }
         }
     }
@@ -93,10 +98,8 @@ class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeed
     }
 
     override fun setUpViewProperties() {
-        binding.progressBar.setCustomStyle(requireContext())
         binding.recipeFeedRecyclerView.setLayoutManager(LinearLayoutManager(context))
-
-        binding.noResultsTextView.visibility = View.GONE // Oculta mensaje de sin resultados-
+        binding.noResultsTextView.visibility = View.GONE // Oculta mensaje de sin resultados
         binding.recipeFeedRecyclerView.visibility = View.VISIBLE // Mostrar RecyclerView
     }
 
@@ -120,14 +123,18 @@ class RecipeFeedFragment @Inject constructor() : BaseFragment<FragmentRecipeFeed
 
     private fun showLoading(show: Boolean) {
         if (show) {
-            binding.progressBar.visibility = View.VISIBLE
+            LoadingDialog.show(requireContext(), parentFragmentManager)
             binding.recipeFeedRecyclerView.visibility = View.GONE
             binding.noResultsTextView.visibility = View.GONE
         } else {
-            binding.progressBar.visibility = View.GONE
+            LoadingDialog.dismiss(parentFragmentManager)
         }
     }
 
+    override fun onDestroyView() {
+        LoadingDialog.dismiss(parentFragmentManager)
+        super.onDestroyView()
+    }
 
 
     companion object {

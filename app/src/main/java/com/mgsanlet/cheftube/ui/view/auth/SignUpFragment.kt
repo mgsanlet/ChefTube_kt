@@ -11,10 +11,12 @@ import com.mgsanlet.cheftube.databinding.FragmentSignUpBinding
 import com.mgsanlet.cheftube.domain.util.error.UserError
 import com.mgsanlet.cheftube.ui.util.afterTextChanged
 import com.mgsanlet.cheftube.ui.util.asMessage
+import com.mgsanlet.cheftube.ui.util.hideKeyboard
 import com.mgsanlet.cheftube.ui.util.matches
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.util.showWithCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
+import com.mgsanlet.cheftube.ui.view.dialogs.LoadingDialog
 import com.mgsanlet.cheftube.ui.viewmodel.auth.SignUpState
 import com.mgsanlet.cheftube.ui.viewmodel.auth.SignUpViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -97,6 +99,7 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
 
     override fun setUpListeners() {
         binding.saveButton.setOnClickListener {
+            view?.hideKeyboard()
             if (isValidViewInput()) {
                 viewModel.trySignUp(
                     binding.nameEditText.text.toString(),
@@ -113,10 +116,6 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
         binding.backbutton.setOnClickListener {
             (activity as? AuthActivity)?.onBackPressedDispatcher?.onBackPressed()
         }
-    }
-
-    override fun setUpViewProperties() {
-        binding.progressBar.setCustomStyle(requireContext())
     }
 
     override fun isValidViewInput(): Boolean {
@@ -152,14 +151,16 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
         binding.password2EditText.error = null
     }
 
-    private fun showLoading(show: Boolean) {
-        binding.saveButton.isEnabled = !show
+    fun showLoading(show: Boolean) {
         if (show) {
-            binding.progressBar.visibility = View.VISIBLE
-            binding.saveButton.visibility = View.INVISIBLE
+            LoadingDialog.show(requireContext(), parentFragmentManager)
         } else {
-            binding.progressBar.visibility = View.GONE
-            binding.saveButton.visibility = View.VISIBLE
+            LoadingDialog.dismiss(parentFragmentManager)
         }
+    }
+
+    override fun onDestroyView() {
+        LoadingDialog.dismiss(parentFragmentManager)
+        super.onDestroyView()
     }
 }

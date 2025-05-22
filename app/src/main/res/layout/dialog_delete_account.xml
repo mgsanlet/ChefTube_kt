@@ -9,19 +9,11 @@
     android:padding="16dp"
     tools:ignore="Overdraw">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="@string/delete_account_confirmation"
+        android:text="@string/all_data_deleted"
         android:textColor="@color/white"
         android:textSize="16sp"
         app:drawableStartCompat="@drawable/ic_warning_24"
@@ -52,6 +44,41 @@
         android:textColor="@color/white"
         android:textSize="14sp"
         app:drawableStartCompat="@drawable/ic_checkbox_unchecked"
-        app:drawableTint="@color/white" />
+        app:drawableTint="@color/white"
+        android:layout_marginBottom="10dp"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/deleteButton"
+            style="@style/AuthBtns"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:padding="10dp"
+            android:text="@string/delete"
+            android:textColor="@color/white"
+            app:backgroundTint="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="TextContrastCheck" />
+
+        <Button
+            android:id="@+id/cancelButton"
+            style="@style/AuthBtns"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="@color/dark_red"
+            android:padding="10dp"
+            android:text="@string/cancel"
+            android:textColor="@color/white"
+            app:backgroundTint="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/deleteButton"
+            tools:ignore="TextContrastCheck" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

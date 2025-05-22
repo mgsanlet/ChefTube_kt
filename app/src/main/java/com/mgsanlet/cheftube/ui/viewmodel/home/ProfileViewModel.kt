@@ -192,21 +192,6 @@ class ProfileViewModel @Inject constructor(
         return _userData.value?.favouriteRecipes ?: emptyList()
     }
 
-    fun updateUserEmail(newEmail: String, password: String) {
-        viewModelScope.launch {
-            updateEmail(newEmail, password).fold(
-                onSuccess = {
-                    // Recargar los datos del usuario para asegurar que todo esté actualizado
-                    loadCurrentUserData()
-                    _uiState.value = ProfileState.EmailUpdated
-                },
-                onError = { error ->
-                    _uiState.value = ProfileState.Error(error)
-                }
-            )
-        }
-    }
-
     fun updateUserPassword(
         currentPassword: String,
         newPassword: String,

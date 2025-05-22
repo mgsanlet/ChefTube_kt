@@ -1,8 +1,10 @@
 package com.mgsanlet.cheftube.data.repository
 
+import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.mgsanlet.cheftube.data.source.remote.FirebaseApi
 import com.mgsanlet.cheftube.domain.model.DomainUser
 import com.mgsanlet.cheftube.domain.repository.UsersRepository
@@ -41,9 +43,9 @@ class UsersRepositoryImpl @Inject constructor(
                         username = result.data.username,
                         email = result.data.email,
                         bio = result.data.bio,
-                        profilePictureUrl = api.getStorageUrlFromPath(
-                            if (result.data.hasProfilePicture) "profile_pictures/${userId}.jpg"
-                            else ""),
+                        profilePictureUrl = if (result.data.hasProfilePicture) api.getStorageUrlFromPath(
+                             "profile_pictures/${userId}.jpg")
+                            else "",
                         createdRecipes = result.data.createdRecipes,
                         favouriteRecipes = result.data.favouriteRecipes,
                         followersIds = result.data.followersIds,
@@ -84,8 +86,13 @@ class UsersRepositoryImpl @Inject constructor(
                     else -> DomainResult.Error(UserError.Unknown(e.message))
                 }
             } else {
-                DomainResult.Error(UserError.Unknown(e.message))
+                if (e.message?.contains("PASSWORD_DOES_NOT_MEET_REQUIREMENTS") == true) {
+                    DomainResult.Error(UserError.PasswordTooShort)
+                } else {
+                    DomainResult.Error(UserError.Unknown(e.message))
+                }
             }
+
         }
     }
 
@@ -176,8 +183,7 @@ class UsersRepositoryImpl @Inject constructor(
             user.reauthenticate(credential).await()
 
             // Actualizar el correo electrónico
-            user.verifyBeforeUpdateEmail(newEmail).await()
-
+            user.updateEmail(newEmail).await()
 
             // Actualizar el correo en la base de datos
             val currentUser = getCurrentUserData().fold(
@@ -191,7 +197,7 @@ class UsersRepositoryImpl @Inject constructor(
             currentUserCache = updatedUser
 
             DomainResult.Success(Unit)
-        } catch (_: com.google.firebase.auth.FirebaseAuthUserCollisionException) {
+        } catch (_: FirebaseAuthUserCollisionException) {
             DomainResult.Error(UserError.EmailInUse)
         } catch (_: FirebaseAuthInvalidCredentialsException) {
             DomainResult.Error(UserError.WrongCredentials)

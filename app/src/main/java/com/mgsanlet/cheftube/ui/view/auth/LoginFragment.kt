@@ -11,8 +11,10 @@ import com.mgsanlet.cheftube.databinding.FragmentLoginBinding
 import com.mgsanlet.cheftube.domain.util.error.UserError
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.util.asMessage
+import com.mgsanlet.cheftube.ui.util.hideKeyboard
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
+import com.mgsanlet.cheftube.ui.view.dialogs.LoadingDialog
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginState
 import com.mgsanlet.cheftube.ui.viewmodel.auth.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -81,6 +83,7 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
 
     override fun setUpListeners() {
         binding.signInButton.setOnClickListener {
+            view?.hideKeyboard()
             if (isValidViewInput()) {
                 viewModel.tryLogin(
                     binding.emailEditText.text.toString(),
@@ -95,10 +98,6 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
                 null, this, SignUpFragment(), R.id.authFrContainer
             )
         }
-    }
-
-    override fun setUpViewProperties() {
-        binding.progressBar.setCustomStyle(requireContext())
     }
 
     override fun isValidViewInput(): Boolean {
@@ -120,11 +119,9 @@ class LoginFragment @Inject constructor() : BaseFormFragment<FragmentLoginBindin
     private fun showLoading(show: Boolean) {
         binding.signInButton.isEnabled = !show
         if (show) {
-            binding.progressBar.visibility = View.VISIBLE
-            binding.signInButton.visibility = View.INVISIBLE
+            LoadingDialog.show(requireContext(), this.parentFragmentManager)
         } else {
-            binding.progressBar.visibility = View.GONE
-            binding.signInButton.visibility = View.VISIBLE
+            LoadingDialog.dismiss(this.parentFragmentManager)
         }
     }
 }

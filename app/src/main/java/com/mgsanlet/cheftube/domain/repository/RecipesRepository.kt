@@ -12,7 +12,7 @@ interface RecipesRepository {
     suspend fun getAll(): DomainResult<List<Recipe>, RecipeError>
     suspend fun getByIds(recipeIds: ArrayList<String>): DomainResult<List<Recipe>, RecipeError>
     suspend fun updateFavouriteCount(recipeId: String, isNewFavourite: Boolean): DomainResult<Unit, RecipeError>
-    suspend fun saveRecipe(newRecipe: Recipe, newImage: ByteArray?, currentUserData: DomainUser): DomainResult<String?, RecipeError>
+    suspend fun saveRecipe(newRecipeData: Recipe, newImage: ByteArray?, currentUserData: DomainUser): DomainResult<String?, RecipeError>
     suspend fun filterRecipes(params: SearchParams): DomainResult<List<Recipe>, RecipeError>
     suspend fun postComment(recipeId: String, commentContent: String, currentUserData: DomainUser): DomainResult<Unit, RecipeError>
 }

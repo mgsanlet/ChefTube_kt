@@ -59,19 +59,6 @@
         app:layout_constraintWidth_max="340dp"
         app:layout_constraintVertical_chainStyle="spread">
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:indeterminate="true"
-            app:layout_constraintBottom_toTopOf="@+id/middleGuide"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:visibility="invisible"/>
-
         <TextView
 
             android:id="@+id/resultTextView"

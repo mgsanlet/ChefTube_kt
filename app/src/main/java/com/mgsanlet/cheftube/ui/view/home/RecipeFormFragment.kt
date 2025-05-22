@@ -24,6 +24,8 @@ import com.mgsanlet.cheftube.ui.util.dpToPx
 import com.mgsanlet.cheftube.ui.util.removeLastChild
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
+import com.mgsanlet.cheftube.ui.view.customviews.VideoUrlState
+import com.mgsanlet.cheftube.ui.view.dialogs.LoadingDialog
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFormState
 import com.mgsanlet.cheftube.ui.viewmodel.home.RecipeFormViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,7 +52,6 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
     }
 
     override fun setUpViewProperties() {
-        binding.progressBar.setCustomStyle(requireContext())
         binding.difficultySpinner.adapter = BaseSpinnerAdapter(
             requireContext(),
             resources.getStringArray(R.array.difficulty).toList()
@@ -253,7 +254,7 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
             ).apply {
                 val marginStart = 24.dpToPx(context)
                 val marginTop = 8.dpToPx(context)
-                val marginEnd = 8.dpToPx(context)
+                val marginEnd = 24.dpToPx(context)
                 setMargins(marginStart, marginTop, marginEnd, 0)
             }
             setTextAppearance(R.style.AuthFields)
@@ -272,12 +273,19 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
 
     private fun showLoading(show: Boolean) {
         if (show) {
-            binding.progressBar.visibility = View.VISIBLE
-            binding.scrollView.visibility = View.GONE
+            binding.scrollView.visibility = View.INVISIBLE
+            binding.submitContainer.visibility = View.INVISIBLE
+            LoadingDialog.show(requireContext(), parentFragmentManager)
         } else {
-            binding.progressBar.visibility = View.GONE
             binding.scrollView.visibility = View.VISIBLE
+            binding.submitContainer.visibility = View.VISIBLE
+            LoadingDialog.dismiss(parentFragmentManager)
         }
+    }
+
+    override fun onDestroyView() {
+        LoadingDialog.dismiss(parentFragmentManager)
+        super.onDestroyView()
     }
 
     companion object {

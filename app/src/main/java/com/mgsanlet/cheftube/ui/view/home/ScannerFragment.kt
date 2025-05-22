@@ -18,6 +18,7 @@ import com.mgsanlet.cheftube.domain.util.error.ProductError
 import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
+import com.mgsanlet.cheftube.ui.view.dialogs.LoadingDialog
 import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerState
 import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,13 +42,13 @@ class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBindin
         viewModel.scannerState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is ScannerState.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
+                    LoadingDialog.show(requireContext(), parentFragmentManager)
                     binding.resultTextView.visibility = View.GONE
                     binding.infoButton.isEnabled = false
                 }
 
                 is ScannerState.ProductFound -> {
-                    binding.progressBar.visibility = View.GONE
+                    LoadingDialog.dismiss(parentFragmentManager)
                     binding.resultTextView.apply {
                         visibility = View.VISIBLE
                         text = viewModel.getLocalizedProductName()
@@ -63,7 +64,7 @@ class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBindin
                 }
 
                 is ScannerState.Error -> {
-                    binding.progressBar.visibility = View.GONE
+                    LoadingDialog.dismiss(parentFragmentManager)
                     val errorMessage = state.error.asMessage(requireContext())
                     when (state.error) {
                         is ProductError.NotFound -> showBadResult(errorMessage)
@@ -101,14 +102,12 @@ class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBindin
     override fun setUpViewProperties() {
         binding.infoButton.isEnabled = false
         binding.infoButton.setBackgroundColor("#505050".toColorInt())
-        binding.progressBar.visibility = View.GONE
         binding.resultTextView.visibility = View.GONE
-        binding.progressBar.setCustomStyle(requireContext())
     }
 
     override fun onResume() {
         super.onResume()
-        binding.progressBar.visibility = View.GONE
+        LoadingDialog.dismiss(parentFragmentManager)
     }
 
     /**

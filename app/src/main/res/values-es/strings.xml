@@ -165,7 +165,6 @@
     <string name="error_updating_password">Error al actualizar la contraseña</string>
     <string name="error_deleting_account">Error al eliminar la cuenta</string>
     <string name="passwords_dont_match">Las contraseñas no coinciden</string>
-    <string name="invalid_email_format">Por favor, ingresa una dirección de correo electrónico válida</string>
     <string name="password_too_short">La contraseña debe tener al menos 6 caracteres</string>
     <string name="all_data_deleted">Todos tus datos, incluidas recetas, favoritos y comentarios, serán eliminados permanentemente.</string>
     <string name="warning_this_action_cannot_be_undone">Advertencia: Esta acción no se puede deshacer</string>
@@ -173,5 +172,13 @@
     <string name="permanently_delete">Eliminar permanentemente tu cuenta y todos los datos</string>
     <string name="update_your_account_password">Actualizar la contraseña de tu cuenta</string>
     <string name="update_your_email_address">Actualizar tu dirección de correo electrónico</string>
+    <string name="delete_account_confirmation_message">¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer y todos tus datos serán eliminados permanentemente.</string>
+    <string name="please_confirm_deletion">Por favor, confirma la eliminación de la cuenta</string>
+    <string name="email_updated_successfully">Correo electrónico actualizado con éxito</string>
+    <string name="password_updated_successfully">Contraseña actualizada con éxito</string>
+    <string name="account_deleted_successfully">Cuenta eliminada con éxito</string>
+    <string name="i_understand_this_action_cannot_be_undone">Entiendo que esta acción no se puede deshacer</string>
+    <string name="delete">Eliminar</string>
+    <string name="password">Contraseña</string>
 
 </resources>
