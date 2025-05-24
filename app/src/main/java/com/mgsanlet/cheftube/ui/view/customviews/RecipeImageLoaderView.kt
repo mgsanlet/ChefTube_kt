@@ -11,7 +11,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.mgsanlet.cheftube.databinding.RecipeImageLoaderViewBinding
+import com.mgsanlet.cheftube.databinding.ViewRecipeImageLoaderBinding
 import com.mgsanlet.cheftube.ui.util.loadUrl
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -27,7 +27,7 @@ class RecipeImageLoaderView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private val binding: RecipeImageLoaderViewBinding = RecipeImageLoaderViewBinding.inflate(
+    private val binding: ViewRecipeImageLoaderBinding = ViewRecipeImageLoaderBinding.inflate(
         LayoutInflater.from(context),
         this,
         true

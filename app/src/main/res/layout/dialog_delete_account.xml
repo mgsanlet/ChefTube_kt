@@ -6,34 +6,30 @@
     android:layout_height="wrap_content"
     android:background="@color/black"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="24dp"
     tools:ignore="Overdraw">
 
     <TextView
+        style="@style/ChefTubeText.Body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="@string/all_data_deleted"
-        android:textColor="@color/white"
-        android:textSize="16sp"
         app:drawableStartCompat="@drawable/ic_warning_24"
         app:drawableTint="@color/primary_red"
         android:drawablePadding="8dp"/>
 
     <EditText
-        style="@style/AuthFields"
+        style="@style/ChefTubeEditText"
         android:id="@+id/currentPasswordEditText"
         android:autofillHints="password"
         android:hint="@string/confirm_password_to_continue"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
         android:inputType="textPassword"
-        android:padding="10dp"
-        android:textSize="16sp"
         android:layout_marginBottom="10dp"
         android:layout_gravity="center"/>
 
     <TextView
+        style="@style/ChefTubeText.Detail"
         android:id="@+id/confirmationCheckbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,40 +37,32 @@
         android:gravity="center_vertical"
         android:paddingVertical="8dp"
         android:text="@string/i_understand_this_action_cannot_be_undone"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        app:drawableStartCompat="@drawable/ic_checkbox_unchecked"
+        app:drawableStartCompat="@drawable/ic_checkbox_unchecked_24"
         app:drawableTint="@color/white"
         android:layout_marginBottom="10dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingVertical="3dp">
         <Button
+            style="@style/ChefTubeButton.Positive"
             android:id="@+id/deleteButton"
-            style="@style/AuthBtns"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:padding="10dp"
             android:text="@string/delete"
-            android:textColor="@color/white"
-            app:backgroundTint="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:ignore="TextContrastCheck" />
 
         <Button
             android:id="@+id/cancelButton"
-            style="@style/AuthBtns"
+            style="@style/ChefTubeButton.Negative"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:backgroundTint="@color/dark_red"
-            android:padding="10dp"
+            android:layout_marginEnd="24dp"
             android:text="@string/cancel"
-            android:textColor="@color/white"
-            app:backgroundTint="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/deleteButton"
             tools:ignore="TextContrastCheck" />

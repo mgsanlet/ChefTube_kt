@@ -2,22 +2,17 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="16dp"
-    android:background="@color/dark_green"
+    style="@style/ChefTubeDialog"
     tools:ignore="Overdraw">
 
     <!-- Título del diálogo -->
     <TextView
+        style="@style/ChefTubeText.Title"
         android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/search_recipe"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,9 +20,8 @@
     <!-- Spinner de criterio -->
     <Spinner
         android:id="@+id/searchCriteriaSpinner"
-        style="@style/AuthFields"
+        style="@style/ChefTubeEditText"
         android:layout_width="0dp"
-        android:layout_height="50dp"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,24 +50,17 @@
         app:layout_constraintTop_toBottomOf="@id/divider">
 
         <EditText
+            style="@style/ChefTubeEditText"
             android:id="@+id/queryEditText"
-
-            style="@style/AuthFields"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:autofillHints="search"
             android:hint="@string/write_your_search"
-            android:inputType="text"
-            android:minHeight="50dp"
-            android:padding="10dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:textSize="16sp" />
+            android:inputType="text"/>
 
         <EditText
             android:id="@+id/rangeEditText"
-            style="@style/AuthFields"
+            style="@style/ChefTubeEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -89,7 +76,7 @@
 
         <Spinner
             android:id="@+id/difficultySpinner"
-            style="@style/AuthFields"
+            style="@style/ChefTubeEditText"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginStart="24dp"
@@ -99,7 +86,6 @@
             android:visibility="gone" />
     </LinearLayout>
 
-    <!-- Contenedor de botones -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/buttonsContainer"
         android:layout_width="match_parent"
@@ -110,25 +96,20 @@
         app:layout_constraintTop_toBottomOf="@id/inputFieldsLayout">
 
         <Button
+            style="@style/ChefTubeButton.Negative"
             android:id="@+id/cancelButton"
-            style="@style/AuthBtns"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
             android:layout_marginEnd="24dp"
             android:text="@string/cancel"
-            app:backgroundTint="@color/dark_red"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/searchButton"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
+            style="@style/ChefTubeButton.Positive"
             android:id="@+id/searchButton"
-            style="@style/AuthBtns"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
             android:text="@string/search_icon"
-            android:textColor="@color/white"
-            app:backgroundTint="@color/primary_orange"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

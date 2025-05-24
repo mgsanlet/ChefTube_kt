@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/bg_splash"
+    android:background="@drawable/background_food_pattern"
     tools:ignore="Overdraw">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -14,7 +15,8 @@
         android:layout_height="match_parent"
         android:padding="16dp"
         android:scrollbars="vertical"
-        android:background="@android:color/transparent"/>
+        android:background="@android:color/transparent" />
+
     <TextView
         android:id="@+id/noResultsTextView"
         android:layout_width="match_parent"
@@ -26,8 +28,7 @@
         android:visibility="gone"
         android:gravity="center"
         android:background="@android:color/black"
-        android:padding="16dp"
-        />
+        android:padding="16dp" />
 
     <ImageButton
         android:id="@+id/searchButton"
@@ -36,12 +37,14 @@
         android:layout_gravity="start|top"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/black_bg_box_shape"
-        android:backgroundTint="@color/dark_green"
+        android:background="@drawable/shape_round_corner_20"
+        android:backgroundTint="@color/black"
         android:backgroundTintMode="src_over"
-        android:src="@drawable/ic_search_wh"
+        android:src="@drawable/ic_search_24"
         android:scaleType="fitXY"
         android:contentDescription="@string/search_icon"
-        tools:ignore="TouchTargetSizeCheck" />
+        app:tint="@color/white"
+        tools:ignore="TouchTargetSizeCheck"
+        android:padding="4dp"/>
 
 </FrameLayout>

@@ -9,15 +9,13 @@
     tools:ignore="Overdraw">
 
     <TextView
+        style="@style/ChefTubeText.Title"
         android:id="@+id/editProfileTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/edit_profile"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,33 +45,31 @@
                 android:layout_height="150dp"
                 android:layout_marginTop="24dp"
                 android:contentDescription="@string/user_avatar_cdesc"
-                android:src="@drawable/account_default_image"
+                android:src="@drawable/ic_default_avatar_24"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                style="@style/ChefTubeText.Detail"
                 android:id="@+id/clickToEditTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/click_to_edit"
-                android:textColor="@color/white"
-                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="@+id/profilePictureImageView"
                 app:layout_constraintStart_toStartOf="@+id/profilePictureImageView"
                 app:layout_constraintTop_toBottomOf="@+id/profilePictureImageView" />
 
             <EditText
                 android:id="@+id/usernameEditText"
-                style="@style/AuthFields"
+                style="@style/ChefTubeEditText"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_marginTop="15dp"
                 android:layout_weight="1"
                 android:autofillHints="null"
-                android:background="?android:attr/editTextBackground"
                 android:hint="@string/username"
                 android:inputType="text"
                 android:maxLength="16"
@@ -85,10 +81,11 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/clickToEditTextView"
-                tools:ignore="VisualLintTextFieldSize" />
+                tools:ignore="VisualLintTextFieldSize,TextContrastCheck" />
 
             <EditText
                 android:id="@+id/bioEditText"
+                style="@style/ChefTubeEditText"
                 android:layout_width="0dp"
                 android:layout_height="142dp"
                 android:layout_marginTop="16dp"
@@ -105,7 +102,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/usernameEditText" />
+                app:layout_constraintTop_toBottomOf="@+id/usernameEditText"
+                tools:ignore="TextContrastCheck" />
 
             <com.mgsanlet.cheftube.ui.view.customviews.AccountSettingsView
                 android:id="@+id/accountSettingsView"
@@ -131,16 +129,12 @@
 
         <Button
             android:id="@+id/saveButton"
-            style="@style/AuthBtns"
+            style="@style/ChefTubeButton.Positive"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            android:padding="10dp"
             android:text="@string/save"
-            android:textColor="@color/white"
-            app:backgroundTint="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -148,17 +142,12 @@
 
         <Button
             android:id="@+id/cancelButton"
-            style="@style/AuthBtns"
+            style="@style/ChefTubeButton.Negative"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/dark_red"
-            android:padding="10dp"
             android:text="@string/cancel"
-            android:textColor="@color/white"
-            app:backgroundTint="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/saveButton"
             app:layout_constraintTop_toTopOf="parent"

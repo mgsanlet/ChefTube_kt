@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Colores base -->
     <color name="white">#FFFFFFFF</color>
     <color name="black">#1F1F1F</color>
+    <color name="black_alpha">#C21F1F1F</color>
+    <color name="grey">#505050</color>
+    
+    <!-- Colores de la marca -->
     <color name="primary_green">#46A467</color>
     <color name="dark_green">#2C6640</color>
     <color name="dark_green_alpha">#DA2C6640</color>
@@ -9,7 +14,13 @@
     <color name="dark_orange">#E66B19</color>
     <color name="primary_red">#FF4D38</color>
     <color name="dark_red">#9E3426</color>
-    <color name="grey">#505050</color>
+    
+    <!-- Estados -->
     <color name="transparent">#00F44336</color>
     <color name="hint">#AAFFFFFF</color>
+    
+    <!-- Colores del gráfico -->
+    <color name="chart_bar_color">#FB9E27</color>
+    <color name="chart_text_color">#FFFFFF</color>
+    <color name="chart_grid_color">#2D2D2D</color>
 </resources>

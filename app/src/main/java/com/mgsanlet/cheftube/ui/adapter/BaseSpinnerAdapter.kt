@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import com.mgsanlet.cheftube.databinding.DifficultySpinnerDropdownItemBinding
-import com.mgsanlet.cheftube.databinding.DifficultySpinnerHeaderBinding
+import com.mgsanlet.cheftube.databinding.SpinnerHeaderBinding
+import com.mgsanlet.cheftube.databinding.SpinnerItemBinding
 
 class BaseSpinnerAdapter(
     context: Context,
@@ -16,16 +16,16 @@ class BaseSpinnerAdapter(
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val binding: DifficultySpinnerHeaderBinding
+        val binding: SpinnerHeaderBinding
         val view: View
 
         if (convertView == null) {
-            binding = DifficultySpinnerHeaderBinding.inflate(inflater, parent, false)
+            binding = SpinnerHeaderBinding.inflate(inflater, parent, false)
             view = binding.root
             view.tag = binding
         } else {
             view = convertView
-            binding = view.tag as DifficultySpinnerHeaderBinding
+            binding = view.tag as SpinnerHeaderBinding
         }
         binding.spinnerHeader.text = items[position]
 
@@ -33,16 +33,16 @@ class BaseSpinnerAdapter(
     }
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val binding: DifficultySpinnerDropdownItemBinding
+        val binding: SpinnerItemBinding
         val view: View
 
         if (convertView == null) {
-            binding = DifficultySpinnerDropdownItemBinding.inflate(inflater, parent, false)
+            binding = SpinnerItemBinding.inflate(inflater, parent, false)
             view = binding.root
             view.tag = binding
         } else {
             view = convertView
-            binding = view.tag as DifficultySpinnerDropdownItemBinding
+            binding = view.tag as SpinnerItemBinding
         }
 
         binding.spinnerDropdownItem.text = items[position]

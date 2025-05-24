@@ -1,6 +1,7 @@
 package com.mgsanlet.cheftube.data.source.remote
 
 import android.util.Log
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.WriteBatch
@@ -8,11 +9,13 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.mgsanlet.cheftube.data.model.RecipeResponse
+import com.mgsanlet.cheftube.data.model.StatsResponse
 import com.mgsanlet.cheftube.data.model.UserResponse
 import com.mgsanlet.cheftube.domain.model.DomainRecipe
 import com.mgsanlet.cheftube.domain.model.DomainUser
 import com.mgsanlet.cheftube.domain.util.DomainResult
 import com.mgsanlet.cheftube.domain.util.error.RecipeError
+import com.mgsanlet.cheftube.domain.util.error.StatsError
 import com.mgsanlet.cheftube.domain.util.error.UserError
 import kotlinx.coroutines.tasks.await
 
@@ -35,6 +38,19 @@ class FirebaseApi {
     }
 
     // USER
+
+    suspend fun getAllUsers(): DomainResult<Map<String, UserResponse>, UserError> {
+        return try {
+            val snapshot = db.collection("users").get().await()
+            val usersMap = snapshot.documents.associate { document ->
+                document.id to document.toObject(UserResponse::class.java)!!
+            }
+            DomainResult.Success(usersMap)
+        } catch (exception: Exception) {
+            Log.e("FireStore", "Error getting all users: ", exception)
+            DomainResult.Error(UserError.Unknown(exception.message))
+        }
+    }
 
     suspend fun getUserDataById(id: String): DomainResult<UserResponse, UserError> {
         return try {
@@ -178,6 +194,18 @@ class FirebaseApi {
             return DomainResult.Success(downloadUrl)
         } catch (e: Exception) {
             return DomainResult.Error(UserError.Unknown(e.message))
+        }
+    }
+
+    suspend fun updateUserLastLogin(userId: String): DomainResult<Unit, UserError> {
+        return try {
+            db.collection("users").document(userId)
+                .update("lastLogin", Timestamp.now())
+                .await()
+            DomainResult.Success(Unit)
+        } catch (exception: Exception) {
+            Log.e("FireStore", "Error updating last login: ", exception)
+            DomainResult.Error(UserError.Unknown(exception.message))
         }
     }
 
@@ -414,7 +442,7 @@ class FirebaseApi {
      *              Si es nulo, se creará y ejecutará un nuevo batch automáticamente.
      * @return DomainResult.Success(Unit) si la operación fue exitosa, o DomainResult.Error en caso contrario
      */
-    private suspend fun deleteRecipeAndReferences(
+    suspend fun deleteRecipeAndReferences(
         recipeId: String,
         batch: WriteBatch? = null
     ): DomainResult<Unit, RecipeError> {
@@ -478,6 +506,20 @@ class FirebaseApi {
         } catch (e: Exception) {
             Log.e("FirebaseApi", "Error deleting recipe $recipeId: ", e)
             DomainResult.Error(RecipeError.Unknown(e.message))
+        }
+    }
+
+    // STATS
+
+    suspend fun getStats(): DomainResult<StatsResponse, StatsError> {
+        try {
+            // Obtener estadísticas de logins
+            val statsDoc = db.collection("stats").document("main").get().await()
+            statsDoc.toObject(StatsResponse::class.java)?.let{
+                    statsResponse -> return DomainResult.Success(statsResponse)
+            } ?: return DomainResult.Error(StatsError.StatsNotFound)
+        } catch (e: Exception) {
+            return DomainResult.Error(StatsError.Unknown(e.message))
         }
     }
 

@@ -12,9 +12,7 @@ import com.mgsanlet.cheftube.ui.util.Constants.ARG_USER_ID
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.loadUrlToCircle
-import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
-import com.mgsanlet.cheftube.ui.view.dialogs.LoadingDialog
 import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileState
 import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -148,6 +146,13 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
                 RecipeFormFragment(), R.id.fragmentContainerView
             )
         }
+
+        binding.adminButton.setOnClickListener {
+            FragmentNavigator.loadFragment(
+                null, this,
+                AdminFragment(), R.id.fragmentContainerView
+            )
+        }
     }
 
     private fun showUserData() {
@@ -169,7 +174,7 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
                     requireContext()
                 )
             } else {
-                binding.profilePictureImageView.setImageResource(R.drawable.account_default_image)
+                binding.profilePictureImageView.setImageResource(R.drawable.ic_default_avatar_24)
             }
         }
     }

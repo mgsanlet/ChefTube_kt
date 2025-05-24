@@ -1,11 +1,15 @@
 package com.mgsanlet.cheftube.ui.adapter
 
+import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.databinding.DialogReportBinding
 import com.mgsanlet.cheftube.databinding.ItemCommentBinding
 import com.mgsanlet.cheftube.domain.model.DomainComment
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
@@ -54,6 +58,10 @@ class CommentAdapter(
         binding.authorTextView.setOnClickListener {
             navToAuthorProfile(comment.author.id)
         }
+
+        binding.reportButton.setOnClickListener {
+            showReportDialog()
+        }
     }
 
     override fun getItemCount(): Int {
@@ -71,5 +79,48 @@ class CommentAdapter(
                 null, currentFragment, profileFragment, R.id.fragmentContainerView
             )
         }
+    }
+
+    private fun showReportDialog() {
+        val dialogView = DialogReportBinding.inflate(LayoutInflater.from(mContext), null, false)
+        val dialog = AlertDialog.Builder(mContext)
+            .setView(dialogView.root)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setLayout(
+            (mContext.resources.displayMetrics.widthPixels * 0.9).toInt(),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        var selectedReason = ""
+
+        dialogView.reasonRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+            selectedReason = when (checkedId) {
+                R.id.inappropriateRadioButton -> mContext.getString(R.string.inappropriate)
+                R.id.spamRadioButton -> mContext.getString(R.string.spam)
+                R.id.violenceRadioButton -> mContext.getString(R.string.violence_reason)
+                R.id.otherRadioButton -> mContext.getString(R.string.other_reason)
+                else -> ""
+            }
+
+            dialogView.confirmButton.isEnabled = selectedReason.isNotEmpty()
+        }
+
+        dialogView.cancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialogView.confirmButton.setOnClickListener {
+            if (selectedReason.isNotEmpty()) {
+                // TODO: Handle report submission with selectedReason
+                // For example: viewModel.reportComment(commentId, selectedReason)
+                dialog.dismiss()
+            }
+        }
+
+        dialogView.confirmButton.isEnabled = false
+
+        dialog.show()
     }
 }

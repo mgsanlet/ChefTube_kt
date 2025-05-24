@@ -1,12 +1,15 @@
 package com.mgsanlet.cheftube.ui.view.home
 
+import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
@@ -23,7 +26,6 @@ import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.asStringList
 import com.mgsanlet.cheftube.ui.util.dpToPx
 import com.mgsanlet.cheftube.ui.util.removeLastChild
-import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
 import com.mgsanlet.cheftube.ui.view.customviews.VideoUrlState
 import com.mgsanlet.cheftube.ui.view.dialogs.LoadingDialog
@@ -42,14 +44,20 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
         container: ViewGroup?
     ): FragmentRecipeFormBinding = FragmentRecipeFormBinding.inflate(inflater, container, false)
 
+    private var isNewRecipe: Boolean = true
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        arguments?.let {
-            val recipeId = it.getString(ARG_RECIPE)
-            recipeId?.let {
+        arguments?.let { bundle ->
+            val recipeId = bundle.getString(ARG_RECIPE)
+            if (!recipeId.isNullOrEmpty()) {
+                isNewRecipe = false
                 viewModel.loadRecipe(recipeId)
             }
         }
+
+        // Show delete button only for existing recipes
+        binding.deleteButton.visibility = if (isNewRecipe) View.GONE else View.VISIBLE
     }
 
     override fun setUpViewProperties() {
@@ -92,14 +100,69 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
                             null, this, detailFragment, R.id.fragmentContainerView
                         )
                     } catch (e: Exception) {
-                        Toast.makeText(context, getString(R.string.unknown_error), Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            context,
+                            getString(R.string.unknown_error),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
+                }
+
+                is RecipeFormState.DeleteSuccess -> {
+                    showLoading(false)
+                    Toast.makeText(context, getString(R.string.recipe_deleted), Toast.LENGTH_LONG)
+                        .show()
+                    FragmentNavigator.loadFragment(
+                        null,
+                        this,
+                        RecipeFeedFragment(),
+                        R.id.fragmentContainerView
+                    )
                 }
             }
         }
     }
 
+    private fun showDeleteConfirmationDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_confirm, null)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        // Configurar el diálogo
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+
+        // Configurar las vistas del diálogo
+        dialogView.apply {
+            findViewById<TextView>(R.id.dialogTitleTextView).text =
+                getString(R.string.delete_recipe_title)
+            findViewById<TextView>(R.id.dialogMessageTextView).text =
+                getString(R.string.delete_recipe_message)
+
+            val positiveButton = findViewById<Button>(R.id.confirmButton)
+            positiveButton.text = getString(R.string.delete)
+            positiveButton.setOnClickListener {
+                viewModel.deleteRecipe()
+                dialog.dismiss()
+            }
+
+            val negativeButton = findViewById<Button>(R.id.cancelButton)
+            negativeButton.text = getString(R.string.cancel)
+            negativeButton.setOnClickListener {
+                dialog.dismiss()
+            }
+        }
+
+        dialog.show()
+    }
+
     override fun setUpListeners() {
+        binding.deleteButton.setOnClickListener {
+            showDeleteConfirmationDialog()
+        }
+
         binding.saveButton.setOnClickListener {
             if (isValidViewInput()) {
                 if (binding.videoLoaderView.state != VideoUrlState.INITIAL &&
@@ -133,7 +196,7 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
             if (binding.categoriesInnerContainer.childCount < 10) {
                 val newView = createCustomEditText(getString(R.string.new_category))
                 binding.categoriesInnerContainer.addView(newView)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     binding.scrollView.scrollToDescendant(newView)
                 }
                 newView.requestFocus()
@@ -149,7 +212,7 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
             if (binding.ingredientsInnerContainer.childCount < 10) {
                 val newView = createCustomEditText(getString(R.string.new_ingredient))
                 binding.ingredientsInnerContainer.addView(newView)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     binding.scrollView.scrollToDescendant(newView)
                 }
                 newView.requestFocus()
@@ -165,7 +228,7 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
             if (binding.stepsInnerContainer.childCount < 10) {
                 val newView = createCustomEditText(getString(R.string.new_step))
                 binding.stepsInnerContainer.addView(newView)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     binding.scrollView.scrollToDescendant(newView)
                 }
                 newView.requestFocus()
@@ -267,9 +330,10 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
                 val marginEnd = 24.dpToPx(context)
                 setMargins(marginStart, marginTop, marginEnd, 0)
             }
-            setTextAppearance(R.style.AuthFields)
+            setTextAppearance(R.style.ChefTubeEditText)
             background =
-                ContextCompat.getDrawable(requireContext(), R.drawable.base_field_shapes)
+                ContextCompat.getDrawable(requireContext(), R.drawable.shape_round_corner_15)
+            backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.primary_green)
             setPadding(
                 16.dpToPx(context),
                 10.dpToPx(context),

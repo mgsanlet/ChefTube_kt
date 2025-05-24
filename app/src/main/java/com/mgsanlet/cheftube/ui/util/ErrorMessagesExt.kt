@@ -6,6 +6,7 @@ import com.mgsanlet.cheftube.domain.util.Constants.USERNAME_MAX_LENGTH
 import com.mgsanlet.cheftube.domain.util.Constants.USERNAME_MIN_LENGTH
 import com.mgsanlet.cheftube.domain.util.error.ProductError
 import com.mgsanlet.cheftube.domain.util.error.RecipeError
+import com.mgsanlet.cheftube.domain.util.error.StatsError
 import com.mgsanlet.cheftube.domain.util.error.UserError
 
 
@@ -45,4 +46,10 @@ fun ProductError.asMessage(context: Context): String {
     }
 }
 
+fun StatsError.asMessage(context: Context): String {
+    return when (this) {
+        is StatsError.StatsNotFound -> context.getString(R.string.stats_not_found)
+        is StatsError.Unknown -> context.getString(R.string.unknown_error, this.messageArg)
+    }
+}
 

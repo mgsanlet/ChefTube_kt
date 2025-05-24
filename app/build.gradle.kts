@@ -112,6 +112,9 @@ dependencies {
     //Views
     implementation("com.google.android.flexbox:flexbox:3.0.0")
 
+    //Stat charts
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
 }
 
 kapt {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_splash"
+    android:background="@drawable/background_food_pattern"
     android:paddingLeft="@dimen/fragment_horizontal_margin"
     android:paddingTop="@dimen/fragment_vertical_margin"
     android:paddingRight="@dimen/fragment_horizontal_margin"
@@ -38,21 +38,20 @@
             android:layout_marginEnd="8dp"
             android:backgroundTint="@color/transparent"
             android:contentDescription="@string/edit_profile"
-            android:src="@drawable/ic_edit"
+            android:src="@drawable/ic_edit_24"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/white" />
 
         <TextView
+            style="@style/ChefTubeText.Detail"
             android:id="@+id/bioTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="24dp"
-            android:fontFamily="sans-serif"
-            android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -66,55 +65,53 @@
             android:layout_marginStart="40dp"
             android:layout_marginTop="36dp"
             android:contentDescription="@string/user_avatar_cdesc"
-            android:src="@drawable/account_default_image"
+            android:src="@drawable/ic_default_avatar_24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            style="@style/ChefTubeText.Title"
             android:id="@+id/usernameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="48dp"
-            android:fontFamily="sans-serif-medium"
             android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
             android:textSize="20sp"
             app:layout_constraintStart_toEndOf="@+id/profilePictureImageView"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Nombre de usuario" />
 
         <TextView
+            style="@style/ChefTubeText.Detail"
             android:id="@+id/emailTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:textAlignment="center"
-            android:textColor="@color/white"
             app:layout_constraintStart_toEndOf="@+id/profilePictureImageView"
             app:layout_constraintTop_toBottomOf="@id/usernameTextView"
             tools:text="email@example.com" />
 
         <TextView
+            style="@style/ChefTubeText.Detail"
             android:id="@+id/followersTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:textAlignment="center"
-            android:textColor="@color/white"
             app:layout_constraintBottom_toTopOf="@+id/divider2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider1"
             tools:text="344 followers" />
 
         <TextView
+            style="@style/ChefTubeText.Detail"
             android:id="@+id/followingTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:textAlignment="center"
-            android:textColor="@color/white"
             app:layout_constraintBottom_toTopOf="@+id/divider2"
             app:layout_constraintStart_toEndOf="@+id/followersTextView"
             app:layout_constraintTop_toBottomOf="@+id/divider1"
@@ -175,15 +172,14 @@
             tools:ignore="TouchTargetSizeCheck" />
 
         <Button
+            style="@style/ChefTubeButton"
             android:id="@+id/seeFavButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
             android:backgroundTint="@color/primary_green"
-            android:textColor="@color/white"
-            android:textSize="12sp"
+            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/favIcon"
             app:layout_constraintTop_toBottomOf="@+id/seeCreatedButton"
@@ -196,7 +192,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:contentDescription="@string/favourite_icon_cdesc"
-            android:src="@drawable/ic_star"
+            android:src="@drawable/ic_empty_star_40"
             app:layout_constraintBottom_toBottomOf="@+id/seeFavButton"
             app:layout_constraintEnd_toStartOf="@+id/seeFavButton"
             app:layout_constraintStart_toStartOf="parent"
@@ -204,16 +200,14 @@
             app:tint="@color/white" />
 
         <Button
+            style="@style/ChefTubeButton"
             android:id="@+id/seeCreatedButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-
             android:layout_marginStart="8dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
             android:backgroundTint="@color/primary_green"
-            android:textColor="@color/white"
-            android:textSize="12sp"
+            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/chefIcon"
             app:layout_constraintTop_toBottomOf="@+id/divider3"
@@ -226,12 +220,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:contentDescription="@string/chef_icon_cdesc"
-            android:src="@drawable/ic_chef_hat"
+            android:src="@drawable/ic_chef_hat_40"
             app:layout_constraintBottom_toBottomOf="@+id/seeCreatedButton"
             app:layout_constraintEnd_toStartOf="@+id/seeCreatedButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/seeCreatedButton"
-            app:layout_constraintVertical_bias="0.0"
             app:tint="@color/white" />
 
         <View
@@ -249,20 +242,19 @@
 
         <Button
             android:id="@+id/createRecipeButton"
+            style="@style/ChefTubeButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
             android:backgroundTint="@color/primary_green"
+            android:text="@string/add_recipe_cdesc"
             android:textColor="@color/white"
-            android:textSize="12sp"
+            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/addIcon"
             app:layout_constraintTop_toBottomOf="@+id/divider4"
-            tools:ignore="TextContrastCheck"
-            android:text="@string/add_recipe_cdesc" />
+            tools:ignore="TextContrastCheck" />
 
         <ImageView
             android:id="@+id/addIcon"
@@ -270,12 +262,54 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:contentDescription="@string/add_recipe_cdesc"
-            android:src="@drawable/ic_add_circle_35"
+            android:src="@drawable/ic_add_circle_40"
             app:layout_constraintBottom_toBottomOf="@+id/createRecipeButton"
             app:layout_constraintEnd_toStartOf="@+id/createRecipeButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/createRecipeButton"
             app:tint="@color/white" />
+
+        <View
+            android:id="@+id/divider5"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:background="@android:color/white"
+            android:alpha="0.2"
+            android:layout_marginTop="32dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/createRecipeButton" />
+        <Button
+            android:id="@+id/adminButton"
+            style="@style/ChefTubeButton.Positive"
+            android:layout_width="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:backgroundTint="@color/primary_green"
+            android:text="@string/see_admin_panel"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/adminIcon"
+            app:layout_constraintTop_toBottomOf="@+id/divider5"
+            tools:ignore="TextContrastCheck" />
+
+        <ImageView
+            android:id="@+id/adminIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:contentDescription="@string/see_admin_panel"
+            android:src="@drawable/ic_admin_40"
+            app:layout_constraintBottom_toBottomOf="@+id/adminButton"
+            app:layout_constraintEnd_toStartOf="@+id/adminButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/adminButton"
+            app:tint="@color/white" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

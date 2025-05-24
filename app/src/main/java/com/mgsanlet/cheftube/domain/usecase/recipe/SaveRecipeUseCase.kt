@@ -26,6 +26,14 @@ class SaveRecipeUseCase @Inject constructor(
                 return DomainResult.Error(it)
             }
         )
-        return recipesRepository.saveRecipe(newRecipeData, newImage, currentUserData)
+        recipesRepository.saveRecipe(newRecipeData, newImage, currentUserData).fold(
+            onSuccess = {
+                usersRepository.clearCache()
+                return DomainResult.Success(it)
+            },
+            onError = {
+                return DomainResult.Error(it)
+            }
+        )
     }
 }

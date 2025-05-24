@@ -5,16 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="@drawable/bg_splash"
+    android:background="@drawable/background_food_pattern"
     android:orientation="vertical"
     tools:ignore="Overdraw">
 
 
     <LinearLayout
+        android:backgroundTint="@color/black"
         android:id="@+id/scannerBtnLinearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/black_bg_box_shape"
+        android:background="@drawable/shape_round_corner_15"
         android:orientation="vertical"
         android:padding="15dp"
         app:layout_constraintBottom_toTopOf="@+id/infoLinearLayout"
@@ -24,7 +25,7 @@
 
         <ImageButton
             android:id="@+id/scanButton"
-            style="@style/AuthBtns"
+            style="@style/ChefTubeButton"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center"
@@ -34,7 +35,7 @@
             android:padding="10dp"
 
             android:scaleType="fitXY"
-            android:src="@drawable/baseline_photo_camera_24" />
+            android:src="@drawable/ic_camera_24" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -47,10 +48,11 @@
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:backgroundTint="@color/black"
         android:id="@+id/infoLinearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/black_bg_box_shape"
+        android:background="@drawable/shape_round_corner_15"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -69,7 +71,7 @@
             android:textSize="24sp"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:background="@drawable/result_green_shapes"
+            android:background="@drawable/shape_radial_green_gradient"
             tools:text="Oreo con mucho texto y chocolate y varias cosas c"
             android:textStyle="italic"
             app:layout_constraintBottom_toTopOf="@+id/middleGuide"
@@ -88,13 +90,13 @@
 
         <Button
             android:id="@+id/infoButton"
-            style="@style/AuthBtns"
+            style="@style/ChefTubeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="16dp"
             android:text="@string/more_info"
-            app:backgroundTint="@null"
+            android:backgroundTint="@color/grey"
             app:layout_constraintBottom_toTopOf="@+id/apiRefTextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

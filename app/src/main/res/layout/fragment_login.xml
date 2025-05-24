@@ -13,20 +13,20 @@
     tools:context=".ui.view.auth.LoginFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        style="@style/ChefTubeDialog"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="260dp"
         android:layout_marginEnd="16dp"
-        android:background="@color/dark_green_alpha"
-        android:padding="20dp"
+        android:backgroundTint="@color/dark_green_alpha"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
             android:id="@+id/emailEditText"
-            style="@style/AuthFields"
+            style="@style/ChefTubeEditText"
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
 
         <EditText
             android:id="@+id/passwordEditText"
-            style="@style/AuthFields"
+            style="@style/ChefTubeEditText"
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -73,26 +73,18 @@
 
         <Button
             android:id="@+id/signInButton"
-            style="@style/AuthBtns"
+            style="@style/ChefTubeButton.Positive"
 
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="48dp"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="48dp"
-
             android:text="@string/action_sign_in"
-
-            app:backgroundTint="@null"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/passwordEditText"
-            app:layout_constraintVertical_bias="0.031"
-
             tools:ignore="TextContrastCheck" />
 
         <TextView
+            style="@style/ChefTubeText"
             android:id="@+id/signUpLink"
 
             android:layout_width="wrap_content"
@@ -100,9 +92,6 @@
             android:layout_marginTop="20dp"
 
             android:text="@string/don_t_have_an_account_sign_up"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

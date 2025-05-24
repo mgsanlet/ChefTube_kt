@@ -263,7 +263,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
                 setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
                 textSize = 18f
                 background =
-                    ContextCompat.getDrawable(requireContext(), R.drawable.base_field_shapes)
+                    ContextCompat.getDrawable(requireContext(), R.drawable.shape_round_corner_15)
                 backgroundTintList =
                     ContextCompat.getColorStateList(requireContext(), R.color.dark_green)
                 setPadding(24, 8, 24, 8)

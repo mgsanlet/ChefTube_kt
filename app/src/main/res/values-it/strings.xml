@@ -32,11 +32,6 @@
     <string name="set">Acettar</string>
     <string name="pause">Pausa</string>
     <string name="more_info">Ulteriori informazioni</string>
-    <string-array name="languages">
-        <item>Inglese</item>
-        <item>Spagnolo</item>
-        <item>Italiano</item>
-    </string-array>
     <string name="dialog_title">Seleziona la lingua</string>
     <string name="no_results">Nessun risultato</string>
     <string name="search_recipe">Cerca ricetta per:</string>
@@ -51,13 +46,6 @@
     <string name="home">Home</string>
     <string name="scanner">Scanner</string>
     <string name="recipe_image">Immagine della ricetta</string>
-    <string-array name="search_criteria">
-        <item>Titolo</item>
-        <item>Ingrediente</item>
-        <item>Durata minuti</item>
-        <item>Categoria</item>
-        <item>Difficoltà</item>
-    </string-array>
     <string name="range_hint_high">Fino a… (Incluso)</string>
     <string name="range_hint_low">Da… (Incluso)</string>
     <string name="write_your_search">Inserisci il termine di ricerca</string>
@@ -90,11 +78,7 @@
     <string name="see_favourite_recipes">Vedi le ricette preferite da %1$s</string>
     <string name="no_recipes_created">L\'utente non ha ancora creato alcuna ricetta</string>
     <string name="no_favourite_recipes">L\'utente non ha ancora ricette preferite</string>
-    <string-array name="difficulty">
-        <item>Facile</item>
-        <item>Medio</item>
-        <item>Avanzato</item>
-    </string-array>
+
     <string name="duration_hours_minutes">Durata: %1$d h. %2$d min.</string>
     <string name="duration_minutes">Durata: %1$d min.</string>
     <string name="recipe_title">Titolo della ricetta</string>
@@ -180,4 +164,57 @@
     <string name="password">Password</string>
     <string name="recovering_last_session">Recuperando l\'ultima sessione…</string>
     <string name="welcome_message">Benvenuto su ChefTube! 👋</string>
+    <string name="delete_recipe">Elimina ricetta</string>
+    <string name="delete_recipe_title">Elimina ricetta</string>
+    <string name="delete_recipe_message">Sei sicuro di voler eliminare questa ricetta? Questa azione non può essere annullata.</string>
+    <string name="recipe_deleted">Ricetta eliminata con successo</string>
+    <string name="report">Segnala</string>
+    <string name="inappropriate">Contenuto inappropriato o violazione delle linee guida della community.</string>
+    <string name="spam">Spam, pubblicità non autorizzata o contenuti fuorvianti.</string>
+    <string name="violence_reason">Molestie, discorsi d’odio o contenuti che promuovono la violenza.</string>
+    <string name="other_reason">Altra motivazione</string>
+    <string name="report_reason">Motivo della segnalazione</string>
+    <string name="explore">Esplora</string>
+    <string name="see_admin_panel">Vedi pannello amministratore</string>
+    <string name="administrator_panel">Pannello amministratore</string>
+    <string name="statistics_graphs">Grafici statistici</string>
+    <string name="user_inactivity_monitoring">Monitoraggio inattività utenti</string>
+    <string name="inactive_days">Giorni di inattività</string>
+    <string name="statistics">Statistiche</string>
+    <string name="total_users">Utenti totali</string>
+    <string name="total_interactions">Interazioni totali</string>
+    <string name="total_scans">Scansioni totali</string>
+    <string name="inactive_users">Utenti inattivi</string>
+    <string name="inactive_users_list">Lista utenti inattivi</string>
+    <string name="days_inactive_format">%d giorni di inattività</string>
+    <string name="last_login_format">Ultimo accesso: %s</string>
+
+
+    <string-array name="difficulty">
+        <item>Facile</item>
+        <item>Medio</item>
+        <item>Avanzato</item>
+    </string-array>
+    <string-array name="search_criteria">
+        <item>Titolo</item>
+        <item>Ingrediente</item>
+        <item>Durata minuti</item>
+        <item>Categoria</item>
+        <item>Difficoltà</item>
+    </string-array>
+    <string-array name="languages">
+        <item>Inglese</item>
+        <item>Spagnolo</item>
+        <item>Italiano</item>
+    </string-array>
+    <string-array name="chart_types">
+        <item>Accessi</item>
+        <item>Interazioni</item>
+        <item>Scansioni</item>
+    </string-array>
+    <string-array name="time_ranges">
+        <item>Ultima settimana</item>
+        <item>Ultimo mese</item>
+    </string-array>
+
 </resources>

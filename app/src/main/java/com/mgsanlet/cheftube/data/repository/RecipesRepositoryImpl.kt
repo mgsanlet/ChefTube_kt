@@ -210,6 +210,10 @@ class RecipesRepositoryImpl @Inject constructor(
     ): DomainResult<Unit, RecipeError> {
         return api.postComment(recipeId, commentContent, currentUserData)
     }
+    
+    override suspend fun deleteRecipe(recipeId: String): DomainResult<Unit, RecipeError> {
+        return api.deleteRecipeAndReferences(recipeId)
+    }
 
     private suspend fun RecipeResponse.toDomainRecipe(): DomainRecipe {
         return DomainRecipe(

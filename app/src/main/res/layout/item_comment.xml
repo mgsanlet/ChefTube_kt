@@ -9,7 +9,7 @@
     android:layout_marginTop="8dp"
     android:layout_marginEnd="8dp"
     android:layout_marginBottom="8dp"
-    android:background="@drawable/black_bg_box_shape"
+    android:background="@drawable/shape_round_corner_15"
     android:backgroundTint="@color/black"
     android:orientation="horizontal"
     android:paddingVertical="16dp"
@@ -18,27 +18,51 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/imageView">
 
+    <ImageButton
+        android:id="@+id/reportButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="@color/transparent"
+        android:contentDescription="@string/report"
+        android:src="@drawable/ic_report_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white"
+        android:visibility="visible"/>
+
+    <ImageButton
+        android:id="@+id/deleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="@color/transparent"
+        android:contentDescription="@string/delete"
+        android:src="@drawable/ic_delete_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white"
+        android:visibility="invisible"/>
+
     <ImageView
         android:id="@+id/authorImageView"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginStart="16dp"
         android:contentDescription="@string/user_avatar_cdesc"
-        android:src="@drawable/account_default_image"
+        android:src="@drawable/ic_default_avatar_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
+        style="@style/ChefTubeText.Body"
         android:id="@+id/authorTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="13dp"
-        android:fontFamily="sans-serif-medium"
         android:gravity="center_vertical"
-        android:textColor="@color/white"
-        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/authorImageView"
         app:layout_constraintStart_toEndOf="@+id/authorImageView"
@@ -46,21 +70,19 @@
         tools:text="Nombre de usuario" />
 
     <TextView
+        style="@style/ChefTubeText.Detail"
         android:id="@+id/timestampTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="13dp"
-        android:fontFamily="sans-serif-medium"
         android:gravity="center_vertical"
-        android:textColor="@color/white"
-        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/authorImageView"
         app:layout_constraintStart_toEndOf="@+id/authorTextView"
         app:layout_constraintTop_toTopOf="@+id/authorImageView"
         tools:text="24-12-25" />
 
     <TextView
-        android:textSize="16sp"
+        style="@style/ChefTubeText.Body"
         android:id="@+id/commentContentTextView"
         android:padding="10dp"
         android:layout_width="0dp"
@@ -68,10 +90,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/black_bg_box_shape"
+        android:background="@drawable/shape_round_corner_15"
         android:backgroundTint="@color/primary_green"
-        android:backgroundTintMode="src_over"
-        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/authorTextView"

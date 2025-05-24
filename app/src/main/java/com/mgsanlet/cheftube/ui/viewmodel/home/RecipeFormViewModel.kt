@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mgsanlet.cheftube.domain.model.DomainRecipe
+import com.mgsanlet.cheftube.domain.usecase.recipe.DeleteRecipeUseCase
 import com.mgsanlet.cheftube.domain.usecase.recipe.GetRecipeByIdUseCase
 import com.mgsanlet.cheftube.domain.usecase.recipe.SaveRecipeUseCase
 import com.mgsanlet.cheftube.domain.util.error.DomainError
@@ -15,7 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class RecipeFormViewModel @Inject constructor(
     private val getRecipeById: GetRecipeByIdUseCase,
-    private val saveRecipe: SaveRecipeUseCase
+    private val saveRecipe: SaveRecipeUseCase,
+    private val deleteRecipe: DeleteRecipeUseCase
 ) : ViewModel() {
     private val _uiState = MutableLiveData<RecipeFormState>()
     val uiState: LiveData<RecipeFormState> = _uiState
@@ -80,6 +82,22 @@ class RecipeFormViewModel @Inject constructor(
             )
         }
     }
+
+    fun deleteRecipe() {
+        val recipeId = _recipe.value?.id ?: return
+        viewModelScope.launch {
+            _uiState.value = RecipeFormState.Loading
+            val result = deleteRecipe(recipeId)
+            result.fold(
+                onSuccess = {
+                    _uiState.value = RecipeFormState.DeleteSuccess
+                },
+                onError = { error ->
+                    _uiState.value = RecipeFormState.Error(error)
+                }
+            )
+        }
+    }
 }
 
 sealed class RecipeFormState {
@@ -87,4 +105,5 @@ sealed class RecipeFormState {
     data class Error(val error: DomainError) : RecipeFormState()
     data class SaveSuccess(val newRecipeId: String?) : RecipeFormState()
     data object LoadSuccess : RecipeFormState()
+    data object DeleteSuccess : RecipeFormState()
 }

@@ -5,8 +5,8 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.mgsanlet.cheftube.R
-import com.mgsanlet.cheftube.databinding.AccountSettingsViewBinding
 import androidx.core.view.isVisible
+import com.mgsanlet.cheftube.databinding.ViewAccountSettingsBinding
 
 class AccountSettingsView @JvmOverloads constructor(
     context: Context,
@@ -14,7 +14,7 @@ class AccountSettingsView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private val binding: AccountSettingsViewBinding = AccountSettingsViewBinding.inflate(
+    private val binding: ViewAccountSettingsBinding = ViewAccountSettingsBinding.inflate(
         LayoutInflater.from(context),
         this,
         true
@@ -28,10 +28,10 @@ class AccountSettingsView @JvmOverloads constructor(
         binding.expandToggleButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 binding.accountBody.visibility = VISIBLE
-                binding.expandToggleButton.setBackgroundResource(R.drawable.ic_expand_up_25)
+                binding.expandToggleButton.setBackgroundResource(R.drawable.ic_arrow_v3_up_24)
             } else {
                 binding.accountBody.visibility = GONE
-                binding.expandToggleButton.setBackgroundResource(R.drawable.ic_expand_down_25)
+                binding.expandToggleButton.setBackgroundResource(R.drawable.ic_arrow_v3_down_24)
             }
         }
     }

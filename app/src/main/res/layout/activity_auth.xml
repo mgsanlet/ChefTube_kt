@@ -3,12 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_food"
-
+    android:background="@drawable/background_food_table"
     tools:context=".ui.view.auth.AuthActivity"
     tools:ignore="Overdraw,VisualLintTextFieldSize">
 
@@ -18,13 +16,11 @@
         android:layout_marginTop="36dp"
         android:contentDescription="@string/logo"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_app"
-
+        android:src="@drawable/png_cheftube_1920_1080"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-
         tools:ignore="ImageContrastCheck" />
 
     <ImageView
@@ -33,26 +29,22 @@
         android:layout_marginTop="172dp"
         android:contentDescription="@string/app_name"
         android:scaleType="fitCenter"
-        android:src="@drawable/ttl_app"
-
+        android:src="@drawable/png_cheftube_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-
         tools:ignore="ImageContrastCheck" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/authFrContainer"
+        android:name="com.mgsanlet.cheftube.ui.view.auth.LoginFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@android:color/transparent"
-        android:name="com.mgsanlet.cheftube.ui.view.auth.LoginFragment"
-
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-
-        tools:layout_editor_absoluteX="0dp"
         tools:layout="@layout/fragment_login" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

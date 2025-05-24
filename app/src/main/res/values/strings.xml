@@ -29,11 +29,6 @@
     <string name="set">Set</string>
     <string name="pause">Pause</string>
     <string name="more_info">More info</string>
-    <string-array name="languages">
-        <item>English</item>
-        <item>Spanish</item>
-        <item>Italian</item>
-    </string-array>
     <string name="dialog_title">Select Language</string>
     <string name="no_results">No results</string>
     <string name="results">Results: </string>
@@ -130,18 +125,6 @@
     <string name="range_hint_high">To… (Included)</string>
     <string name="range_hint_low">From… (Included)</string>
     <string name="duration_range_error">Invalid range</string>
-    <string-array name="difficulty">
-        <item>Easy</item>
-        <item>Medium</item>
-        <item>Advanced</item>
-    </string-array>
-    <string-array name="search_criteria">
-        <item>Title</item>
-        <item>Ingredient</item>
-        <item>Duration minutes</item>
-        <item>Category</item>
-        <item>Difficulty</item>
-    </string-array>
     <string name="recipe_shared_from_cheftube">Recipe shared from ChefTube App</string>
     <string name="share_recipe_using">Share recipe using</string>
     <string name="share_icon_cdesc">Share recipe</string>
@@ -181,8 +164,62 @@
     <string name="password_updated_successfully">Password updated successfully</string>
     <string name="account_deleted_successfully">Account deleted successfully</string>
     <string name="i_understand_this_action_cannot_be_undone">I understand that this action cannot be undone</string>
-    <string name="delete">Delete</string>
     <string name="password">Password</string>
     <string name="recovering_last_session">Recovering the last session…</string>
     <string name="welcome_message">Welcome to ChefTube! 👋</string>
+    <string name="delete_recipe">Delete recipe</string>
+    <string name="delete_recipe_title">Delete Recipe</string>
+    <string name="delete_recipe_message">Are you sure you want to delete this recipe? This action cannot be undone.</string>
+    <string name="recipe_deleted">Recipe deleted successfully</string>
+    <string name="report">Report</string>
+    <string name="inappropriate">Inappropriate content or violation of community guidelines.</string>
+    <string name="spam">Spam, unauthorized advertising, or misleading content.</string>
+    <string name="violence_reason">Harassment, hate speech, or content that promotes violence.</string>
+    <string name="other_reason">Other reason</string>
+    <string name="report_reason">Report reason</string>
+    <string name="explore">Explore</string>
+    <string name="see_admin_panel">See admin panel</string>
+    <string name="administrator_panel">Administrator panel</string>
+    <string name="statistics_graphs">Statistics graphs</string>
+    <string name="user_inactivity_monitoring">User Inactivity Monitoring</string>
+    <string name="inactive_days">Inactive days</string>
+    <string name="statistics">Statistics</string>
+    <string name="total_users">Total Users</string>
+    <string name="total_interactions">Total Interactions</string>
+    <string name="total_scans">Total Scans</string>
+    <string name="inactive_users">Inactive Users</string>
+    <string name="inactive_users_list">Inactive Users</string>
+    <string name="days_inactive_format">%d days inactive</string>
+    <string name="last_login_format">Last login: %s</string>
+    <string name="delete">Delete</string>
+    <string name="delete_user">Delete user</string>
+    <string name="delete_user_message">Are you sure you want to delete this user? This action cannot be undone.</string>
+    <string name="stats_not_found">Stats were not found</string>
+
+    <string-array name="languages">
+        <item>English</item>
+        <item>Spanish</item>
+        <item>Italian</item>
+    </string-array>
+    <string-array name="difficulty">
+        <item>Easy</item>
+        <item>Medium</item>
+        <item>Advanced</item>
+    </string-array>
+    <string-array name="search_criteria">
+        <item>Title</item>
+        <item>Ingredient</item>
+        <item>Duration minutes</item>
+        <item>Category</item>
+        <item>Difficulty</item>
+    </string-array>
+    <string-array name="chart_types">
+        <item>Logins</item>
+        <item>Interactions</item>
+        <item>Scans</item>
+    </string-array>
+    <string-array name="time_ranges">
+        <item>Last month</item>
+        <item>Last week</item>
+    </string-array>
 </resources>

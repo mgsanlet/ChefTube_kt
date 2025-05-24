@@ -10,7 +10,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.mgsanlet.cheftube.R
-import com.mgsanlet.cheftube.databinding.RecipeVideoLoaderViewBinding
+import com.mgsanlet.cheftube.databinding.ViewRecipeVideoLoaderBinding
 import com.mgsanlet.cheftube.ui.util.Constants.YOUTUBE_ID_REGEX
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 
@@ -29,7 +29,7 @@ class RecipeVideoLoaderView @JvmOverloads constructor(
 
     private var embedVideoUrl: String? = null
 
-    private val binding: RecipeVideoLoaderViewBinding = RecipeVideoLoaderViewBinding.inflate(
+    private val binding: ViewRecipeVideoLoaderBinding = ViewRecipeVideoLoaderBinding.inflate(
         LayoutInflater.from(context),
         this,
         true

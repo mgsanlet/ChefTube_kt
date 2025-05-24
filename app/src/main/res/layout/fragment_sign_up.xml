@@ -20,7 +20,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="260dp"
         android:layout_marginEnd="16dp"
-        android:background="@color/dark_green_alpha"
+        android:background="@drawable/shape_round_corner_15"
+        android:backgroundTint="@color/dark_green_alpha"
         android:padding="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,18 +29,14 @@
 
         <EditText
             android:id="@+id/nameEditText"
-            style="@style/AuthFields"
+            style="@style/ChefTubeEditText"
 
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:autofillHints="username"
             android:hint="@string/username"
             android:inputType="text"
-            android:minHeight="48dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -50,19 +47,15 @@
 
     <EditText
         android:id="@+id/emailEditText"
-        style="@style/AuthFields"
+        style="@style/ChefTubeEditText"
 
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:autofillHints="email"
         android:hint="@string/prompt_email"
         android:inputType="textEmailAddress"
-        android:minHeight="48dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -73,19 +66,15 @@
 
     <EditText
         android:id="@+id/password1EditText"
-        style="@style/AuthFields"
+        style="@style/ChefTubeEditText"
 
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:autofillHints="password"
         android:hint="@string/prompt_password"
         android:inputType="textPassword"
-        android:minHeight="48dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -96,30 +85,23 @@
 
         <EditText
             android:id="@+id/password2EditText"
-            style="@style/AuthFields"
-
+            style="@style/ChefTubeEditText"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
             android:autofillHints="null"
             android:hint="@string/repeat_password"
             android:inputType="textPassword"
-            android:minHeight="48dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/password1EditText"
-
             tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
 
         <Button
             android:id="@+id/saveButton"
-            style="@style/AuthBtns"
+            style="@style/ChefTubeButton.Positive"
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -146,7 +128,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:backgroundTint="@color/transparent"
-            android:src="@drawable/ic_back_arrow"
+            android:src="@drawable/ic_arrow_v1_back_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/password2EditText"

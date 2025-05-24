@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.flexbox.FlexboxLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_round_corner_15"
+    android:backgroundTint="@color/grey"
+    app:flexDirection="row"
+    app:justifyContent="space_between"
+    app:alignItems="center"
+    android:paddingStart="8dp"
+    tools:ignore="RtlSymmetry"
+    android:layout_marginBottom="16dp">
+
+    <TextView
+        android:id="@+id/usernameTextView"
+        app:layout_flexGrow="1.2"
+        style="@style/ChefTubeText.Body"
+        android:textAlignment="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="UsernameExample" />
+
+    <!-- Divider vertical -->
+    <View
+        android:layout_width="1dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        android:background="@color/white" />
+
+    <TextView
+        android:id="@+id/emailTextView"
+        android:paddingHorizontal="2dp"
+        app:layout_flexGrow="3"
+        style="@style/ChefTubeText.Body"
+        android:textAlignment="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="example@gmail.com" />
+
+    <!-- Divider vertical -->
+    <View
+        android:layout_width="1dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        android:background="@color/white" />
+
+    <TextView
+        android:id="@+id/daysTextView"
+        app:layout_flexGrow="1"
+        style="@style/ChefTubeText.Body"
+        android:textAlignment="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="23" />
+
+    <!-- Opcional: espaciador antes del botón -->
+    <View
+        android:layout_width="1dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="3dp"
+        android:background="@color/white"/>
+
+    <ImageButton
+
+        android:id="@+id/deleteButton"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/shape_round_corner_45"
+        android:contentDescription="@string/delete_recipe"
+        android:src="@drawable/ic_delete_24"
+        android:backgroundTint="@color/dark_red"
+        app:tint="@color/white" />
+
+</com.google.android.flexbox.FlexboxLayout>

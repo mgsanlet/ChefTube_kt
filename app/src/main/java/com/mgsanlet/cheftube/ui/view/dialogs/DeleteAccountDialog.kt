@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
@@ -56,9 +55,9 @@ class DeleteAccountDialog(val fragment: EditProfileFragment) : BaseAccountDialog
 
     private fun updateConfirmationCheckbox() {
         val drawableRes = if (isConfirmed) {
-            R.drawable.ic_checkbox_checked
+            R.drawable.ic_checkbox_checked_24
         } else {
-            R.drawable.ic_checkbox_unchecked
+            R.drawable.ic_checkbox_unchecked_24
         }
 
         val drawable = ResourcesCompat.getDrawable(resources, drawableRes, null)

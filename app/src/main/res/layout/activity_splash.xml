@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@drawable/bg_splash"
+    android:background="@drawable/background_food_pattern"
     tools:ignore="Overdraw">
 
     <ImageView
@@ -15,7 +15,7 @@
         android:layout_height="150dp"
         android:layout_gravity="center"
         android:contentDescription="@string/logo"
-        android:src="@drawable/ic_app2" />
+        android:src="@drawable/png_cheftube_752_752" />
     <Space
         android:layout_width="match_parent"
         android:layout_height="50dp"/>
@@ -25,7 +25,7 @@
         android:layout_width="300dp"
         android:layout_height="80dp"
         android:layout_gravity="center"
-        android:src="@drawable/ttl_app"
+        android:src="@drawable/png_cheftube_title"
         android:contentDescription="@string/app_name" />
 
 </LinearLayout>

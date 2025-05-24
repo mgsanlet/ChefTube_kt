@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/bg_splash"
+    android:background="@drawable/background_food_pattern"
     tools:ignore="Overdraw">
 
     <ScrollView
@@ -21,22 +21,21 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="15dp"
-            android:background="@drawable/black_bg_box_shape">
+            android:backgroundTint="@color/black_alpha"
+            android:background="@drawable/shape_round_corner_15">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <TextView
+                    style="@style/ChefTubeText.Title"
                     android:id="@+id/titleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -49,13 +48,25 @@
                     android:layout_height="48dp"
                     android:backgroundTint="@color/transparent"
                     android:contentDescription="@string/edit_profile"
-                    android:src="@drawable/ic_edit"
+                    android:src="@drawable/ic_edit_24"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="@+id/titleTextView"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toEndOf="@+id/titleTextView"
                     app:layout_constraintTop_toTopOf="@+id/titleTextView"
+                    app:tint="@color/white"/>
+
+                <ImageButton
+                    android:id="@+id/reportButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@color/transparent"
+                    android:contentDescription="@string/report"
+                    android:src="@drawable/ic_report_24"
+                    android:visibility="invisible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/white" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -65,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="5dp"
-                android:background="@drawable/black_bg_box_shape"
+                android:background="@drawable/shape_round_corner_15"
                 android:backgroundTint="@color/black"
                 android:layout_marginBottom="10dp">
 
@@ -75,7 +86,7 @@
                     android:layout_height="35dp"
                     android:layout_marginStart="8dp"
                     android:contentDescription="@string/user_avatar_cdesc"
-                    android:src="@drawable/account_default_image"
+                    android:src="@drawable/ic_default_avatar_24"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -120,34 +131,36 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Fácil"
-                    android:textSize="18sp"/>
+                    app:layout_constraintTop_toBottomOf="@+id/shareButton"
+                    tools:text="Fácil" />
 
                 <com.mgsanlet.cheftube.ui.view.customviews.DurationTextView
+                    android:background="@color/black"
                     android:id="@+id/durationTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/shareButton"
                     app:layout_constraintStart_toEndOf="@+id/difficultyTextView"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/shareButton"
                     tools:text="Duración 1h. 30min." />
 
                 <ImageButton
                     android:id="@+id/shareButton"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
 
+                    android:layout_marginEnd="16dp"
                     android:backgroundTint="@color/transparent"
                     android:contentDescription="@string/share_icon_cdesc"
-                    android:src="@drawable/ic_share_30"
+                    android:src="@drawable/ic_share_24"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/favouriteToggle"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
                     app:tint="@color/white"
                     tools:ignore="TouchTargetSizeCheck" />
 
@@ -164,13 +177,11 @@
                     tools:text="13" />
 
 
-
-
                 <ToggleButton
                     android:id="@+id/favouriteToggle"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:background="@drawable/ic_star_selector"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/selector_star"
                     android:backgroundTint="@color/white"
                     android:checked="false"
                     android:contentDescription="@string/favourite_icon_cdesc"
@@ -180,6 +191,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/favouriteNumberTextView"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
                     tools:ignore="TouchTargetSizeCheck" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -203,14 +215,11 @@
                 android:layout_marginBottom="10dp"/>
 
             <TextView
+                style="@style/ChefTubeText.Subtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:fontFamily="sans-serif-medium"
                 android:text="@string/ingredients"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold"
                 tools:ignore="TextContrastCheck"/>
 
             <LinearLayout
@@ -230,14 +239,11 @@
                 android:layout_marginBottom="10dp"/>
 
             <TextView
+                style="@style/ChefTubeText.Subtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:fontFamily="sans-serif-medium"
                 android:text="@string/steps"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold"
                 tools:ignore="TextContrastCheck"/>
 
             <LinearLayout
@@ -265,12 +271,13 @@
 
     <!-- Countdown Timer Layout -->
     <LinearLayout
+        android:backgroundTint="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="bottom"
         android:layout_marginBottom="5dp"
-        android:background="@drawable/black_bg_box_shape">
+        android:background="@drawable/shape_round_corner_15">
 
         <TextView
             android:id="@+id/timerTextView"
@@ -284,7 +291,7 @@
 
         <Button
             android:id="@+id/startPauseButton"
-            style="@style/AuthBtns"
+            style="@style/ChefTubeButton"
             app:backgroundTint="#00FFFFFF"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -8,7 +8,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mgsanlet.cheftube.R
-import com.mgsanlet.cheftube.databinding.RecipeCommentsViewBinding
+import com.mgsanlet.cheftube.databinding.ViewRecipeCommentsBinding
 import com.mgsanlet.cheftube.domain.model.DomainComment
 import com.mgsanlet.cheftube.ui.adapter.CommentAdapter
 
@@ -18,7 +18,7 @@ class RecipeCommentsView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private val binding: RecipeCommentsViewBinding = RecipeCommentsViewBinding.inflate(
+    private val binding: ViewRecipeCommentsBinding = ViewRecipeCommentsBinding.inflate(
         LayoutInflater.from(context),
         this,
         true
@@ -33,10 +33,10 @@ class RecipeCommentsView @JvmOverloads constructor(
             if (isChecked) {
                 binding.commentEditText.requestFocus()
                 binding.commentsBody.visibility = VISIBLE
-                binding.expandToggleButton.setBackgroundResource(R.drawable.ic_expand_up_25)
+                binding.expandToggleButton.setBackgroundResource(R.drawable.ic_arrow_v3_up_24)
             } else {
                 binding.commentsBody.visibility = GONE
-                binding.expandToggleButton.setBackgroundResource(R.drawable.ic_expand_down_25)
+                binding.expandToggleButton.setBackgroundResource(R.drawable.ic_arrow_v3_down_24)
             }
         }
     }

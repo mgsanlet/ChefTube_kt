@@ -16,7 +16,6 @@ import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentScannerBinding
 import com.mgsanlet.cheftube.domain.util.error.ProductError
 import com.mgsanlet.cheftube.ui.util.asMessage
-import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFragment
 import com.mgsanlet.cheftube.ui.view.dialogs.LoadingDialog
 import com.mgsanlet.cheftube.ui.viewmodel.home.ScannerState
@@ -52,7 +51,7 @@ class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBindin
                     binding.resultTextView.apply {
                         visibility = View.VISIBLE
                         text = viewModel.getLocalizedProductName()
-                        setBackgroundResource(R.drawable.result_green_shapes)
+                        setBackgroundResource(R.drawable.shape_radial_green_gradient)
                     }
                     binding.infoButton.isEnabled = true
                     binding.infoButton.setBackgroundColor(
@@ -83,7 +82,7 @@ class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBindin
         binding.resultTextView.apply {
             visibility = View.VISIBLE
             text = message
-            this.setBackgroundResource(R.drawable.result_red_shapes)
+            this.setBackgroundResource(R.drawable.shape_radial_red_gradient)
         }
         binding.infoButton.isEnabled = false
         binding.infoButton.setBackgroundColor(

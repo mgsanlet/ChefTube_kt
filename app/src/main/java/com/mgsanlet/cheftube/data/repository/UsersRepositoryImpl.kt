@@ -1,6 +1,8 @@
 package com.mgsanlet.cheftube.data.repository
 
 import com.google.firebase.FirebaseException
+import com.google.firebase.Timestamp
+import com.google.firebase.Timestamp.Companion.now
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
@@ -11,6 +13,8 @@ import com.mgsanlet.cheftube.domain.repository.UsersRepository
 import com.mgsanlet.cheftube.domain.util.DomainResult
 import com.mgsanlet.cheftube.domain.util.error.UserError
 import kotlinx.coroutines.tasks.await
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,22 +38,29 @@ class UsersRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun clearCache(){
+        currentUserCache = null
+    }
+
     override suspend fun getUserDataById(userId: String): DomainResult<DomainUser, UserError> {
         return when (val result = api.getUserDataById(userId)) {
             is DomainResult.Success -> {
+                val userResponse = result.data
+                val inactiveDays = calculateInactiveDays(userResponse.lastLogin)
+                
                 DomainResult.Success(
                     DomainUser(
                         id = userId,
-                        username = result.data.username,
-                        email = result.data.email,
-                        bio = result.data.bio,
-                        profilePictureUrl = if (result.data.hasProfilePicture) api.getStorageUrlFromPath(
-                             "profile_pictures/${userId}.jpg")
-                            else "",
-                        createdRecipes = result.data.createdRecipes,
-                        favouriteRecipes = result.data.favouriteRecipes,
-                        followersIds = result.data.followersIds,
-                        followingIds = result.data.followingIds
+                        username = userResponse.username,
+                        email = userResponse.email,
+                        bio = userResponse.bio,
+                        profilePictureUrl = if (userResponse.hasProfilePicture) 
+                            api.getStorageUrlFromPath("profile_pictures/${userId}.jpg") else "",
+                        createdRecipes = userResponse.createdRecipes,
+                        favouriteRecipes = userResponse.favouriteRecipes,
+                        followersIds = userResponse.followersIds,
+                        followingIds = userResponse.followingIds,
+                        inactiveDays = inactiveDays
                     )
                 )
             }
@@ -74,6 +85,9 @@ class UsersRepositoryImpl @Inject constructor(
                 return insertDataResult
             }
 
+            // Actualizar el lastLogin después de crear el usuario
+            api.updateUserLastLogin(user.uid)
+
             currentUserCache = DomainUser(
                 id = user.uid, username = username, email = email, profilePictureUrl = ""
             )
@@ -96,19 +110,19 @@ class UsersRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun loginUser(
-        email: String, password: String
-    ): DomainResult<Unit, UserError> {
+    override suspend fun loginUser(email: String, password: String): DomainResult<Unit, UserError> {
         try {
             api.auth.signInWithEmailAndPassword(email, password).await()
-            // Se capturan excepciones de validación en el catch
             api.auth.currentUser ?: throw Exception("User not found after login")
+            // Actualizar el lastLogin después del login
+            api.auth.currentUser?.uid?.let { userId ->
+                api.updateUserLastLogin(userId)
+            }
             // Se cachean los datos del usuario actual mediante getCurrentUserData()
             return when (val result = getCurrentUserData()) {
                 is DomainResult.Success -> {
                     DomainResult.Success(Unit)
                 }
-
                 is DomainResult.Error -> DomainResult.Error(result.error)
             }
         } catch (e: Exception) {
@@ -161,9 +175,12 @@ class UsersRepositoryImpl @Inject constructor(
     }
 
     override suspend fun tryAutoLogin(): DomainResult<Unit, UserError> {
-
-        api.auth.currentUser?.let {
-            var result = getCurrentUserData() //Cacheamos el usuario
+        api.auth.currentUser?.let { user ->
+            // Actualizar el lastLogin después del autologin
+            api.updateUserLastLogin(user.uid)
+            
+            // Cacheamos el usuario
+            val result = getCurrentUserData()
             result.fold(onSuccess = {
                 return DomainResult.Success(Unit)
             }, onError = { error ->
@@ -201,7 +218,7 @@ class UsersRepositoryImpl @Inject constructor(
             // Reautenticar al usuario
             val user = api.auth.currentUser ?: throw Exception("User not found after login")
             val email = user.email ?: return DomainResult.Error(UserError.UserNotFound)
-            
+
             val credential = com.google.firebase.auth.EmailAuthProvider.getCredential(email, password)
             user.reauthenticate(credential).await()
             
@@ -280,5 +297,43 @@ class UsersRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             return DomainResult.Error(UserError.Unknown(e.message))
         }
+    }
+    
+    override suspend fun getInactiveUsers(): DomainResult<List<DomainUser>, UserError> {
+        return when (val result = api.getAllUsers()) {
+            is DomainResult.Success -> {
+                val inactiveUsers = result.data.mapNotNull { (userId, userResponse) ->
+                        val inactiveDays = calculateInactiveDays(userResponse.lastLogin)
+
+                    // Solo incluir usuarios inactivos (más de 30 días sin iniciar sesión)
+                    if (inactiveDays > 30) {
+                        DomainUser(
+                            id = userId,
+                            username = userResponse.username,
+                            email = userResponse.email,
+                            bio = userResponse.bio,
+                            profilePictureUrl = if (userResponse.hasProfilePicture)
+                                api.getStorageUrlFromPath("profile_pictures/$userId.jpg") else "",
+                            createdRecipes = userResponse.createdRecipes,
+                            favouriteRecipes = userResponse.favouriteRecipes,
+                            followersIds = userResponse.followersIds,
+                            followingIds = userResponse.followingIds,
+                            inactiveDays = inactiveDays
+                        )
+                    } else {
+                        null
+                    }
+                }
+                DomainResult.Success(inactiveUsers)
+            }
+            is DomainResult.Error -> DomainResult.Error(result.error)
+        }
+    }
+
+    fun calculateInactiveDays(lastLogin: Timestamp): Int {
+            return ChronoUnit.DAYS.between(
+            lastLogin.toDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+            now().toDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+        ).toInt().coerceAtLeast(0)
     }
 }
