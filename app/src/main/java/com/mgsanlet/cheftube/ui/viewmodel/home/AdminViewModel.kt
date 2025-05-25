@@ -13,9 +13,8 @@ import com.mgsanlet.cheftube.domain.util.DomainResult
 import com.mgsanlet.cheftube.domain.util.error.DomainError
 import com.mgsanlet.cheftube.domain.util.error.UserError
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -36,52 +35,47 @@ class AdminViewModel @Inject constructor(
     private var currentTimeRange: Int = 0
 
     init {
-        loadStats()
-        loadInactiveUsers()
+        loadData()
     }
 
-    private fun loadStats() {
+    private fun loadData() {
         _uiState.value = AdminState.Loading
 
         viewModelScope.launch {
+            try {
+                // 1. Cargar usuarios inactivos (usamos el caso de uso real)
+                val inactiveUsersResult = getInactiveUsers()
+                if (inactiveUsersResult is DomainResult.Error) {
+                    _uiState.value = AdminState.Error(inactiveUsersResult.error)
+                    return@launch
+                }
 
-            when (val result = getStats()) {
-                is DomainResult.Success -> {
-                    currentStats = result.data
+                // 2. Cargar estadísticas (usamos el caso de uso real)
+                val statsResult = getStats()
+                if (statsResult is DomainResult.Error) {
+                    _uiState.value = AdminState.Error(statsResult.error)
+                    return@launch
+                }
+
+                // 3. Actualizar el estado con los datos de prueba
+                if (inactiveUsersResult is DomainResult.Success && statsResult is DomainResult.Success) {
+                    currentStats = statsResult.data
                     _uiState.value = AdminState.Content(
-                        stats = result.data,
-                        inactiveUsers = emptyList(),
-                        chartEntries = getChartEntries(result.data, currentChartType, currentTimeRange)
+                        stats = statsResult.data,
+                        inactiveUsers = inactiveUsersResult.data,
+                        chartEntries = getChartEntries(
+                            statsResult.data,
+                            currentChartType,
+                            currentTimeRange
+                        )
                     )
                 }
-
-                is DomainResult.Error -> {
-                    _uiState.value = AdminState.Error(result.error)
-                }
+            } catch (e: Exception) {
+                _uiState.value = AdminState.Error(UserError.Unknown(e.message))
             }
         }
     }
 
-    private fun loadInactiveUsers() {
-        viewModelScope.launch {
-            when (val result = getInactiveUsers()) {
-                is DomainResult.Success -> {
-                    val currentState = _uiState.value as? AdminState.Content
-                    currentState?.let {
-                        _uiState.value = it.copy(inactiveUsers = result.data)
-                    }
-                }
-
-                is DomainResult.Error -> { _uiState.value = AdminState.Error(result.error) }
-            }
-        }
-    }
-
-    /**
-     * Maneja el cambio en el tipo de gráfico seleccionado
-     * @param chartType Tipo de gráfico (0: Logins, 1: Interacciones, 2: Escaneos)
-     * @param timeRange Rango de tiempo (0: Mensual, 1: Diario)
-     */
     fun onChartTypeSelected(chartType: Int, timeRange: Int) {
         currentChartType = chartType
         currentTimeRange = timeRange
@@ -95,58 +89,113 @@ class AdminViewModel @Inject constructor(
         }
     }
 
-    fun deleteInactiveUser(userId: String) {
-        viewModelScope.launch {
-            try {
-                // TODO: Implementar lógica de eliminación de usuario
-                // Por ahora, solo actualizamos la UI simulando la eliminación
-                val currentState = _uiState.value as? AdminState.Content ?: return@launch
-                val updatedUsers = currentState.inactiveUsers.toMutableList().apply {
-                    removeAll { it.id == userId }
-                }
-                _uiState.value = currentState.copy(inactiveUsers = updatedUsers)
-            } catch (e: Exception) {
-                _uiState.value = AdminState.Error(
-                    error = UserError.Unknown(e.message)
-                )
-            }
-        }
-    }
-
     private fun getChartEntries(
         stats: DomainStats,
         chartType: Int,
-        timeRange: Int = 0 // 0 = mensual, 1 = diario
+        timeRange: Int
     ): MutableList<BarEntry> {
         val entries = mutableListOf<BarEntry>()
-
-        // Obtener los datos según el tipo de gráfico y rango de tiempo
-        val dataMap = when (chartType) {
-            CHART_TYPE_LOGINS ->
-                if (timeRange == TIME_RANGE_MONTHLY) stats.loginsByMonth else stats.loginsByDay
-
-            CHART_TYPE_INTERACTIONS ->
-                if (timeRange == TIME_RANGE_MONTHLY) stats.interactionsByMonth else stats.interactionsByDay
-
-            CHART_TYPE_SCANS ->
-                if (timeRange == TIME_RANGE_MONTHLY) stats.scansByMonth else stats.scansByDay
-
-            else -> emptyMap()
+        val timestamps = when (chartType) {
+            CHART_TYPE_LOGINS -> stats.loginTimestamps
+            CHART_TYPE_INTERACTIONS -> stats.interactionTimestamps
+            CHART_TYPE_SCANS -> stats.scanTimestamps
+            else -> emptyList()
         }
 
-        // Ordenar las fechas
-        val sortedDates = dataMap.keys.sorted()
-
-        // Limitar a los últimos 12 meses o 30 días según el rango de tiempo
-        val limit = if (timeRange == TIME_RANGE_MONTHLY) 12 else 30
-        val limitedDates = sortedDates.takeLast(limit)
-
-        // Crear entradas para el gráfico
-        limitedDates.forEachIndexed { index, date ->
-            val value = dataMap[date]?.toFloat() ?: 0f
-            entries.add(BarEntry(index.toFloat(), value, date))
+        val calendar = Calendar.getInstance()
+        val now = System.currentTimeMillis()
+        
+        when (timeRange) {
+            TIME_RANGE_LAST_24H -> {
+                // Agrupar por hora (últimas 24 horas)
+                val hourCounts = IntArray(24) { 0 }
+                timestamps.forEach { timestamp ->
+                    calendar.timeInMillis = timestamp.toEpochMilli()
+                    val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                    hourCounts[hour]++
+                }
+                hourCounts.forEachIndexed { index, count ->
+                    // Usamos el timestamp del inicio de la hora como dato
+                    calendar.timeInMillis = now
+                    calendar.set(Calendar.HOUR_OF_DAY, index)
+                    calendar.set(Calendar.MINUTE, 0)
+                    calendar.set(Calendar.SECOND, 0)
+                    calendar.set(Calendar.MILLISECOND, 0)
+                    entries.add(BarEntry(index.toFloat(), count.toFloat(), calendar.timeInMillis))
+                }
+            }
+            TIME_RANGE_LAST_7_DAYS -> {
+                // Agrupar por día (últimos 7 días)
+                val dayCounts = IntArray(7) { 0 }
+                
+                timestamps.forEach { timestamp ->
+                    calendar.timeInMillis = timestamp.toEpochMilli()
+                    val daysAgo = ((now - calendar.timeInMillis) / (24 * 60 * 60 * 1000)).toInt()
+                    if (daysAgo in 0..6) {
+                        dayCounts[6 - daysAgo]++
+                    }
+                }
+                
+                dayCounts.forEachIndexed { index, count ->
+                    // Usamos el timestamp del inicio del día como dato
+                    calendar.timeInMillis = now
+                    calendar.add(Calendar.DAY_OF_YEAR, -6 + index)
+                    calendar.set(Calendar.HOUR_OF_DAY, 0)
+                    calendar.set(Calendar.MINUTE, 0)
+                    calendar.set(Calendar.SECOND, 0)
+                    calendar.set(Calendar.MILLISECOND, 0)
+                    entries.add(BarEntry(index.toFloat(), count.toFloat(), calendar.timeInMillis))
+                }
+            }
+            TIME_RANGE_LAST_30_DAYS -> {
+                // Agrupar por día (últimos 30 días)
+                val dayCounts = IntArray(30) { 0 }
+                
+                timestamps.forEach { timestamp ->
+                    calendar.timeInMillis = timestamp.toEpochMilli()
+                    val daysAgo = ((now - calendar.timeInMillis) / (24 * 60 * 60 * 1000)).toInt()
+                    if (daysAgo in 0..29) {
+                        dayCounts[29 - daysAgo]++
+                    }
+                }
+                
+                dayCounts.forEachIndexed { index, count ->
+                    // Usamos el timestamp del inicio del día como dato
+                    calendar.timeInMillis = now
+                    calendar.add(Calendar.DAY_OF_YEAR, -29 + index)
+                    calendar.set(Calendar.HOUR_OF_DAY, 0)
+                    calendar.set(Calendar.MINUTE, 0)
+                    calendar.set(Calendar.SECOND, 0)
+                    calendar.set(Calendar.MILLISECOND, 0)
+                    entries.add(BarEntry(index.toFloat(), count.toFloat(), calendar.timeInMillis))
+                }
+            }
+            TIME_RANGE_LAST_12_MONTHS -> {
+                // Agrupar por mes (últimos 12 meses)
+                val monthCounts = IntArray(12) { 0 }
+                
+                timestamps.forEach { timestamp ->
+                    calendar.timeInMillis = timestamp.toEpochMilli()
+                    val monthsAgo = ((now - calendar.timeInMillis) / (30.44 * 24 * 60 * 60 * 1000)).toInt()
+                    if (monthsAgo in 0..11) {
+                        monthCounts[11 - monthsAgo]++
+                    }
+                }
+                
+                monthCounts.forEachIndexed { index, count ->
+                    // Usamos el timestamp del primer día del mes como dato
+                    calendar.timeInMillis = now
+                    calendar.add(Calendar.MONTH, -11 + index)
+                    calendar.set(Calendar.DAY_OF_MONTH, 1)
+                    calendar.set(Calendar.HOUR_OF_DAY, 0)
+                    calendar.set(Calendar.MINUTE, 0)
+                    calendar.set(Calendar.SECOND, 0)
+                    calendar.set(Calendar.MILLISECOND, 0)
+                    entries.add(BarEntry(index.toFloat(), count.toFloat(), calendar.timeInMillis))
+                }
+            }
         }
-
+        
         return entries
     }
 
@@ -157,10 +206,14 @@ class AdminViewModel @Inject constructor(
         const val CHART_TYPE_SCANS = 2
 
         // Constantes para los rangos de tiempo
-        const val TIME_RANGE_MONTHLY = 0
-        const val TIME_RANGE_DAILY = 1
-    }
+        const val TIME_RANGE_LAST_24H = 0
+        const val TIME_RANGE_LAST_7_DAYS = 1
+        const val TIME_RANGE_LAST_30_DAYS = 2
+        const val TIME_RANGE_LAST_12_MONTHS = 3
 
+        private const val HOUR_IN_MILLIS = 60 * 60 * 1000L
+        private const val DAY_IN_MILLIS = 24 * HOUR_IN_MILLIS
+    }
 }
 
 sealed class AdminState {

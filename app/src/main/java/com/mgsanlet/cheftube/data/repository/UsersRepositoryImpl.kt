@@ -41,6 +41,11 @@ class UsersRepositoryImpl @Inject constructor(
     override fun clearCache(){
         currentUserCache = null
     }
+    
+    override suspend fun isCurrentUserAdmin(): DomainResult<Boolean, UserError> {
+        val currentUserId = api.auth.currentUser?.uid ?: return DomainResult.Error(UserError.UserNotFound)
+        return api.isUserAdmin(currentUserId)
+    }
 
     override suspend fun getUserDataById(userId: String): DomainResult<DomainUser, UserError> {
         return when (val result = api.getUserDataById(userId)) {
@@ -303,7 +308,7 @@ class UsersRepositoryImpl @Inject constructor(
         return when (val result = api.getAllUsers()) {
             is DomainResult.Success -> {
                 val inactiveUsers = result.data.mapNotNull { (userId, userResponse) ->
-                        val inactiveDays = calculateInactiveDays(userResponse.lastLogin)
+                    val inactiveDays = calculateInactiveDays(userResponse.lastLogin)
 
                     // Solo incluir usuarios inactivos (más de 30 días sin iniciar sesión)
                     if (inactiveDays > 30) {

@@ -216,8 +216,10 @@
         <item>Escaneos</item>
     </string-array>
     <string-array name="time_ranges">
-        <item>Último mes</item>
+        <item>Últimas 24h</item>
         <item>Última semana</item>
+        <item>Último mes</item>
+        <item>Último año</item>
     </string-array>
 
 

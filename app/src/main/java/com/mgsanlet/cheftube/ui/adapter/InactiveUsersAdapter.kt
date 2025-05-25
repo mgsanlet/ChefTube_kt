@@ -12,7 +12,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class InactiveUsersAdapter(
-    private val onDeleteClick: (DomainUser) -> Unit
 ) : ListAdapter<DomainUser, InactiveUsersAdapter.InactiveUserViewHolder>(InactiveUserDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InactiveUserViewHolder {
@@ -21,7 +20,7 @@ class InactiveUsersAdapter(
             parent,
             false
         )
-        return InactiveUserViewHolder(binding, onDeleteClick)
+        return InactiveUserViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: InactiveUserViewHolder, position: Int) {
@@ -29,11 +28,8 @@ class InactiveUsersAdapter(
     }
 
     inner class InactiveUserViewHolder(
-        private val binding: ItemInactiveUserBinding,
-        private val onDeleteClick: (DomainUser) -> Unit
+        private val binding: ItemInactiveUserBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-
-        private val dateFormat = SimpleDateFormat("MMM d, yyyy hh:mm a", Locale.getDefault())
         
         fun bind(user: DomainUser) {
             with(binding) {
@@ -46,20 +42,6 @@ class InactiveUsersAdapter(
                     R.string.days_inactive_format,
                     user.inactiveDays
                 )
-                
-                // Mostrar días inactivos en el campo de último inicio de sesión
-                textLastLogin.text = root.context.getString(
-                    R.string.days_inactive_format,
-                    user.inactiveDays
-                )
-                
-                // Set delete button click listener
-                buttonDelete.setOnClickListener { onDeleteClick(user) }
-                
-                // Set click listeners for the entire item if needed
-                root.setOnClickListener {
-                    // Handle item click if needed
-                }
             }
         }
     }

@@ -2,4 +2,9 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="fragment_horizontal_margin">16dp</dimen>
     <dimen name="fragment_vertical_margin">16dp</dimen>
+    
+    <!-- Dimensiones para el RecyclerView de usuarios inactivos -->
+    <dimen name="inactive_user_item_height">100dp</dimen> <!-- Altura estimada de cada elemento -->
+    <dimen name="divider_height">1dp</dimen> <!-- Altura del divisor entre elementos -->
+    <dimen name="default_padding">16dp</dimen> <!-- Padding general -->
 </resources>

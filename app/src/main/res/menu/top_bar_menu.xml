@@ -13,13 +13,13 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/manage_account_item"
-        android:title="@string/manage_account"
+        android:id="@+id/action_logout"
+        android:title="@string/logout"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_logout"
-        android:title="@string/logout"
+        android:id="@+id/admin_panel_item"
+        android:title="@string/administrator_panel"
         app:showAsAction="never" />
 
 

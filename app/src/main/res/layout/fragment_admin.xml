@@ -46,7 +46,7 @@
             app:layout_constraintTop_toTopOf="@id/spinnerChartType" />
 
         <!-- Gráfico -->
-        <com.github.mikephil.charting.charts.BarChart
+        <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/chart"
             android:layout_width="match_parent"
             android:layout_height="300dp"
@@ -231,8 +231,11 @@
                 android:clipToPadding="false"
                 android:orientation="vertical"
                 android:paddingBottom="16dp"
+                android:maxHeight="300dp"
+                android:minHeight="0dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/textInactiveUsersTitle"
+                app:layout_constraintHeight_max="wrap"
                 tools:itemCount="3"
                 tools:listitem="@layout/item_inactive_user" />
 

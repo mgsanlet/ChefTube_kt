@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ChefTubeText.Component"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/spinner_header"
-    style="@style/ChefTubeEditText"
-    android:minHeight="52dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:drawableEndCompat="@drawable/ic_arrow_v2_down_24"
     app:drawableTint="@color/white"
     tools:text="Spinner item"
     android:layout_weight="1"
-    android:paddingVertical="12dp"
-    android:paddingHorizontal="24dp"
-    android:textColor="@color/white" />
+    android:textColor="@color/white"
+    android:textAlignment="center"
+    tools:background="@color/primary_green"/>

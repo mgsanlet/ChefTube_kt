@@ -18,6 +18,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.flexbox.FlexboxLayout
 import com.mgsanlet.cheftube.R
+import com.mgsanlet.cheftube.databinding.DialogReportBinding
 import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
 import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
@@ -118,6 +119,14 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         { time ->
             binding.timerTextView.text = time
         }
+
+        viewModel.isUserAdmin.observe(viewLifecycleOwner) { isAdmin ->
+            if (isAdmin) {
+                binding.editButton.visibility = View.INVISIBLE
+                binding.reportButton.visibility = View.VISIBLE
+                binding.commentsView.setAdminMode()
+            }
+        }
     }
 
     override fun setUpListeners() {
@@ -183,6 +192,10 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
             binding.commentsView.setOnExpandDownClickListener {
                 scrollToCommentsView()
             }
+        }
+
+        binding.reportButton.setOnClickListener {
+            showReportDialog()
         }
     }
 
@@ -448,6 +461,49 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
             binding.recipeContent.visibility = View.VISIBLE
             LoadingDialog.dismiss(parentFragmentManager)
         }
+    }
+
+    private fun showReportDialog() {
+        val dialogView = DialogReportBinding.inflate(LayoutInflater.from(requireContext()), null, false)
+        val dialog = android.app.AlertDialog.Builder(requireContext())
+            .setView(dialogView.root)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setLayout(
+            (requireContext().resources.displayMetrics.widthPixels * 0.9).toInt(),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        var selectedReason = ""
+
+        dialogView.reasonRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+            selectedReason = when (checkedId) {
+                R.id.inappropriateRadioButton -> requireContext().getString(R.string.inappropriate)
+                R.id.spamRadioButton -> requireContext().getString(R.string.spam)
+                R.id.violenceRadioButton -> requireContext().getString(R.string.violence_reason)
+                R.id.otherRadioButton -> requireContext().getString(R.string.other_reason)
+                else -> ""
+            }
+
+            dialogView.confirmButton.isEnabled = selectedReason.isNotEmpty()
+        }
+
+        dialogView.cancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialogView.confirmButton.setOnClickListener {
+            if (selectedReason.isNotEmpty()) {
+                // TODO: Handle report submission with selectedReason
+                // For example: viewModel.reportComment(commentId, selectedReason)
+                dialog.dismiss()
+            }
+        }
+
+        dialogView.confirmButton.isEnabled = false
+
+        dialog.show()
     }
 
     override fun onDestroyView() {

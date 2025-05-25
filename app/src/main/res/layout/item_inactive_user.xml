@@ -16,7 +16,6 @@
         android:layout_height="wrap_content"
         android:padding="12dp">
 
-        <!-- Username -->
         <TextView
             android:id="@+id/textUsername"
             style="@style/TextAppearance.MaterialComponents.Subtitle1"
@@ -30,8 +29,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="johndoe" />
-
-        <!-- Inactive Days Badge -->
         <TextView
             android:id="@+id/textInactiveDays"
             android:layout_width="wrap_content"
@@ -49,7 +46,6 @@
             tools:ignore="TextContrastCheck"
             tools:text="30 days" />
 
-        <!-- Email -->
         <TextView
             android:id="@+id/textEmail"
             style="@style/TextAppearance.MaterialComponents.Body2"
@@ -63,40 +59,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textUsername"
             tools:text="john.doe@example.com" />
-
-        <!-- Last Login -->
-        <TextView
-            android:id="@+id/textLastLogin"
-            style="@style/TextAppearance.MaterialComponents.Caption"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textColor="@color/hint"
-            app:layout_constraintEnd_toStartOf="@+id/buttonDelete"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textEmail"
-            tools:text="Last login: 01/01/2023 12:00" />
-
-        <!-- Delete Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonDelete"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:paddingHorizontal="8dp"
-            android:text="@string/delete"
-            android:textAllCaps="false"
-            android:textColor="@color/primary_red"
-            android:textSize="12sp"
-            app:icon="@drawable/ic_delete_24"
-            app:iconGravity="textStart"
-            app:iconSize="16dp"
-            app:iconTint="@color/primary_red"
-            app:layout_constraintBottom_toBottomOf="@id/textLastLogin"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:rippleColor="@color/dark_red"
-            tools:ignore="ContentDescription" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

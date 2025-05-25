@@ -213,8 +213,10 @@
         <item>Scansioni</item>
     </string-array>
     <string-array name="time_ranges">
+        <item>Ultime 24h</item>
         <item>Ultima settimana</item>
         <item>Ultimo mese</item>
+        <item>Ultimo anno</item>
     </string-array>
 
 </resources>

@@ -35,6 +35,7 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
     private val viewModel: HomeViewModel by viewModels()
+    private var isAdmin = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,12 +54,22 @@ class HomeActivity : AppCompatActivity() {
 
         // Configurar BottomNavigationView
         setUpBottomNav()
+
+        viewModel.isAdmin.observe(this) { isAdmin ->
+            invalidateOptionsMenu() // Esto forzará a que se vuelva a crear el menú
+        }
+        
         Toast.makeText(applicationContext, getString(R.string.welcome_message), Toast.LENGTH_SHORT)
             .show()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.top_bar_menu, menu)
+        
+        // Ocultar/mostrar el ítem de administrador según el rol
+        val adminItem = menu.findItem(R.id.admin_panel_item)
+        adminItem?.isVisible = viewModel.isAdmin.value == true
+        
         return true
     }
 
@@ -67,6 +78,7 @@ class HomeActivity : AppCompatActivity() {
             R.id.action_contact_us -> onContactUs()
             R.id.action_language -> onLanguage()
             R.id.action_logout -> onLogout()
+            R.id.admin_panel_item -> onAdminPanel()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -101,6 +113,12 @@ class HomeActivity : AppCompatActivity() {
         viewModel.handleLogout()
         startActivity(Intent(this, AuthActivity::class.java))
         finish()
+    }
+
+    private fun onAdminPanel() {
+        FragmentNavigator.loadFragment(
+            this, null, AdminFragment(), R.id.fragmentContainerView
+        )
     }
 
     private fun setUpBottomNav() {

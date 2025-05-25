@@ -70,4 +70,9 @@ class RecipeCommentsView @JvmOverloads constructor(
         }
     }
 
+    fun setAdminMode(){
+        val adapter = binding.commentRecycler.adapter as CommentAdapter
+        adapter.updateAdminMode(true)
+    }
+
 }

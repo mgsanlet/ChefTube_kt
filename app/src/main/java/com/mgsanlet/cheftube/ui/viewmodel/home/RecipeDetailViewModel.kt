@@ -11,6 +11,7 @@ import com.mgsanlet.cheftube.domain.usecase.recipe.AlternateFavouriteRecipeUseCa
 import com.mgsanlet.cheftube.domain.usecase.recipe.GetRecipeByIdUseCase
 import com.mgsanlet.cheftube.domain.usecase.recipe.PostCommentUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.GetCurrentUserDataUseCase
+import com.mgsanlet.cheftube.domain.usecase.user.IsCurrentUserAdminUseCase
 import com.mgsanlet.cheftube.domain.util.error.RecipeError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +25,8 @@ class RecipeDetailViewModel @Inject constructor(
     private val getRecipeById: GetRecipeByIdUseCase,
     private val getCurrentUserData: GetCurrentUserDataUseCase,
     private val alternateFavouriteRecipe: AlternateFavouriteRecipeUseCase,
-    private val postComment: PostCommentUseCase
+    private val postComment: PostCommentUseCase,
+    private val isCurrentUserAdminUseCase: IsCurrentUserAdminUseCase
 ) : ViewModel() {
 
     private val _recipeState = MutableLiveData<RecipeState>()
@@ -35,10 +37,14 @@ class RecipeDetailViewModel @Inject constructor(
     var isFavourite: Boolean = false
     var isRecipeByAuthor: Boolean = false
 
+
     // Estado del cronómetro
     private var _timer: CountDownTimer? = null
 
     var timeLeftInMillis: Long = 0
+
+    private val _isUserAdmin = MutableLiveData<Boolean>()
+    val isUserAdmin: LiveData<Boolean> = _isUserAdmin
 
     private val _timerState = MutableLiveData<TimerState>()
     val timerState: LiveData<TimerState> = _timerState
@@ -48,6 +54,7 @@ class RecipeDetailViewModel @Inject constructor(
 
     init {
         _timerState.value = TimerState.Initial
+        isCurrentUserAdmin()
     }
 
     fun loadRecipe(recipeId: String) {
@@ -136,6 +143,15 @@ class RecipeDetailViewModel @Inject constructor(
         }
     }
 
+    fun isCurrentUserAdmin() {
+        viewModelScope.launch {
+            isCurrentUserAdminUseCase().fold(
+                onSuccess = { _isUserAdmin.value = it },
+                onError = { _isUserAdmin.value = false }
+            )
+        }
+    }
+
     private fun isRecipeFavourite(recipeId: String): Boolean {
         var isFavourite = false
         viewModelScope.launch {
@@ -183,6 +199,8 @@ class RecipeDetailViewModel @Inject constructor(
             }
         }
     }
+
+
 }
 
 sealed class TimerState {

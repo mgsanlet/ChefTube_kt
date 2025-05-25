@@ -146,13 +146,6 @@ class ProfileFragment @Inject constructor() : BaseFragment<FragmentProfileBindin
                 RecipeFormFragment(), R.id.fragmentContainerView
             )
         }
-
-        binding.adminButton.setOnClickListener {
-            FragmentNavigator.loadFragment(
-                null, this,
-                AdminFragment(), R.id.fragmentContainerView
-            )
-        }
     }
 
     private fun showUserData() {

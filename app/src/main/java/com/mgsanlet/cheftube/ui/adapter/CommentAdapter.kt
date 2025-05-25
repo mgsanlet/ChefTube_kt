@@ -1,5 +1,6 @@
 package com.mgsanlet.cheftube.ui.adapter
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
@@ -25,6 +26,7 @@ class CommentAdapter(
     private val mContext: Context,
     private val commentList: List<DomainComment>,
     private val fragmentManager: FragmentManager,
+    private var isAdminMode: Boolean = false
 ) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
 
     inner class CommentViewHolder(var binding: ItemCommentBinding) :
@@ -58,15 +60,19 @@ class CommentAdapter(
         binding.authorTextView.setOnClickListener {
             navToAuthorProfile(comment.author.id)
         }
-
-        binding.reportButton.setOnClickListener {
-            showReportDialog()
+        if (isAdminMode) {
+            binding.reportButton.visibility = Button.VISIBLE
+            binding.reportButton.setOnClickListener {
+                showReportDialog()
+            }
         }
+
     }
 
     override fun getItemCount(): Int {
         return commentList.size
     }
+
 
     private fun navToAuthorProfile(authorId: String) {
         // Obtener el fragmento visible actual
@@ -79,6 +85,12 @@ class CommentAdapter(
                 null, currentFragment, profileFragment, R.id.fragmentContainerView
             )
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateAdminMode(isAdmin: Boolean) {
+        this.isAdminMode = isAdmin
+        notifyDataSetChanged()
     }
 
     private fun showReportDialog() {

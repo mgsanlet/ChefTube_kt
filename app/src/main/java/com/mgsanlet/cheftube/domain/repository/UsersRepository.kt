@@ -17,12 +17,8 @@ interface UsersRepository {
     suspend fun saveProfilePicture(profilePicture: ByteArray): DomainResult<Unit, UserError>
     suspend fun updatePassword(currentPassword: String, newPassword: String): DomainResult<Unit, UserError>
     suspend fun deleteAccount(password: String): DomainResult<Unit, UserError>
-    
-    /**
-     * Obtiene los usuarios inactivos (más de 30 días sin actividad)
-     * @return Lista de usuarios inactivos o un error
-     */
     suspend fun getInactiveUsers(): DomainResult<List<DomainUser>, UserError>
+    suspend fun isCurrentUserAdmin(): DomainResult<Boolean, UserError>
     
     fun clearCache()
     fun logout()

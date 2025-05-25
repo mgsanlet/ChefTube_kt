@@ -39,6 +39,22 @@ class FirebaseApi {
 
     // USER
 
+    suspend fun isUserAdmin(userId: String): DomainResult<Boolean, UserError> {
+        return try {
+            val userDoc = db.collection("users").document(userId).get().await()
+            
+            if (!userDoc.exists()) {
+                return DomainResult.Error(UserError.UserNotFound)
+            }
+            
+            val isAdmin = userDoc.getBoolean("isAdmin") == true
+            DomainResult.Success(isAdmin)
+        } catch (e: Exception) {
+            Log.e("FirebaseApi", "Error checking admin status", e)
+            DomainResult.Error(UserError.Unknown(e.message))
+        }
+    }
+
     suspend fun getAllUsers(): DomainResult<Map<String, UserResponse>, UserError> {
         return try {
             val snapshot = db.collection("users").get().await()
