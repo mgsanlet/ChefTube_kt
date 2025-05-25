@@ -28,7 +28,7 @@ class RecipeCommentsView @JvmOverloads constructor(
         setUpListeners()
     }
 
-    private fun setUpListeners(){
+    private fun setUpListeners() {
         binding.expandToggleButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 binding.commentEditText.requestFocus()
@@ -41,16 +41,25 @@ class RecipeCommentsView @JvmOverloads constructor(
         }
     }
 
-    fun setComments(comments: List<DomainComment>, fragmentManager: FragmentManager) {
+    fun setComments(
+        comments: List<DomainComment>,
+        fragmentManager: FragmentManager,
+        onCommentReportedListener: (DomainComment) -> Unit = {}
+    ) {
         if (comments.isEmpty()) {
             binding.commentRecycler.visibility = GONE
-        }else{
+        } else {
             binding.commentRecycler.visibility = VISIBLE
             val layoutManager = LinearLayoutManager(context)
             layoutManager.reverseLayout = true
             layoutManager.stackFromEnd = true
             binding.commentRecycler.layoutManager = layoutManager
-            binding.commentRecycler.adapter = CommentAdapter(context, comments, fragmentManager)
+            binding.commentRecycler.adapter = CommentAdapter(
+                context, 
+                comments, 
+                fragmentManager,
+                onCommentReportedListener = onCommentReportedListener
+            )
         }
     }
 
@@ -70,9 +79,11 @@ class RecipeCommentsView @JvmOverloads constructor(
         }
     }
 
-    fun setAdminMode(){
-        val adapter = binding.commentRecycler.adapter as CommentAdapter
-        adapter.updateAdminMode(true)
+    fun setAdminMode() {
+        try {
+            val adapter = binding.commentRecycler.adapter as CommentAdapter
+            adapter.updateAdminMode(true)
+        } catch (_: Exception) { }
     }
 
 }

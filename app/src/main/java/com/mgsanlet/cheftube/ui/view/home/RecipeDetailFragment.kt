@@ -3,6 +3,7 @@ package com.mgsanlet.cheftube.ui.view.home
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,7 +21,9 @@ import com.google.android.flexbox.FlexboxLayout
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.DialogReportBinding
 import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
+import com.mgsanlet.cheftube.domain.model.DomainComment
 import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE
+import com.mgsanlet.cheftube.ui.util.Constants.URI_MAIL_TO_SCHEME
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.loadUrlToCircle
@@ -36,6 +39,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
+import androidx.core.net.toUri
 
 /**
  * Un fragmento que muestra los detalles de una receta, incluyendo su título, ingredientes,
@@ -80,6 +84,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
                     }
                     hideProgressWhenVideoLoaded()
                     state.recipe.author?.let { setAuthorTagListener(it.id) }
+                    viewModel.isCurrentUserAdmin()
                 }
 
                 is RecipeState.Error -> {
@@ -89,6 +94,20 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
                         state.error.asMessage(requireContext()),
                         Toast.LENGTH_LONG
                     ).show()
+                }
+
+                RecipeState.DeleteSuccess -> {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.recipe_deleted),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    FragmentNavigator.loadFragment(
+                        null,
+                        this,
+                        RecipeFeedFragment(),
+                        R.id.fragmentContainerView
+                    )
                 }
             }
         }
@@ -195,7 +214,11 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
 
         binding.reportButton.setOnClickListener {
-            showReportDialog()
+            viewModel.recipeState.value?.let { state ->
+                if (state is RecipeState.Success) {
+                    showReportDialog(state.recipe)
+                }
+            }
         }
     }
 
@@ -334,7 +357,13 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
     }
 
     private fun fillComments(recipe: Recipe) {
-        binding.commentsView.setComments(recipe.comments, parentFragmentManager)
+        binding.commentsView.setComments(
+            recipe.comments,
+            parentFragmentManager,
+            onCommentReportedListener = { comment ->
+                showReportDialog(comment)
+            }
+        )
     }
 
     private fun shareRecipe(recipe: Recipe) {
@@ -463,8 +492,11 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
     }
 
-    private fun showReportDialog() {
-        val dialogView = DialogReportBinding.inflate(LayoutInflater.from(requireContext()), null, false)
+    private fun showReportDialog(reportedEntity: Any) {
+        if (reportedEntity !is Recipe && reportedEntity !is DomainComment) return
+
+        val dialogView =
+            DialogReportBinding.inflate(LayoutInflater.from(requireContext()), null, false)
         val dialog = android.app.AlertDialog.Builder(requireContext())
             .setView(dialogView.root)
             .create()
@@ -475,7 +507,7 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
-        var selectedReason = ""
+        var selectedReason = requireContext().getString(R.string.other_reason)
 
         dialogView.reasonRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             selectedReason = when (checkedId) {
@@ -495,15 +527,71 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
 
         dialogView.confirmButton.setOnClickListener {
             if (selectedReason.isNotEmpty()) {
-                // TODO: Handle report submission with selectedReason
-                // For example: viewModel.reportComment(commentId, selectedReason)
+
+                if (reportedEntity is Recipe) {
+                    viewModel.deleteRecipe(reportedEntity)
+                } else if (reportedEntity is DomainComment) {
+                    viewModel.deleteComment(reportedEntity)
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.comment_deleted),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
                 dialog.dismiss()
+                sendReportEmail(
+                    reportedEntity,
+                    selectedReason
+                )
             }
         }
 
         dialogView.confirmButton.isEnabled = false
 
         dialog.show()
+    }
+
+    private fun sendReportEmail(reportedEntity: Any, reason: String) {
+        var email = ""
+        var subject = ""
+        var content = ""
+
+        if (reportedEntity is Recipe) {
+            email = reportedEntity.author?.email ?: ""
+            subject = getString(R.string.report_subject, getString(R.string.recipe))
+            content = getString(R.string.recipe_report_content, reportedEntity.title, reason)
+        } else if (reportedEntity is DomainComment) {
+            email = reportedEntity.author.email
+            subject = getString(R.string.report_subject, getString(R.string.comment))
+            content = getString(R.string.comment_report_content, reportedEntity.content, reason)
+        } else {
+            return
+        }
+
+        if (email.isBlank()) {
+            Toast.makeText(requireContext(),
+                getString(R.string.error_author_s_email_not_found), Toast.LENGTH_LONG)
+                .show()
+            return
+        }
+
+        // Encode subject and content for URI query parameters
+        val encodedSubject = Uri.encode(subject)
+        val encodedContent = Uri.encode(content)
+
+        val uriString = "mailto:$email?subject=$encodedSubject&body=$encodedContent"
+        val emailUri = uriString.toUri()
+
+        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+            data = emailUri
+        }
+
+        if (emailIntent.resolveActivity(requireContext().packageManager) != null) {
+            startActivity(emailIntent)
+        } else {
+            Toast.makeText(requireContext(), getString(R.string.no_email_app), Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 
     override fun onDestroyView() {

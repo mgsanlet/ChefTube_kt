@@ -214,6 +214,34 @@ class RecipesRepositoryImpl @Inject constructor(
     override suspend fun deleteRecipe(recipeId: String): DomainResult<Unit, RecipeError> {
         return api.deleteRecipeAndReferences(recipeId)
     }
+    
+    override suspend fun deleteComment(
+        recipeId: String,
+        commentTimestamp: Long,
+        userId: String
+    ): DomainResult<Unit, RecipeError> {
+        // Delete the comment from Firebase
+        val result = api.deleteComment(recipeId, commentTimestamp, userId)
+        
+        // Update cache if deletion was successful
+        if (result is DomainResult.Success) {
+            recipesCache?.let { cache ->
+                val recipeIndex = cache.indexOfFirst { it.id == recipeId }
+                if (recipeIndex != -1) {
+                    val updatedRecipe = cache[recipeIndex].copy(
+                        comments = cache[recipeIndex].comments.filterNot {
+                            it.author.id == userId && it.timestamp == commentTimestamp
+                        }
+                    )
+                    recipesCache = cache.toMutableList().apply {
+                        set(recipeIndex, updatedRecipe)
+                    }
+                }
+            }
+        }
+        
+        return result
+    }
 
     private suspend fun RecipeResponse.toDomainRecipe(): DomainRecipe {
         return DomainRecipe(
@@ -230,6 +258,7 @@ class RecipesRepositoryImpl @Inject constructor(
             difficulty = this.difficulty,
             author = DomainUser(
                 id = this.authorId,
+                email = this.authorEmail,
                 username = this.authorName,
                 profilePictureUrl = if (this.authorHasProfilePicture) api.getStorageUrlFromPath(
                     "profile_pictures/${this.authorId}.jpg"
@@ -244,6 +273,7 @@ class RecipesRepositoryImpl @Inject constructor(
         return DomainComment(
             author = DomainUser(
                 id = this.authorId,
+                email = this.authorEmail,
                 username = this.authorName,
                 profilePictureUrl = if (this.authorHasProfilePicture) api.getStorageUrlFromPath(
                     "profile_pictures/${this.authorId}.jpg"

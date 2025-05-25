@@ -25,37 +25,126 @@
             android:background="@drawable/shape_round_corner_15">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content">
 
                 <TextView
-                    style="@style/ChefTubeText.Title"
                     android:id="@+id/titleTextView"
+                    style="@style/ChefTubeText.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Recipe Title" />
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/authorTag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/shape_round_corner_15"
+                    android:backgroundTint="@color/black"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="4dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/titleTextView">
+
+                    <ImageView
+                        android:id="@+id/authorImageView"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:contentDescription="@string/user_avatar_cdesc"
+                        android:src="@drawable/ic_default_avatar_24"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <TextView
+                        android:id="@+id/authorTextView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="13dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/authorImageView"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Nombre de usuario" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <FrameLayout
+                android:id="@+id/videoFrame"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp">
+
+                <WebView
+                    android:id="@+id/videoWebView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </FrameLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/actionContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/shape_round_corner_15"
+                android:backgroundTint="@color/black">
+
+
+
                 <ImageButton
-                    android:id="@+id/editButton"
+                    android:id="@+id/shareButton"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
+
                     android:backgroundTint="@color/transparent"
-                    android:contentDescription="@string/edit_profile"
-                    android:src="@drawable/ic_edit_24"
-                    android:visibility="visible"
-                    app:layout_constraintBottom_toBottomOf="@+id/titleTextView"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toEndOf="@+id/titleTextView"
-                    app:layout_constraintTop_toTopOf="@+id/titleTextView"
+                    android:contentDescription="@string/share_icon_cdesc"
+                    android:src="@drawable/ic_share_24"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/white"/>
+
+                <TextView
+                    android:id="@+id/favouriteNumberTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/favouriteToggle"
+                    app:layout_constraintStart_toEndOf="@+id/favouriteToggle"
+                    app:layout_constraintTop_toTopOf="@+id/favouriteToggle"
+                    tools:text="13" />
+
+
+                <ToggleButton
+                    android:id="@+id/favouriteToggle"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/selector_star"
+                    android:scaleX="0.6"
+                    android:scaleY="0.6"
+                    android:backgroundTint="@color/white"
+                    android:checked="false"
+                    android:contentDescription="@string/favourite_icon_cdesc"
+                    android:text=""
+                    android:textOff=""
+                    android:textOn=""
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/shareButton"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageButton
                     android:id="@+id/reportButton"
@@ -65,76 +154,38 @@
                     android:contentDescription="@string/report"
                     android:src="@drawable/ic_report_24"
                     android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
+
+                <ImageButton
+                    android:id="@+id/editButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:backgroundTint="@color/transparent"
+                    android:contentDescription="@string/edit_profile"
+                    android:src="@drawable/ic_edit_24"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/white" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/authorTag"
+                android:id="@+id/difficultyDurationContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="5dp"
-                android:background="@drawable/shape_round_corner_15"
-                android:backgroundTint="@color/black"
-                android:layout_marginBottom="10dp">
-
-                <ImageView
-                    android:id="@+id/authorImageView"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_marginStart="8dp"
-                    android:contentDescription="@string/user_avatar_cdesc"
-                    android:src="@drawable/ic_default_avatar_24"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <TextView
-                    android:id="@+id/authorTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="13dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/authorImageView"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Nombre de usuario" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <FrameLayout
-                android:id="@+id/videoFrame"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginBottom="16dp">
-
-                <WebView
-                    android:id="@+id/videoWebView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-            </FrameLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/favouriteButtonContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp">
+                android:layout_marginBottom="8dp">
 
                 <com.mgsanlet.cheftube.ui.view.customviews.DifficultyTextView
                     android:id="@+id/difficultyTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
                     android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/shareButton"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:text="Fácil" />
 
                 <com.mgsanlet.cheftube.ui.view.customviews.DurationTextView
@@ -145,54 +196,7 @@
                     android:layout_marginStart="16dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/difficultyTextView"
-                    app:layout_constraintTop_toBottomOf="@+id/shareButton"
                     tools:text="Duración 1h. 30min." />
-
-                <ImageButton
-                    android:id="@+id/shareButton"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-
-                    android:layout_marginEnd="16dp"
-                    android:backgroundTint="@color/transparent"
-                    android:contentDescription="@string/share_icon_cdesc"
-                    android:src="@drawable/ic_share_24"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/favouriteToggle"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0"
-                    app:tint="@color/white"
-                    tools:ignore="TouchTargetSizeCheck" />
-
-                <TextView
-                    android:id="@+id/favouriteNumberTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:textColor="@color/white"
-                    android:textSize="22sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/favouriteToggle"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/favouriteToggle"
-                    tools:text="13" />
-
-
-                <ToggleButton
-                    android:id="@+id/favouriteToggle"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:background="@drawable/selector_star"
-                    android:backgroundTint="@color/white"
-                    android:checked="false"
-                    android:contentDescription="@string/favourite_icon_cdesc"
-                    android:text=""
-                    android:textOff=""
-                    android:textOn=""
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/favouriteNumberTextView"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0"
-                    tools:ignore="TouchTargetSizeCheck" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.flexbox.FlexboxLayout

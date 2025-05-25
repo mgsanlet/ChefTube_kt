@@ -26,7 +26,8 @@ class CommentAdapter(
     private val mContext: Context,
     private val commentList: List<DomainComment>,
     private val fragmentManager: FragmentManager,
-    private var isAdminMode: Boolean = false
+    private var isAdminMode: Boolean = false,
+    internal var onCommentReportedListener: (DomainComment) -> Unit = {}
 ) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
 
     inner class CommentViewHolder(var binding: ItemCommentBinding) :
@@ -60,12 +61,9 @@ class CommentAdapter(
         binding.authorTextView.setOnClickListener {
             navToAuthorProfile(comment.author.id)
         }
-        if (isAdminMode) {
-            binding.reportButton.visibility = Button.VISIBLE
-            binding.reportButton.setOnClickListener {
-                showReportDialog()
-            }
-        }
+        if (isAdminMode) { binding.reportButton.visibility = Button.VISIBLE }
+
+        binding.reportButton.setOnClickListener { onCommentReportedListener(comment) }
 
     }
 
@@ -91,48 +89,5 @@ class CommentAdapter(
     fun updateAdminMode(isAdmin: Boolean) {
         this.isAdminMode = isAdmin
         notifyDataSetChanged()
-    }
-
-    private fun showReportDialog() {
-        val dialogView = DialogReportBinding.inflate(LayoutInflater.from(mContext), null, false)
-        val dialog = AlertDialog.Builder(mContext)
-            .setView(dialogView.root)
-            .create()
-
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        dialog.window?.setLayout(
-            (mContext.resources.displayMetrics.widthPixels * 0.9).toInt(),
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-
-        var selectedReason = ""
-
-        dialogView.reasonRadioGroup.setOnCheckedChangeListener { group, checkedId ->
-            selectedReason = when (checkedId) {
-                R.id.inappropriateRadioButton -> mContext.getString(R.string.inappropriate)
-                R.id.spamRadioButton -> mContext.getString(R.string.spam)
-                R.id.violenceRadioButton -> mContext.getString(R.string.violence_reason)
-                R.id.otherRadioButton -> mContext.getString(R.string.other_reason)
-                else -> ""
-            }
-
-            dialogView.confirmButton.isEnabled = selectedReason.isNotEmpty()
-        }
-
-        dialogView.cancelButton.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialogView.confirmButton.setOnClickListener {
-            if (selectedReason.isNotEmpty()) {
-                // TODO: Handle report submission with selectedReason
-                // For example: viewModel.reportComment(commentId, selectedReason)
-                dialog.dismiss()
-            }
-        }
-
-        dialogView.confirmButton.isEnabled = false
-
-        dialog.show()
     }
 }

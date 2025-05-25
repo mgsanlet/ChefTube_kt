@@ -437,6 +437,7 @@ class FirebaseApi {
                 FieldValue.arrayUnion(
                     hashMapOf(
                         "authorId" to user.id,
+                        "authorEmail" to user.email,
                         "authorName" to user.username,
                         "authorHasProfilePicture" to user.profilePictureUrl.isNotBlank(),
                         "content" to commentContent,
@@ -539,4 +540,46 @@ class FirebaseApi {
         }
     }
 
+    /**
+     * Deletes a comment from a recipe
+     * @param recipeId The ID of the recipe containing the comment
+     * @param commentTimestamp The timestamp of the comment to delete
+     * @param userId The ID of the user who made the comment
+     * @return DomainResult with Unit on success, or RecipeError on failure
+     */
+    suspend fun deleteComment(
+        recipeId: String,
+        commentTimestamp: Long,
+        userId: String
+    ): DomainResult<Unit, RecipeError> {
+        return try {
+            // Get the recipe document
+            val recipeRef = db.collection("recipes").document(recipeId)
+            val recipeDoc = recipeRef.get().await()
+            
+            if (!recipeDoc.exists()) {
+                return DomainResult.Error(RecipeError.RecipeNotFound)
+            }
+            
+            // Get current comments
+            val comments = recipeDoc.get("comments") as? List<Map<String, Any>>
+                ?: return DomainResult.Error(RecipeError.CommentNotFound)
+            
+            // Find the comment to delete
+            val commentToDelete = comments.find { 
+                (it["authorId"] as? String == userId) && 
+                (it["timestamp"] as? Long == commentTimestamp)
+            } ?: return DomainResult.Error(RecipeError.CommentNotFound)
+            
+            // Remove the comment
+            val batch = db.batch()
+            batch.update(recipeRef, "comments", FieldValue.arrayRemove(commentToDelete))
+            batch.commit().await()
+            
+            DomainResult.Success(Unit)
+        } catch (exception: Exception) {
+            Log.e("FirebaseApi", "Error deleting comment", exception)
+            DomainResult.Error(RecipeError.Unknown(exception.message))
+        }
+    }
 }

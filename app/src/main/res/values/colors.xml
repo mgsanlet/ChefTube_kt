@@ -2,8 +2,8 @@
 <resources>
     <!-- Colores base -->
     <color name="white">#FFFFFFFF</color>
-    <color name="black">#1F1F1F</color>
-    <color name="black_alpha">#C21F1F1F</color>
+    <color name="black">#000000</color>
+    <color name="black_alpha">#A7000000</color>
     <color name="grey">#505050</color>
     
     <!-- Colores de la marca -->

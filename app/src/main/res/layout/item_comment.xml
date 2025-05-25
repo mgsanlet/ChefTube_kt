@@ -12,7 +12,7 @@
     android:background="@drawable/shape_round_corner_15"
     android:backgroundTint="@color/black"
     android:orientation="horizontal"
-    android:paddingVertical="16dp"
+    android:paddingBottom="16dp"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="0.0"
     app:layout_constraintStart_toStartOf="parent"
@@ -22,14 +22,15 @@
         android:id="@+id/reportButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:background="@color/transparent"
         android:contentDescription="@string/report"
         android:src="@drawable/ic_report_24"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/white"
-        android:visibility="invisible"/>
+        app:tint="@color/white" />
 
     <ImageView
         android:id="@+id/authorImageView"
@@ -38,49 +39,48 @@
         android:layout_marginStart="16dp"
         android:contentDescription="@string/user_avatar_cdesc"
         android:src="@drawable/ic_default_avatar_24"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/timestampTextView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="@+id/authorTextView" />
 
     <TextView
-        style="@style/ChefTubeText.Body"
         android:id="@+id/authorTextView"
+        style="@style/ChefTubeText.Body"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="13dp"
+        android:layout_marginTop="8dp"
         android:gravity="center_vertical"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/authorImageView"
         app:layout_constraintStart_toEndOf="@+id/authorImageView"
-        app:layout_constraintTop_toTopOf="@+id/authorImageView"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="Nombre de usuario" />
 
     <TextView
-        style="@style/ChefTubeText.Detail"
         android:id="@+id/timestampTextView"
+        style="@style/ChefTubeText.Detail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="13dp"
+        android:layout_marginTop="4dp"
         android:gravity="center_vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/authorImageView"
-        app:layout_constraintStart_toEndOf="@+id/authorTextView"
-        app:layout_constraintTop_toTopOf="@+id/authorImageView"
+        android:textAlignment="center"
+        app:layout_constraintStart_toStartOf="@+id/authorTextView"
+        app:layout_constraintTop_toBottomOf="@+id/authorTextView"
         tools:text="24-12-25" />
 
     <TextView
-        style="@style/ChefTubeText.Body"
         android:id="@+id/commentContentTextView"
-        android:padding="10dp"
+        style="@style/ChefTubeText.Body"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/shape_round_corner_15"
         android:backgroundTint="@color/primary_green"
+        android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/authorTextView"
+        app:layout_constraintTop_toBottomOf="@+id/timestampTextView"
         tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." />
 </androidx.constraintlayout.widget.ConstraintLayout>

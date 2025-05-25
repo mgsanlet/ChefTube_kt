@@ -16,4 +16,13 @@ interface RecipesRepository {
     suspend fun deleteRecipe(recipeId: String): DomainResult<Unit, RecipeError>
     suspend fun filterRecipes(params: SearchParams): DomainResult<List<Recipe>, RecipeError>
     suspend fun postComment(recipeId: String, commentContent: String, currentUserData: DomainUser): DomainResult<Unit, RecipeError>
+    
+    /**
+     * Deletes a comment from a recipe
+     * @param recipeId The ID of the recipe containing the comment
+     * @param commentTimestamp The timestamp of the comment to delete
+     * @param userId The ID of the user who made the comment
+     * @return DomainResult with Unit on success, or RecipeError on failure
+     */
+    suspend fun deleteComment(recipeId: String, commentTimestamp: Long, userId: String): DomainResult<Unit, RecipeError>
 }

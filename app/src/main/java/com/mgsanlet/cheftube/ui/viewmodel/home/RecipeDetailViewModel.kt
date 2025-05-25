@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mgsanlet.cheftube.domain.model.DomainComment
 import com.mgsanlet.cheftube.domain.usecase.recipe.AlternateFavouriteRecipeUseCase
+import com.mgsanlet.cheftube.domain.usecase.recipe.DeleteCommentUseCase
+import com.mgsanlet.cheftube.domain.usecase.recipe.DeleteRecipeUseCase
 import com.mgsanlet.cheftube.domain.usecase.recipe.GetRecipeByIdUseCase
 import com.mgsanlet.cheftube.domain.usecase.recipe.PostCommentUseCase
 import com.mgsanlet.cheftube.domain.usecase.user.GetCurrentUserDataUseCase
@@ -26,7 +28,9 @@ class RecipeDetailViewModel @Inject constructor(
     private val getCurrentUserData: GetCurrentUserDataUseCase,
     private val alternateFavouriteRecipe: AlternateFavouriteRecipeUseCase,
     private val postComment: PostCommentUseCase,
-    private val isCurrentUserAdminUseCase: IsCurrentUserAdminUseCase
+    private val isCurrentUserAdminUseCase: IsCurrentUserAdminUseCase,
+    private val deleteRecipeUseCase: DeleteRecipeUseCase,
+    private val deleteCommentUseCase: DeleteCommentUseCase
 ) : ViewModel() {
 
     private val _recipeState = MutableLiveData<RecipeState>()
@@ -131,10 +135,12 @@ class RecipeDetailViewModel @Inject constructor(
                     onSuccess = {
                         isFavourite = favourite
                         _recipeState.value =
-                            RecipeState.Success(recipe.copy(
-                                favouriteCount =
-                                    if (favourite) recipe.favouriteCount + 1
-                                    else recipe.favouriteCount - 1)
+                            RecipeState.Success(
+                                recipe.copy(
+                                    favouriteCount =
+                                        if (favourite) recipe.favouriteCount + 1
+                                        else recipe.favouriteCount - 1
+                                )
                             )
                     },
                     onError = { _recipeState.value = RecipeState.Error(RecipeError.Unknown()) }
@@ -191,7 +197,9 @@ class RecipeDetailViewModel @Inject constructor(
                             onSuccess = {
                                 _recipeState.value = RecipeState.Success(updatedRecipe)
                             },
-                            onError = { _recipeState.value = RecipeState.Error(RecipeError.Unknown()) }
+                            onError = {
+                                _recipeState.value = RecipeState.Error(RecipeError.Unknown())
+                            }
                         )
                     },
                     onError = { _recipeState.value = RecipeState.Error(RecipeError.Unknown()) }
@@ -200,18 +208,54 @@ class RecipeDetailViewModel @Inject constructor(
         }
     }
 
+    fun deleteRecipe(recipe: Recipe) {
+        viewModelScope.launch {
+            deleteRecipeUseCase(recipe.id).fold(
+                onSuccess = {
+                    _recipeState.value = RecipeState.DeleteSuccess
+                },
+                onError = { _recipeState.value = RecipeState.Error(RecipeError.Unknown()) }
+            )
+        }
+    }
 
+    fun deleteComment(comment: DomainComment) {
+        if (_recipeState.value !is RecipeState.Success) return
+        
+        val currentRecipe = (_recipeState.value as RecipeState.Success).recipe
+        
+        viewModelScope.launch {
+            deleteCommentUseCase(
+                recipeId = currentRecipe.id,
+                commentTimestamp = comment.timestamp,
+                userId = comment.author.id
+            ).fold(
+                onSuccess = {
+                    // Update the recipe state with the comment removed
+                    val updatedComments = currentRecipe.comments.filterNot {
+                        it.author.id == comment.author.id && it.timestamp == comment.timestamp
+                    }
+                    _recipeState.value = RecipeState.Success(
+                        currentRecipe.copy(comments = updatedComments)
+                    )
+                },
+                onError = { error ->
+                    _recipeState.value = RecipeState.Error(error as? RecipeError ?: RecipeError.Unknown())
+                }
+            )
+        }
+    }
 }
+    sealed class TimerState {
+        data object Running : TimerState()
+        data object Paused : TimerState()
+        data object Finished : TimerState()
+        data object Initial : TimerState()
+    }
 
-sealed class TimerState {
-    data object Running : TimerState()
-    data object Paused : TimerState()
-    data object Finished : TimerState()
-    data object Initial : TimerState()
-}
-
-sealed class RecipeState {
-    data object Loading : RecipeState()
-    data class Success(val recipe: Recipe) : RecipeState()
-    data class Error(val error: RecipeError) : RecipeState()
-}
+    sealed class RecipeState {
+        data object Loading : RecipeState()
+        data class Success(val recipe: Recipe) : RecipeState()
+        data class Error(val error: RecipeError) : RecipeState()
+        data object DeleteSuccess : RecipeState()
+    }

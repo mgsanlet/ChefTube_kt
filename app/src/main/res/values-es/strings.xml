@@ -192,6 +192,17 @@
     <string name="inactive_users_list">Lista de usuarios inactivos</string>
     <string name="days_inactive_format">%d días inactivo</string>
     <string name="last_login_format">Último acceso: %s</string>
+    <string name="delete_user">Eliminar usuario</string>
+    <string name="delete_user_message">¿Estás seguro de que deseas eliminar a este usuario? Esta acción no se puede deshacer.</string>
+    <string name="stats_not_found">No se encontraron estadísticas</string>
+    <string name="recipe">receta</string>
+    <string name="report_subject">ChefTube reportado %1$s</string>
+    <string name="recipe_report_content">Tu receta con el título \' %1$s \' ha sido eliminada debido a las siguientes razones:\n%2$s\nDetalles:\n\nPor favor, contáctanos para más información.\nSaludos, equipo de soporte de ChefTube.</string>
+    <string name="comment">comentario</string>
+    <string name="comment_report_content">Tu comentario: \' %1$s \' ha sido eliminado debido a las siguientes razones:\n%2$s\nDetalles:\n\nPor favor, contáctanos para más información.\nSaludos, equipo de soporte de ChefTube.</string>
+    <string name="error_author_s_email_not_found">Error: Correo electrónico del autor no encontrado</string>
+    <string name="no_chart_data_available">No hay datos de gráfico disponibles para este período</string>
+
 
     <string-array name="search_criteria">
         <item>Título</item>

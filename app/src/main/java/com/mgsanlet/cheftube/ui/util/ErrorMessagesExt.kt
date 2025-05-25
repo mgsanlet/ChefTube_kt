@@ -33,6 +33,7 @@ fun RecipeError.asMessage(context: Context): String {
         is RecipeError.NoResults -> context.getString(R.string.no_results)
         is RecipeError.Unknown -> context.getString(R.string.unknown_error, this.messageArg)
         is RecipeError.RecipeNotFound -> context.getString(R.string.recipe_not_found_error)
+        is RecipeError.CommentNotFound -> context.getString(R.string.error_comment_not_found)
     }
 }
 
