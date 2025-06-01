@@ -21,9 +21,22 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+/**
+ * Módulo de Dagger que proporciona las implementaciones concretas de los repositorios.
+ * Todas las dependencias tienen ámbito de Singleton para asegurar una única instancia en toda
+ * la aplicación.
+ */
+
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryDaggerModule {
+    
+    /**
+     * Proporciona la implementación concreta de [UsersRepository].
+     *
+     * @param api Cliente de Firebase para operaciones de autenticación y base de datos
+     * @return Instancia de [UsersRepositoryImpl] configurada con el cliente de Firebase
+     */
     @Provides
     @Singleton
     fun provideUsersRepository(
@@ -32,6 +45,12 @@ object RepositoryDaggerModule {
         return UsersRepositoryImpl(api)
     }
 
+    /**
+     * Proporciona la implementación concreta de [RecipesRepository].
+     *
+     * @param api Cliente de Firebase para operaciones relacionadas con recetas
+     * @return Instancia de [RecipesRepositoryImpl] configurada con el cliente de Firebase
+     */
     @Provides
     @Singleton
     fun provideRecipesRepository(
@@ -40,14 +59,28 @@ object RepositoryDaggerModule {
         return RecipesRepositoryImpl(api)
     }
 
+    /**
+     * Proporciona la implementación concreta de [ProductsRepository].
+     *
+     * @param openFoodFactsApi Cliente para la API de Open Food Facts
+     * @param firebaseApi Cliente de Firebase
+     * @return Instancia de [ProductsRepositoryImpl] configurada con el cliente de la API
+     */
     @Provides
     @Singleton
     fun provideProductsRepository(
-        openFoodFactsApi: OpenFoodFactsApi
+        openFoodFactsApi: OpenFoodFactsApi,
+        firebaseApi: FirebaseApi
     ): ProductsRepository {
-        return ProductsRepositoryImpl(openFoodFactsApi)
+        return ProductsRepositoryImpl(openFoodFactsApi, firebaseApi)
     }
 
+    /**
+     * Proporciona la implementación concreta de [LanguagesRepository].
+     *
+     * @param preferences Gestor de preferencias para almacenar la configuración de idioma
+     * @return Instancia de [LanguagesRepositoryImpl] configurada con el gestor de preferencias
+     */
     @Provides
     @Singleton
     fun provideLanguagesRepository(
@@ -56,6 +89,12 @@ object RepositoryDaggerModule {
         return LanguagesRepositoryImpl(preferences)
     }
 
+    /**
+     * Proporciona la implementación concreta de [StatsRepository].
+     *
+     * @param api Cliente de Firebase para operaciones relacionadas con estadísticas
+     * @return Instancia de [StatsRepositoryImpl] configurada con el cliente de Firebase
+     */
     @Provides
     @Singleton
     fun provideStatsRepository(
@@ -64,10 +103,14 @@ object RepositoryDaggerModule {
         return StatsRepositoryImpl(api)
     }
 
+    /**
+     * Proporciona la implementación concreta de [PatternValidator].
+     *
+     * @return Instancia de [PatternValidatorImpl] para validación de patrones
+     */
     @Provides
     @Singleton
     fun providePatternValidator(): PatternValidator {
         return PatternValidatorImpl()
     }
-
 }

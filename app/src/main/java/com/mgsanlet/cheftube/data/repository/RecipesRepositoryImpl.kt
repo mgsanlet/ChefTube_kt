@@ -8,6 +8,7 @@ import com.mgsanlet.cheftube.domain.model.DomainRecipe
 import com.mgsanlet.cheftube.domain.model.DomainUser
 import com.mgsanlet.cheftube.domain.model.SearchParams
 import com.mgsanlet.cheftube.domain.repository.RecipesRepository
+import com.mgsanlet.cheftube.data.util.Constants
 import com.mgsanlet.cheftube.domain.util.DomainResult
 import com.mgsanlet.cheftube.domain.util.DomainResult.Error
 import com.mgsanlet.cheftube.domain.util.DomainResult.Success
@@ -17,16 +18,33 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * Implementación de [RecipesRepository] que gestiona las operaciones relacionadas con recetas.
+ * Incluye caché en memoria para mejorar el rendimiento.
+ *
+ * @property api Cliente de Firebase para operaciones de base de datos
+ * @property recipesCache Almacenamiento en caché de las recetas para acceso rápido
+ */
 @Singleton
 class RecipesRepositoryImpl @Inject constructor(
     private val api: FirebaseApi
 ) : RecipesRepository {
     var recipesCache: List<DomainRecipe>? = null
 
+    /**
+     * Limpia la caché de recetas.
+     * Útil para forzar una actualización de datos en la próxima solicitud.
+     */
     override suspend fun clearCache() {
         recipesCache = null
     }
 
+    /**
+     * Obtiene todas las recetas disponibles.
+     * Primero intenta devolver las recetas de la caché si están disponibles.
+     *
+     * @return [DomainResult] con la lista de recetas o un error
+     */
     override suspend fun getAll(): DomainResult<List<DomainRecipe>, RecipeError> {
         recipesCache?.let {
             if (it.isNotEmpty()) return Success(it)
@@ -48,7 +66,14 @@ class RecipesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun filterRecipes(params: SearchParams): DomainResult<List<DomainRecipe>, RecipeError> {
+    /**
+     * Filtra las recetas según los criterios de búsqueda proporcionados.
+     *
+     * @param params Parámetros de búsqueda que incluyen criterio y valores
+     * @return [DomainResult] con la lista de recetas filtradas o un error
+     */
+    override suspend fun filterRecipes(params: SearchParams):
+            DomainResult<List<DomainRecipe>, RecipeError> {
         return when (val result = getAll()) {
             is Success -> {
                 val filteredRecipes = when (params.criterion) {
@@ -99,6 +124,13 @@ class RecipesRepositoryImpl @Inject constructor(
         }
     }
 
+    /**
+     * Obtiene una receta por su ID.
+     * Primero busca en la caché antes de hacer una solicitud a la red.
+     *
+     * @param recipeId ID de la receta a buscar
+     * @return [DomainResult] con la receta encontrada o un error
+     */
     override suspend fun getById(recipeId: String): DomainResult<DomainRecipe, RecipeError> {
         recipesCache?.let {
             val recipe = it.find { recipe -> recipe.id == recipeId }
@@ -120,7 +152,15 @@ class RecipesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getByIds(recipeIds: ArrayList<String>): DomainResult<List<DomainRecipe>, RecipeError> {
+    /**
+     * Obtiene múltiples recetas por sus IDs.
+     * Primero intenta obtenerlas de la caché.
+     *
+     * @param recipeIds Lista de IDs de recetas a buscar
+     * @return [DomainResult] con la lista de recetas encontradas o un error
+     */
+    override suspend fun getByIds(recipeIds: ArrayList<String>):
+            DomainResult<List<DomainRecipe>, RecipeError> {
         recipesCache?.let {
             return Success(it.filter { recipe -> recipeIds.contains(recipe.id) })
         }
@@ -140,6 +180,14 @@ class RecipesRepositoryImpl @Inject constructor(
         }
     }
 
+    /**
+     * Actualiza el contador de favoritos de una receta.
+     * También actualiza la caché si existe.
+     *
+     * @param recipeId ID de la receta a actualizar
+     * @param isNewFavourite true si se está añadiendo a favoritos, false si se está quitando
+     * @return [DomainResult] con el resultado de la operación
+     */
     override suspend fun updateFavouriteCount(
         recipeId: String,
         isNewFavourite: Boolean
@@ -164,6 +212,15 @@ class RecipesRepositoryImpl @Inject constructor(
         return result
     }
 
+    /**
+     * Guarda una nueva receta o actualiza una existente.
+     * Si la receta no tiene ID, se genera una nueva.
+     *
+     * @param newRecipeData Datos de la receta a guardar
+     * @param newImage Imagen de la receta en bytes (opcional)
+     * @param currentUserData Datos del usuario que está guardando la receta
+     * @return [DomainResult] con el ID de la receta si es nueva, o null si es una actualización
+     */
     override suspend fun saveRecipe(
         newRecipeData: DomainRecipe,
         newImage: ByteArray?,
@@ -182,7 +239,8 @@ class RecipesRepositoryImpl @Inject constructor(
 
                 val finalRecipeData = newRecipeData.copy(
                     id = finalId,
-                    imageUrl = api.getStorageUrlFromPath("recipe_images/$finalId.jpg"),
+                    imageUrl = api.getStorageUrlFromPath(
+                        Constants.Storage.getRecipeImagePath(finalId)),
                     author = currentUserData
                 )
 
@@ -203,6 +261,14 @@ class RecipesRepositoryImpl @Inject constructor(
         }
     }
 
+    /**
+     * Publica un nuevo comentario en una receta.
+     *
+     * @param recipeId ID de la receta donde se publicará el comentario
+     * @param commentContent Contenido del comentario
+     * @param currentUserData Datos del usuario que está publicando el comentario
+     * @return [DomainResult] con Unit si fue exitoso, o un error
+     */
     override suspend fun postComment(
         recipeId: String,
         commentContent: String,
@@ -211,20 +277,35 @@ class RecipesRepositoryImpl @Inject constructor(
         return api.postComment(recipeId, commentContent, currentUserData)
     }
     
+    /**
+     * Elimina una receta y todas sus referencias asociadas.
+     *
+     * @param recipeId ID de la receta a eliminar
+     * @return [DomainResult] con Unit si fue exitoso, o un error
+     */
     override suspend fun deleteRecipe(recipeId: String): DomainResult<Unit, RecipeError> {
         return api.deleteRecipeAndReferences(recipeId)
     }
     
+    /**
+     * Elimina un comentario de una receta.
+     * Actualiza la caché local si la eliminación es exitosa.
+     *
+     * @param recipeId ID de la receta que contiene el comentario
+     * @param commentTimestamp Marca de tiempo del comentario a eliminar
+     * @param userId ID del usuario que realizó el comentario
+     * @return [DomainResult] con Unit si fue exitoso, o un error
+     */
     override suspend fun deleteComment(
         recipeId: String,
         commentTimestamp: Long,
         userId: String
     ): DomainResult<Unit, RecipeError> {
-        // Delete the comment from Firebase
+        // Borra el comentario de Firebase
         val result = api.deleteComment(recipeId, commentTimestamp, userId)
         
-        // Update cache if deletion was successful
-        if (result is DomainResult.Success) {
+        // Actualiza la caché local si la eliminación fue exitosa
+        if (result is Success) {
             recipesCache?.let { cache ->
                 val recipeIndex = cache.indexOfFirst { it.id == recipeId }
                 if (recipeIndex != -1) {
@@ -243,46 +324,56 @@ class RecipesRepositoryImpl @Inject constructor(
         return result
     }
 
+    /**
+     * Convierte un [RecipeResponse] a un [DomainRecipe].
+     * Incluye la conversión de la URL de la imagen y los datos del autor.
+     *
+     * @receiver Respuesta de la API a convertir
+     * @return [DomainRecipe] con los datos de la receta
+     */
     private suspend fun RecipeResponse.toDomainRecipe(): DomainRecipe {
         return DomainRecipe(
-            id = this.id,
-            title = this.title,
-            imageUrl = api.getStorageUrlFromPath("recipe_images/${this.id}.jpg"),
-            videoUrl = this.videoUrl,
-            ingredients = this.ingredients,
-            steps = this.steps,
-            categories = this.categories,
-            comments = this.comments.map { it.toDomainComment() },
-            favouriteCount = this.favouriteCount,
-            durationMinutes = this.durationMinutes,
-            difficulty = this.difficulty,
+            id = id,
+            title = title,
+            videoUrl = videoUrl,
+            imageUrl = api.getStorageUrlFromPath(Constants.Storage.getRecipeImagePath(id)),
+            ingredients = ingredients,
+            steps = steps,
+            categories = categories,
+            comments = comments.map { it.toDomainComment() },
+            favouriteCount = favouriteCount,
+            durationMinutes = durationMinutes,
+            difficulty = difficulty,
             author = DomainUser(
                 id = this.authorId,
                 email = this.authorEmail,
                 username = this.authorName,
-                profilePictureUrl = if (this.authorHasProfilePicture) api.getStorageUrlFromPath(
-                    "profile_pictures/${this.authorId}.jpg"
-                )
+                profilePictureUrl = if (this.authorHasProfilePicture) 
+                    api.getStorageUrlFromPath(
+                        Constants.Storage.getProfilePicturePath(this.authorId))
                 else ""
-
             )
         )
     }
 
+    /**
+     * Convierte un [CommentResponse] a un [DomainComment].
+     *
+     * @receiver Respuesta de la API a convertir
+     * @return [DomainComment] con los datos del comentario
+     */
     private suspend fun CommentResponse.toDomainComment(): DomainComment {
         return DomainComment(
             author = DomainUser(
                 id = this.authorId,
                 email = this.authorEmail,
                 username = this.authorName,
-                profilePictureUrl = if (this.authorHasProfilePicture) api.getStorageUrlFromPath(
-                    "profile_pictures/${this.authorId}.jpg"
-                )
+                profilePictureUrl = if (this.authorHasProfilePicture) 
+                    api.getStorageUrlFromPath(Constants.Storage.getProfilePicturePath(this.authorId))
                 else ""
             ),
             content = this.content,
             timestamp = this.timestamp
         )
     }
-
 }

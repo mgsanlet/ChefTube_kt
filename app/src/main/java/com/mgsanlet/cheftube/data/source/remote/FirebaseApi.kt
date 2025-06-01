@@ -19,6 +19,14 @@ import com.mgsanlet.cheftube.domain.util.error.StatsError
 import com.mgsanlet.cheftube.domain.util.error.UserError
 import kotlinx.coroutines.tasks.await
 
+/**
+ * Clase que implementa la API de Firebase para la aplicación ChefTube.
+ * Se encarga de todas las operaciones de red relacionadas con Firebase, incluyendo:
+ * - Autenticación de usuarios
+ * - Operaciones CRUD en Firestore
+ * - Almacenamiento de archivos en Firebase Storage
+ * - Operaciones por lotes (batch) para mantener la consistencia de datos
+ */
 class FirebaseApi {
     private val db by lazy { Firebase.firestore }
     private val storage by lazy { Firebase.storage }
@@ -26,6 +34,12 @@ class FirebaseApi {
 
     // GENERAL
 
+    /**
+     * Obtiene la URL de descarga de un archivo en Firebase Storage a partir de su ruta.
+     *
+     * @param path Ruta del archivo en Firebase Storage
+     * @return URL de descarga del archivo o cadena vacía en caso de error
+     */
     suspend fun getStorageUrlFromPath(path: String): String {
         return try {
             val url = storage.reference.child(path).downloadUrl.await()
@@ -39,6 +53,13 @@ class FirebaseApi {
 
     // USER
 
+    /**
+     * Verifica si un usuario tiene permisos de administrador.
+     *
+     * @param userId ID del usuario a verificar
+     * @return [DomainResult.Success] con true si es administrador, false en caso contrario,
+     *         o [DomainResult.Error] si ocurre un error
+     */
     suspend fun isUserAdmin(userId: String): DomainResult<Boolean, UserError> {
         return try {
             val userDoc = db.collection("users").document(userId).get().await()
@@ -55,6 +76,12 @@ class FirebaseApi {
         }
     }
 
+    /**
+     * Obtiene todos los usuarios registrados en la aplicación.
+     *
+     * @return [DomainResult.Success] con un mapa de ID de usuario a [UserResponse],
+     *         o [DomainResult.Error] si ocurre un error
+     */
     suspend fun getAllUsers(): DomainResult<Map<String, UserResponse>, UserError> {
         return try {
             val snapshot = db.collection("users").get().await()
@@ -68,6 +95,13 @@ class FirebaseApi {
         }
     }
 
+    /**
+     * Obtiene los datos de un usuario por su ID.
+     *
+     * @param id ID del usuario a buscar
+     * @return [DomainResult.Success] con los datos del usuario si existe,
+     *         o [DomainResult.Error] si no se encuentra o hay un error
+     */
     suspend fun getUserDataById(id: String): DomainResult<UserResponse, UserError> {
         return try {
             val document = db.collection("users").document(id).get().await()
@@ -84,6 +118,13 @@ class FirebaseApi {
         }
     }
 
+    /**
+     * Verifica si un nombre de usuario está disponible.
+     *
+     * @param username Nombre de usuario a verificar
+     * @return [DomainResult.Success] si el nombre está disponible,
+     *         [DomainResult.Error] si ya está en uso o hay un error
+     */
     suspend fun isAvailableUsername(username: String): DomainResult<Unit, UserError> {
         return try {
             val document =
@@ -99,6 +140,15 @@ class FirebaseApi {
         }
     }
 
+    /**
+     * Inserta los datos iniciales de un nuevo usuario en Firestore.
+     *
+     * @param id ID del usuario generado por Firebase Auth
+     * @param username Nombre de usuario elegido
+     * @param email Correo electrónico del usuario
+     * @return [DomainResult.Success] si la operación fue exitosa,
+     *         [DomainResult.Error] si ocurre un error
+     */
     suspend fun insertUserData(
         id: String,
         username: String,
@@ -117,6 +167,15 @@ class FirebaseApi {
         return DomainResult.Success(Unit)
     }
 
+    /**
+     * Actualiza los datos de un usuario existente en Firestore.
+     * También actualiza la información del autor en todas sus recetas.
+     *
+     * @param id ID del usuario a actualizar
+     * @param userData Nuevos datos del usuario
+     * @return [DomainResult.Success] si la operación fue exitosa,
+     *         [DomainResult.Error] si ocurre un error
+     */
     suspend fun updateUserData(id: String, userData: DomainUser): DomainResult<Unit, UserError> {
         try {
             val user = hashMapOf(
@@ -154,6 +213,15 @@ class FirebaseApi {
         return DomainResult.Success(Unit)
     }
 
+    /**
+     * Actualiza la lista de recetas favoritas de un usuario.
+     *
+     * @param currentUserId ID del usuario
+     * @param recipeId ID de la receta a añadir/eliminar de favoritos
+     * @param isNewFavourite true para añadir a favoritos, false para eliminar
+     * @return [DomainResult.Success] si la operación fue exitosa,
+     *         [DomainResult.Error] si ocurre un error
+     */
     suspend fun updateUserFavouriteRecipes(
         currentUserId: String,
         recipeId: String,
@@ -169,13 +237,23 @@ class FirebaseApi {
                 else FieldValue.arrayRemove(recipeId)
             )
             batch.commit().await()
-
+            val statsRef = db.collection("stats").document("main")
+            statsRef.update("interactionTimestamps", FieldValue.arrayUnion(Timestamp.now()))
             return DomainResult.Success(Unit)
         } catch (exception: Exception) {
             return DomainResult.Error(UserError.Unknown(exception.message))
         }
     }
 
+    /**
+     * Guarda la imagen de perfil de un usuario en Firebase Storage.
+     * Actualiza la referencia en Firestore y en todas sus recetas.
+     *
+     * @param userId ID del usuario
+     * @param profilePicture Imagen de perfil en formato ByteArray
+     * @return [DomainResult.Success] con la URL de descarga de la imagen si tiene éxito,
+     *         [DomainResult.Error] si ocurre un error
+     */
     suspend fun saveUserProfilePicture(
         userId: String,
         profilePicture: ByteArray
@@ -213,11 +291,20 @@ class FirebaseApi {
         }
     }
 
+    /**
+     * Actualiza la fecha del último inicio de sesión de un usuario.
+     *
+     * @param userId ID del usuario
+     * @return [DomainResult.Success] si la operación fue exitosa,
+     *         [DomainResult.Error] si ocurre un error
+     */
     suspend fun updateUserLastLogin(userId: String): DomainResult<Unit, UserError> {
         return try {
             db.collection("users").document(userId)
                 .update("lastLogin", Timestamp.now())
                 .await()
+            val statsRef = db.collection("stats").document("main")
+            statsRef.update("loginTimestamps", FieldValue.arrayUnion(Timestamp.now()))
             DomainResult.Success(Unit)
         } catch (exception: Exception) {
             Log.e("FireStore", "Error updating last login: ", exception)
@@ -225,6 +312,19 @@ class FirebaseApi {
         }
     }
 
+    /**
+     * Elimina todos los datos asociados a un usuario, incluyendo:
+     * - Imagen de perfil en Storage
+     * - Recetas creadas por el usuario
+     * - Referencias en listas de favoritos de otros usuarios
+     * - Comentarios realizados
+     * - Seguidores y seguidos
+     * - Documento del usuario en Firestore
+     *
+     * @param userId ID del usuario a eliminar
+     * @return [DomainResult.Success] si la operación fue exitosa,
+     *         [DomainResult.Error] si ocurre un error
+     */
     suspend fun deleteUserData(userId: String): DomainResult<Unit, UserError> {
         return try {
             // Eliminar la imagen de perfil si existe
@@ -299,6 +399,12 @@ class FirebaseApi {
 
     // RECIPE
 
+    /**
+     * Obtiene todas las recetas disponibles en la base de datos.
+     *
+     * @return [DomainResult.Success] con la lista de recetas si tiene éxito,
+     *         [DomainResult.Error] si ocurre un error
+     */
     suspend fun getAllRecipes(): DomainResult<List<RecipeResponse>, RecipeError> {
         return try {
             val result = db.collection("recipes").get().await()
@@ -317,6 +423,13 @@ class FirebaseApi {
         }
     }
 
+    /**
+     * Obtiene una receta específica por su ID.
+     *
+     * @param recipeId ID de la receta a buscar
+     * @return [DomainResult.Success] con la receta si existe,
+     *         [DomainResult.Error] si no se encuentra o hay un error
+     */
     suspend fun getRecipeById(recipeId: String): DomainResult<RecipeResponse, RecipeError> {
         return try {
             val document = db.collection("recipes").document(recipeId).get().await()
@@ -333,6 +446,13 @@ class FirebaseApi {
         }
     }
 
+    /**
+     * Obtiene múltiples recetas por sus IDs.
+     *
+     * @param recipeIds Lista de IDs de recetas a buscar
+     * @return [DomainResult.Success] con la lista de recetas encontradas,
+     *         [DomainResult.Error] si ocurre un error
+     */
     suspend fun getRecipesByIds(recipeIds: ArrayList<String>): DomainResult<List<RecipeResponse>, RecipeError> {
         return try {
             val result =
@@ -353,6 +473,14 @@ class FirebaseApi {
         }
     }
 
+    /**
+     * Actualiza el contador de favoritos de una receta.
+     *
+     * @param recipeId ID de la receta a actualizar
+     * @param isNewFavourite true para incrementar el contador, false para decrementarlo
+     * @return [DomainResult.Success] si la operación fue exitosa,
+     *         [DomainResult.Error] si ocurre un error
+     */
     suspend fun updateRecipeFavouriteCount(
         recipeId: String,
         isNewFavourite: Boolean
@@ -366,12 +494,25 @@ class FirebaseApi {
                 if (isNewFavourite) FieldValue.increment(1) else FieldValue.increment(-1)
             )
             batch.commit().await()
+            val statsRef = db.collection("stats").document("main")
+            statsRef.update("interactionTimestamps", FieldValue.arrayUnion(Timestamp.now()))
             return DomainResult.Success(Unit)
         } catch (exception: Exception) {
             return DomainResult.Error(RecipeError.Unknown(exception.message))
         }
     }
 
+    /**
+     * Guarda una nueva receta o actualiza una existente en Firestore.
+     * Si se proporciona una imagen, también la guarda en Firebase Storage.
+     *
+     * @param finalId ID final de la receta (puede ser nuevo o existente)
+     * @param newRecipeData Datos de la receta a guardar
+     * @param newImage Imagen de la receta en formato ByteArray (opcional)
+     * @param currentUserData Datos del usuario que está guardando la receta
+     * @return [DomainResult.Success] si la operación fue exitosa,
+     *         [DomainResult.Error] si ocurre un error
+     */
     suspend fun saveRecipe(
         finalId: String,
         newRecipeData: DomainRecipe,
@@ -417,12 +558,24 @@ class FirebaseApi {
             batch.update(userRef, "createdRecipes", FieldValue.arrayUnion(finalId))
 
             batch.commit().await()
+
+            val statsRef = db.collection("stats").document("main")
+            statsRef.update("interactionTimestamps", FieldValue.arrayUnion(Timestamp.now()))
             return DomainResult.Success(Unit)
         } catch (exception: Exception) {
             return DomainResult.Error(RecipeError.Unknown(exception.message))
         }
     }
 
+    /**
+     * Publica un nuevo comentario en una receta.
+     *
+     * @param recipeId ID de la receta donde se publicará el comentario
+     * @param commentContent Contenido del comentario
+     * @param user Usuario que realiza el comentario
+     * @return [DomainResult.Success] si el comentario se publicó correctamente,
+     *         [DomainResult.Error] si ocurre un error
+     */
     suspend fun postComment(
         recipeId: String,
         commentContent: String,
@@ -446,6 +599,9 @@ class FirebaseApi {
                 )
             )
             batch.commit().await()
+
+            val statsRef = db.collection("stats").document("main")
+            statsRef.update("interactionTimestamps", FieldValue.arrayUnion(Timestamp.now()))
             return DomainResult.Success(Unit)
         } catch (exception: Exception) {
             return DomainResult.Error(RecipeError.Unknown(exception.message))
@@ -453,11 +609,15 @@ class FirebaseApi {
     }
 
     /**
-     * Elimina una receta y todas sus referencias en la base de datos
+     * Elimina una receta y todas sus referencias en la base de datos.
+     * Se encarga de eliminar la imagen de la receta, actualizar las listas de favoritos
+     * de los usuarios y eliminar las referencias en las colecciones relacionadas.
+     *
      * @param recipeId ID de la receta a eliminar
      * @param batch Lote de operaciones al que se agregarán las operaciones de eliminación (opcional).
      *              Si es nulo, se creará y ejecutará un nuevo batch automáticamente.
-     * @return DomainResult.Success(Unit) si la operación fue exitosa, o DomainResult.Error en caso contrario
+     * @return [DomainResult.Success] si la operación fue exitosa,
+     *         [DomainResult.Error] si ocurre un error
      */
     suspend fun deleteRecipeAndReferences(
         recipeId: String,
@@ -528,6 +688,12 @@ class FirebaseApi {
 
     // STATS
 
+    /**
+     * Obtiene las estadísticas generales de la aplicación.
+     *
+     * @return [DomainResult.Success] con las estadísticas si se obtuvieron correctamente,
+     *         [DomainResult.Error] si ocurre un error
+     */
     suspend fun getStats(): DomainResult<StatsResponse, StatsError> {
         try {
             // Obtener estadísticas de logins
@@ -541,11 +707,13 @@ class FirebaseApi {
     }
 
     /**
-     * Deletes a comment from a recipe
-     * @param recipeId The ID of the recipe containing the comment
-     * @param commentTimestamp The timestamp of the comment to delete
-     * @param userId The ID of the user who made the comment
-     * @return DomainResult with Unit on success, or RecipeError on failure
+     * Elimina un comentario de una receta.
+     *
+     * @param recipeId ID de la receta que contiene el comentario
+     * @param commentTimestamp Marca de tiempo del comentario a eliminar
+     * @param userId ID del usuario que realizó el comentario
+     * @return [DomainResult.Success] si el comentario se eliminó correctamente,
+     *         [DomainResult.Error] si no se encuentra o hay un error
      */
     suspend fun deleteComment(
         recipeId: String,
@@ -580,6 +748,15 @@ class FirebaseApi {
         } catch (exception: Exception) {
             Log.e("FirebaseApi", "Error deleting comment", exception)
             DomainResult.Error(RecipeError.Unknown(exception.message))
+        }
+    }
+
+    fun registerScanTimestamp(){
+        try {
+            val statsRef = db.collection("stats").document("main")
+            statsRef.update("scanTimestamps", FieldValue.arrayUnion(Timestamp.now()))
+        } catch (_: Exception) {
+            // No se interrumpe la acción en la que se llama a esta función
         }
     }
 }
