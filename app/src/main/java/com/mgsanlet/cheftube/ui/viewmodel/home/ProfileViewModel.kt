@@ -192,13 +192,12 @@ class ProfileViewModel @Inject constructor(
 
     fun updateUserPassword(
         currentPassword: String,
-        newPassword: String,
-        confirmPassword: String
+        newPassword: String
     ) {
         viewModelScope.launch {
             _uiState.value = ProfileState.Loading
             
-            updatePassword(currentPassword, newPassword, confirmPassword).fold(
+            updatePassword(currentPassword, newPassword).fold(
                 onSuccess = {
                     _uiState.value = ProfileState.PasswordUpdated
                 },

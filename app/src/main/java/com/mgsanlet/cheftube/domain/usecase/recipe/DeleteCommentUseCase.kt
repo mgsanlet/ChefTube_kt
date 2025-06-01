@@ -6,18 +6,20 @@ import com.mgsanlet.cheftube.domain.util.error.DomainError
 import javax.inject.Inject
 
 /**
- * Use case for deleting a comment from a recipe
- * @property recipesRepository The repository that handles recipe-related operations
+ * Caso de uso para eliminar un comentario de una receta.
+ *
+ * @property recipesRepository Repositorio de recetas para eliminar el comentario
  */
 class DeleteCommentUseCase @Inject constructor(
     private val recipesRepository: RecipesRepository
 ) {
     /**
-     * Deletes a comment from a recipe
-     * @param recipeId The ID of the recipe containing the comment
-     * @param commentTimestamp The timestamp of the comment to delete
-     * @param userId The ID of the user who made the comment
-     * @return DomainResult with Unit on success, or DomainError on failure
+     * Ejecuta el caso de uso para eliminar un comentario.
+     *
+     * @param recipeId ID de la receta que contiene el comentario
+     * @param commentTimestamp Marca de tiempo del comentario a eliminar
+     * @param userId ID del usuario que realizó el comentario
+     * @return [DomainResult] con Unit en caso de éxito o [DomainError] si hay un error
      */
     suspend operator fun invoke(
         recipeId: String,

@@ -1,9 +1,20 @@
 package com.mgsanlet.cheftube.domain.model
 
 /**
- * Representa una rectea, incluyendo detalles como título, imagen, ingredientes,
- * pasos de preparación, y una URL de video.
- * @author MarioG
+ * Clase de dominio que representa una receta en la aplicación.
+ *
+ * @property id Identificador único de la receta
+ * @property title Título de la receta
+ * @property imageUrl URL de la imagen principal de la receta
+ * @property videoUrl URL del video de la receta (opcional)
+ * @property ingredients Lista de ingredientes necesarios
+ * @property steps Lista de pasos para preparar la receta
+ * @property categories Categorías a las que pertenece la receta
+ * @property comments Lista de comentarios sobre la receta
+ * @property favouriteCount Número de veces que la receta ha sido marcada como favorita
+ * @property durationMinutes Tiempo de preparación en minutos
+ * @property difficulty Nivel de dificultad (0-2)
+ * @property author Usuario que creó la receta
  */
 data class DomainRecipe(
     val id: String = "",

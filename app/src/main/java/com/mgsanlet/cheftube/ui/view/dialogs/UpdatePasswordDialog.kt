@@ -94,8 +94,7 @@ class UpdatePasswordDialog(val fragment: EditProfileFragment) : BaseAccountDialo
 
         viewModel.updateUserPassword(
             currentPassword,
-            newPassword,
-            confirmPasswordEditText.text.toString()
+            newPassword
         )
 
         // Observar los cambios en el ViewModel
