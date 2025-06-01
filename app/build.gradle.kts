@@ -18,7 +18,21 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.mgsanlet.cheftube.test.CustomTestRunner"
+        
+        // Configuración para pruebas
+        testInstrumentationRunnerArguments["clearPackageData"] = "true"
+        
+        // Incluir el manifiesto de prueba
+        testApplicationId = "com.mgsanlet.cheftube.test"
+    }
+    
+    // Configuración para pruebas
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+        animationsDisabled = true
     }
 
     buildTypes {
@@ -41,6 +55,18 @@ android {
     buildFeatures {
         viewBinding = true
         dataBinding = true
+    }
+    testOptions {
+        unitTests.all {
+            it.jvmArgs(
+                "--add-opens=java.base/java.lang=ALL-UNNAMED",
+                "--add-opens=java.base/java.util=ALL-UNNAMED",
+                "-XX:+EnableDynamicAgentLoading",
+                "-Djdk.instrument.traceUsage=false",
+                "-Dnet.bytebuddy.experimental=true"
+            )
+            it.systemProperty("jdk.attach.allowAttachSelf", "true")
+        }
     }
 }
 
@@ -99,8 +125,12 @@ dependencies {
 
     // Testing
     testImplementation(libs.junit)
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    testImplementation("io.mockk:mockk:1.14.2")
+    testImplementation("io.mockk:mockk-agent-jvm:1.13.3")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("app.cash.turbine:turbine:1.0.0")
+    testImplementation("com.google.truth:truth:1.1.5")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
 
     //Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.13.0"))

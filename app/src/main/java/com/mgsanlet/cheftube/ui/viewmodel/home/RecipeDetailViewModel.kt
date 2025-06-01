@@ -19,6 +19,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import javax.inject.Inject
 import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
 
@@ -65,23 +66,33 @@ class RecipeDetailViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _recipeState.value = RecipeState.Loading
+                // Forzamos un yield para permitir que el estado Loading se emita
+                yield()
+                
                 val result = withContext(Dispatchers.IO) {
                     getRecipeById(recipeId)
                 }
+                
                 result.fold(
                     onSuccess = { recipe ->
                         authorId = recipe.author?.id
-                        isFavourite = isRecipeFavourite(recipe.id)
-                        isRecipeByAuthor = isRecipeByAuthor(recipe.id)
-                        _recipeState.value = RecipeState.Success(recipe)
+                        // Llamamos a las funciones suspend y esperamos su resultado
+                        val isFav = isRecipeFavourite(recipe.id)
+                        val isByAuthor = isRecipeByAuthor(recipe.id)
+                        
+                        // Actualizamos las propiedades en el hilo principal
+                        withContext(Dispatchers.Main) {
+                            isFavourite = isFav
+                            isRecipeByAuthor = isByAuthor
+                            _recipeState.value = RecipeState.Success(recipe)
+                        }
                     },
                     onError = { error ->
                         _recipeState.value = RecipeState.Error(error)
                     }
                 )
             } catch (e: Exception) {
-                _recipeState.value =
-                    RecipeState.Error(RecipeError.Unknown(e.message))
+                _recipeState.value = RecipeState.Error(RecipeError.Unknown(e.message))
             }
         }
     }
@@ -158,26 +169,24 @@ class RecipeDetailViewModel @Inject constructor(
         }
     }
 
-    private fun isRecipeFavourite(recipeId: String): Boolean {
-        var isFavourite = false
-        viewModelScope.launch {
-            getCurrentUserData().fold(
-                onSuccess = { user -> isFavourite = user.favouriteRecipes.contains(recipeId) },
-                onError = { _recipeState.value = RecipeState.Error(RecipeError.Unknown()) }
-            )
-        }
-        return isFavourite
+    internal suspend fun isRecipeFavourite(recipeId: String): Boolean {
+        return getCurrentUserData().fold(
+            onSuccess = { user -> user.favouriteRecipes.contains(recipeId) },
+            onError = {
+                _recipeState.value = RecipeState.Error(RecipeError.Unknown())
+                false
+            }
+        )
     }
 
-    private fun isRecipeByAuthor(recipeId: String): Boolean {
-        var isByAuthor = false
-        viewModelScope.launch {
-            getCurrentUserData().fold(
-                onSuccess = { user -> isByAuthor = user.createdRecipes.contains(recipeId) },
-                onError = { _recipeState.value = RecipeState.Error(RecipeError.Unknown()) }
-            )
-        }
-        return isByAuthor
+    internal suspend fun isRecipeByAuthor(recipeId: String): Boolean {
+        return getCurrentUserData().fold(
+            onSuccess = { user -> user.createdRecipes.contains(recipeId) },
+            onError = {
+                _recipeState.value = RecipeState.Error(RecipeError.Unknown())
+                false
+            }
+        )
     }
 
     fun postComment(comment: String) {
@@ -223,7 +232,7 @@ class RecipeDetailViewModel @Inject constructor(
         if (_recipeState.value !is RecipeState.Success) return
         
         val currentRecipe = (_recipeState.value as RecipeState.Success).recipe
-        
+
         viewModelScope.launch {
             deleteCommentUseCase(
                 recipeId = currentRecipe.id,

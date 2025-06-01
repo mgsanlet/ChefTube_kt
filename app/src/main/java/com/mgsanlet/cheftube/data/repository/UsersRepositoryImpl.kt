@@ -23,7 +23,7 @@ class UsersRepositoryImpl @Inject constructor(
     private val api: FirebaseApi
 ) : UsersRepository {
 
-    private var currentUserCache: DomainUser? = null
+    var currentUserCache: DomainUser? = null
 
     override suspend fun getCurrentUserData(): DomainResult<DomainUser, UserError> {
         currentUserCache?.let {

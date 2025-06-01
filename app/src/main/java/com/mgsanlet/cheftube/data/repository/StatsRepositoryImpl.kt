@@ -32,12 +32,11 @@ class StatsRepositoryImpl @Inject constructor(
 
 private fun generateTestData(): DomainStats {
     val now = Instant.now()
-    val calendar = java.util.Calendar.getInstance()
     
     // Generar datos de prueba para los últimos 30 días
-    val loginTimestamps = List(500) { now.minusSeconds((0L..(30L * 24 * 60 * 60)).random()) }
-    val interactionTimestamps = List(1500) { now.minusSeconds((0L..(30L * 24 * 60 * 60)).random()) }
-    val scanTimestamps = List(200) { now.minusSeconds((0L..(30L * 24 * 60 * 60)).random()) }
+    val loginTimestamps = List(24) { now.minusSeconds((0L..(30L * 24 * 60 * 60)).random()) }
+    val interactionTimestamps = List(83) { now.minusSeconds((0L..(30L * 24 * 60 * 60)).random()) }
+    val scanTimestamps = List(15) { now.minusSeconds((0L..(30L * 24 * 60 * 60)).random()) }
     
     return DomainStats(loginTimestamps, interactionTimestamps, scanTimestamps)
 }
