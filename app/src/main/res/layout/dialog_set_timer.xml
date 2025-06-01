@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/ChefTubeDialog"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,21 +9,34 @@
     tools:ignore="Overdraw">
 
     <TextView
+        android:id="@+id/textView2"
         style="@style/ChefTubeText.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/set_timer"
-        android:layout_gravity="center"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="16dp"
         android:orientation="horizontal"
-        android:padding="15dp">
+        android:padding="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2">
 
         <EditText
-            style="@style/ChefTubeEditText"
             android:id="@+id/minutesInput"
+            style="@style/ChefTubeEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints=""
@@ -34,15 +47,51 @@
             android:textStyle="bold" />
 
         <EditText
-            style="@style/ChefTubeEditText"
             android:id="@+id/secondsInput"
+            style="@style/ChefTubeEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autofillHints="" android:hint="@string/seconds"
+            android:layout_marginLeft="8dp"
+            android:autofillHints=""
+            android:hint="@string/seconds"
             android:inputType="number"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginLeft="8dp"/>
+            android:textStyle="bold" />
+
+
     </LinearLayout>
-</LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/submitContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout">
+
+        <Button
+            android:id="@+id/cancelButton"
+            style="@style/ChefTubeButton.Negative"
+            android:layout_width="0dp"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/confirmButton"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/confirmButton"
+            style="@style/ChefTubeButton.Positive"
+            android:layout_width="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="TextContrastCheck"
+            android:text="@string/save" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

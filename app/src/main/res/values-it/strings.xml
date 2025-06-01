@@ -181,7 +181,7 @@
     <string name="user_inactivity_monitoring">Monitoraggio inattività utenti</string>
     <string name="inactive_days">Giorni di inattività</string>
     <string name="statistics">Statistiche</string>
-    <string name="total_users">Utenti totali</string>
+    <string name="total_logins">Accessi totali</string>
     <string name="total_interactions">Interazioni totali</string>
     <string name="total_scans">Scansioni totali</string>
     <string name="inactive_users">Utenti inattivi</string>

@@ -184,7 +184,7 @@
     <string name="user_inactivity_monitoring">User Inactivity Monitoring</string>
     <string name="inactive_days">Inactive days</string>
     <string name="statistics">Statistics</string>
-    <string name="total_users">Total Users</string>
+    <string name="total_logins">Total Logins</string>
     <string name="total_interactions">Total Interactions</string>
     <string name="total_scans">Total Scans</string>
     <string name="inactive_users">Inactive Users</string>

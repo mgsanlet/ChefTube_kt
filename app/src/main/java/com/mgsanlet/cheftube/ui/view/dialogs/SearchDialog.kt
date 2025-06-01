@@ -60,6 +60,7 @@ class SearchDialog @JvmOverloads constructor(
                     when (selectedCriteria) {
                         FilterCriterion.DURATION -> {
                             binding.rangeEditText.visibility = VISIBLE
+                            binding.queryEditText.visibility = VISIBLE
                             binding.queryEditText.inputType = EditorInfo.TYPE_CLASS_NUMBER
                             binding.queryEditText.hint = context.getString(R.string.range_hint_low)
                             binding.difficultySpinner.visibility = GONE
@@ -152,6 +153,7 @@ class SearchDialog @JvmOverloads constructor(
         val searchDialogBuilder = AlertDialog.Builder(context)
         searchDialogBuilder.setView(this)
         dialog = searchDialogBuilder.create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
     }
 }

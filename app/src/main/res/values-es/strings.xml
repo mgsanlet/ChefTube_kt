@@ -185,7 +185,7 @@
     <string name="user_inactivity_monitoring">Monitoreo de inactividad de usuarios</string>
     <string name="inactive_days">Días inactivos</string>
     <string name="statistics">Estadísticas</string>
-    <string name="total_users">Usuarios totales</string>
+    <string name="total_logins">Inicios de sesión totales</string>
     <string name="total_interactions">Interacciones totales</string>
     <string name="total_scans">Escaneos totales</string>
     <string name="inactive_users">Usuarios inactivos</string>
@@ -207,7 +207,7 @@
     <string-array name="search_criteria">
         <item>Título</item>
         <item>Ingrediente</item>
-        <item>Duración minutos</item>
+        <item>Duración (minutos)</item>
         <item>Categoría</item>
         <item>Dificultad</item>
     </string-array>

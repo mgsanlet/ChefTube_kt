@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -446,24 +447,28 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         val dialogBuilder = AlertDialog.Builder(requireContext())
         val inflater = requireActivity().layoutInflater
         val dialogView = inflater.inflate(R.layout.dialog_set_timer, null)
+
         dialogBuilder.setView(dialogView)
 
         val minutesInput = dialogView.findViewById<EditText>(R.id.minutesInput)
         val secondsInput = dialogView.findViewById<EditText>(R.id.secondsInput)
+        val confirmButton = dialogView.findViewById<Button>(R.id.confirmButton)
+        val cancelButton = dialogView.findViewById<Button>(R.id.cancelButton)
+        val dialog = dialogBuilder.create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        dialogBuilder.setPositiveButton(R.string.set) { _, _ ->
+        confirmButton.setOnClickListener {
             val minutes = minutesInput.text.toString().toIntOrNull() ?: 0
             val seconds = secondsInput.text.toString().toIntOrNull() ?: 0
             val timeInMillis = (minutes * 60L + seconds) * 1000
 
             viewModel.setTime(timeInMillis)
-        }
-
-        dialogBuilder.setNegativeButton(R.string.cancel) { dialog, _ ->
             dialog.dismiss()
         }
 
-        dialogBuilder.create().show()
+        cancelButton.setOnClickListener { dialog.dismiss() }
+
+        dialog.show()
     }
 
     /**

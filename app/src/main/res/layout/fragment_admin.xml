@@ -90,7 +90,7 @@
                     android:id="@+id/textTotalUsersLabel"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/total_users"
+                    android:text="@string/total_logins"
                     android:textColor="@color/white"
                     app:layout_constraintEnd_toStartOf="@+id/textTotalUsers"
                     app:layout_constraintStart_toStartOf="parent"

@@ -51,15 +51,14 @@ class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBindin
                     binding.resultTextView.apply {
                         visibility = View.VISIBLE
                         text = viewModel.getLocalizedProductName()
+                            .ifBlank { getString(R.string.unknown) }
                         setBackgroundResource(R.drawable.shape_radial_green_gradient)
                     }
-                    binding.infoButton.isEnabled = true
-                    binding.infoButton.setBackgroundColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.primary_green
-                        )
-                    )
+                    binding.infoButton.apply {
+                        isEnabled = true
+                        backgroundTintList =
+                            ContextCompat.getColorStateList(requireContext(), R.color.primary_green)
+                    }
                 }
 
                 is ScannerState.Error -> {
@@ -84,13 +83,12 @@ class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBindin
             text = message
             this.setBackgroundResource(R.drawable.shape_radial_red_gradient)
         }
-        binding.infoButton.isEnabled = false
-        binding.infoButton.setBackgroundColor(
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.grey
-            )
-        )
+
+        binding.infoButton.apply {
+            isEnabled = false
+            backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.dark_red)
+        }
     }
 
     override fun setUpListeners() {
