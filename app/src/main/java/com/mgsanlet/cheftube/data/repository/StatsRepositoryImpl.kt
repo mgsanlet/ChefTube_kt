@@ -29,7 +29,7 @@ class StatsRepositoryImpl @Inject constructor(
      * @return [DomainResult] con las estadísticas o un error
      */
     override suspend fun getStats(): DomainResult<DomainStats, StatsError> {
-        // TODO: Eliminar esta línea para usar datos reales
+        // Devolver datos generados (datos reales insuficientes)
         return DomainResult.Success(generateTestData())
         
         return try {
