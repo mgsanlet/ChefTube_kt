@@ -39,13 +39,29 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
 
     private val viewModel: RecipeFormViewModel by viewModels()
 
+    /**
+     * Infla y devuelve el binding para el layout del fragmento.
+     *
+     * @param inflater El LayoutInflater usado para inflar la vista
+     * @param container El ViewGroup padre al que se adjuntará la vista
+     * @return Instancia del binding inflado
+     */
     override fun inflateViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
     ): FragmentRecipeFormBinding = FragmentRecipeFormBinding.inflate(inflater, container, false)
 
+    /** Indica si se está creando una nueva receta (true) o editando una existente (false) */
     private var isNewRecipe: Boolean = true
 
+    /**
+     * Se llama después de que la vista ha sido creada.
+     *
+     * Inicializa el estado del fragmento y carga la receta existente si se proporciona un ID.
+     *
+     * @param view La vista raíz del fragmento
+     * @param savedInstanceState Estado previamente guardado de la instancia
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         arguments?.let { bundle ->
@@ -60,6 +76,12 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
         binding.deleteButton.visibility = if (isNewRecipe) View.GONE else View.VISIBLE
     }
 
+    /**
+     * Configura las propiedades iniciales de la vista.
+     *
+     * Inicializa el adaptador del spinner de dificultad y configura el registro de resultados
+     * para el selector de imágenes.
+     */
     override fun setUpViewProperties() {
         binding.difficultySpinner.adapter = BaseSpinnerAdapter(
             requireContext(),
@@ -68,6 +90,16 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
         binding.imageLoaderView.setActivityResultRegistry(requireActivity().activityResultRegistry)
     }
 
+    /**
+     * Configura los observadores para los estados del ViewModel.
+     *
+     * Maneja los diferentes estados de la UI:
+     * - Loading: Muestra el indicador de carga
+     * - LoadSuccess: Muestra los datos de la receta cargada
+     * - Error: Muestra mensajes de error
+     * - SaveSuccess: Navega a la vista de detalle de la receta guardada
+     * - DeleteSuccess: Navega al feed de recetas después de eliminar
+     */
     override fun setUpObservers() {
         viewModel.uiState.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -99,7 +131,7 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
                         FragmentNavigator.loadFragmentInstance(
                             null, this, detailFragment, R.id.fragmentContainerView
                         )
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         Toast.makeText(
                             context,
                             getString(R.string.unknown_error),
@@ -123,6 +155,12 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
         }
     }
 
+    /**
+     * Muestra un diálogo de confirmación para eliminar la receta actual.
+     *
+     * El diálogo muestra un mensaje de confirmación y botones para confirmar o cancelar la acción.
+     * Si se confirma, se llama al ViewModel para eliminar la receta.
+     */
     private fun showDeleteConfirmationDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_confirm, null)
 
@@ -158,6 +196,15 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
         dialog.show()
     }
 
+    /**
+     * Configura los listeners para los elementos de la interfaz de usuario.
+     *
+     * Incluye:
+     * - Botón de eliminar receta
+     * - Botón de guardar receta
+     * - Botón de cancelar
+     * - Botones para agregar/eliminar categorías, ingredientes y pasos
+     */
     override fun setUpListeners() {
         binding.deleteButton.setOnClickListener {
             showDeleteConfirmationDialog()
@@ -246,6 +293,17 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
         binding.stepsRemoveButton.setOnClickListener { binding.stepsInnerContainer.removeLastChild() }
     }
 
+    /**
+     * Valida los datos ingresados en el formulario.
+     *
+     * Verifica que todos los campos requeridos estén completos y cumplan con las validaciones:
+     * - Título: entre 5 y 30 caracteres
+     * - Duración: valor numérico mayor a 0
+     * - Al menos 1 ingrediente
+     * - Al menos 1 paso
+     *
+     * @return true si todos los campos son válidos, false en caso contrario
+     */
     override fun isValidViewInput(): Boolean {
         var isValid: Boolean
 
@@ -299,6 +357,13 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
         return isValid
     }
 
+    /**
+     * Muestra los datos de la receta en el formulario.
+     * 
+     * Rellena todos los campos del formulario con los datos de la receta proporcionada.
+     * 
+     * @param recipe Objeto DomainRecipe que contiene los datos de la receta a mostrar
+     */
     private fun showRecipeData(recipe: DomainRecipe) {
         binding.titleEditText.setText(recipe.title)
         binding.videoLoaderView.setText(recipe.videoUrl)
@@ -310,6 +375,14 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
         fillContainer(binding.stepsInnerContainer, recipe.steps)
     }
 
+    /**
+     * Rellena un contenedor con elementos de texto.
+     * 
+     * Crea dinámicamente campos de texto para cada elemento de la lista y los añade al contenedor.
+     * 
+     * @param container Contenedor LinearLayout donde se añadirán los elementos
+     * @param list Lista de cadenas que se mostrarán en los campos de texto
+     */
     private fun fillContainer(container: LinearLayout, list: List<String>) {
         list.forEach {
             createCustomEditText().apply {
@@ -319,6 +392,12 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
         }
     }
 
+    /**
+     * Crea un EditText personalizado con el estilo de la aplicación.
+     * 
+     * @param hintText Texto de sugerencia que se mostrará cuando el campo esté vacío
+     * @return EditText configurado con el estilo de la aplicación
+     */
     private fun createCustomEditText(hintText: String = ""): EditText {
         return EditText(context).apply {
             layoutParams = ViewGroup.MarginLayoutParams(
@@ -345,6 +424,11 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
         }
     }
 
+    /**
+     * Muestra u oculta la pantalla de carga.
+     * 
+     * @param show true para mostrar la pantalla de carga, false para ocultarla
+     */
     private fun showLoading(show: Boolean) {
         if (show) {
             binding.scrollView.visibility = View.INVISIBLE
@@ -357,6 +441,12 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
         }
     }
 
+    /**
+     * Se llama cuando la vista del fragmento está a punto de ser destruida.
+     *
+     * Realiza la limpieza de recursos como cerrar el diálogo de carga si está visible.
+     * Es importante llamar al método de la superclase para asegurar una limpieza adecuada.
+     */
     override fun onDestroyView() {
         LoadingDialog.dismiss(parentFragmentManager)
         super.onDestroyView()
@@ -364,6 +454,12 @@ class RecipeFormFragment @Inject constructor() : BaseFormFragment<FragmentRecipe
 
     companion object {
 
+        /**
+         * Crea una nueva instancia de RecipeFormFragment con el ID de la receta como argumento.
+         * 
+         * @param recipeId ID de la receta a cargar. Si está vacío, se creará una nueva receta.
+         * @return Nueva instancia de RecipeFormFragment
+         */
         fun newInstance(recipeId: String): RecipeFormFragment {
             val fragment = RecipeFormFragment()
             val args = Bundle()

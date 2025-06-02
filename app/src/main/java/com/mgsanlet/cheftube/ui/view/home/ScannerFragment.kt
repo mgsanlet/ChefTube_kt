@@ -31,12 +31,28 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBinding>() {
 
+    /** ViewModel que maneja la lógica de negocio del escáner. */
     private val viewModel: ScannerViewModel by viewModels()
 
+    /**
+     * Infla y devuelve el binding para el layout del fragmento.
+     *
+     * @param inflater El LayoutInflater usado para inflar la vista
+     * @param container El ViewGroup padre al que se adjuntará la vista
+     * @return Instancia del binding inflado
+     */
     override fun inflateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
     ): FragmentScannerBinding = FragmentScannerBinding.inflate(inflater, container, false)
 
+    /**
+     * Configura los observadores para los estados del ViewModel.
+     *
+     * Maneja los diferentes estados de la UI:
+     * - Loading: Muestra el indicador de carga
+     * - ProductFound: Muestra el nombre del producto encontrado
+     * - Error: Muestra mensajes de error apropiados
+     */
     override fun setUpObservers() {
         viewModel.scannerState.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -76,6 +92,13 @@ class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBindin
         }
     }
 
+    /**
+     * Muestra un mensaje de error en la interfaz de usuario.
+     * 
+     * Actualiza la vista para mostrar un mensaje de error y desactiva el botón de información.
+     * 
+     * @param message Mensaje de error a mostrar
+     */
     private fun showBadResult(message: String) {
 
         binding.resultTextView.apply {
@@ -91,17 +114,38 @@ class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBindin
         }
     }
 
+    /**
+     * Configura los listeners para los elementos de la interfaz de usuario.
+     *
+     * Configura los siguientes listeners:
+     * - Botón de escanear: Inicia el escaneo de código de barras
+     * - Botón de información: Abre la página del producto en el navegador
+     */
     override fun setUpListeners() {
         binding.scanButton.setOnClickListener { startBarcodeScan() }
         binding.infoButton.setOnClickListener { openProductPage() }
     }
 
+    /**
+     * Configura las propiedades iniciales de la vista.
+     *
+     * Realiza las siguientes configuraciones iniciales:
+     * - Desactiva el botón de información
+     * - Establece el color de fondo del botón de información
+     * - Oculta el TextView de resultados
+     */
     override fun setUpViewProperties() {
         binding.infoButton.isEnabled = false
         binding.infoButton.setBackgroundColor("#505050".toColorInt())
         binding.resultTextView.visibility = View.GONE
     }
 
+    /**
+     * Se llama cuando el fragmento se hace visible para el usuario.
+     * 
+     * Asegura que cualquier diálogo de carga activo sea descartado
+     * cuando el usuario vuelve a este fragmento.
+     */
     override fun onResume() {
         super.onResume()
         LoadingDialog.dismiss(parentFragmentManager)
@@ -139,6 +183,12 @@ class ScannerFragment @Inject constructor() : BaseFragment<FragmentScannerBindin
 
     /**
      * Abre la página del producto en el sitio web de Open Food Facts en un navegador
+     */
+    /**
+     * Abre la página del producto en el navegador web predeterminado del dispositivo.
+     * 
+     * Utiliza un Intent con acción ACTION_VIEW para abrir la URL del producto
+     * en el navegador web predeterminado del dispositivo.
      */
     private fun openProductPage() {
         val browserIntent = Intent(Intent.ACTION_VIEW, viewModel.getProductUrl().toUri())

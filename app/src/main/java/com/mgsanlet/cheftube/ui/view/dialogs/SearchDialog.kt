@@ -15,12 +15,28 @@ import com.mgsanlet.cheftube.domain.model.SearchParams
 import com.mgsanlet.cheftube.domain.util.FilterCriterion
 import com.mgsanlet.cheftube.ui.adapter.BaseSpinnerAdapter
 
+/**
+ * Diálogo de búsqueda personalizado que permite filtrar recetas por diferentes criterios.
+ *
+ * Este diálogo muestra diferentes campos de entrada según el criterio de búsqueda seleccionado:
+ * - Búsqueda por texto (título, ingredientes, etc.)
+ * - Búsqueda por rango de duración
+ * - Búsqueda por nivel de dificultad
+ *
+ * Una vez que el usuario realiza una búsqueda, se notifica a través del listener [onSearchQuerySubmitted]
+ * con los parámetros de búsqueda seleccionados.
+ *
+ * @property context Contexto de la aplicación
+ * @property attrs Atributos XML personalizados
+ * @property defStyleAttr Estilo por defecto
+ */
 class SearchDialog @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
+    /** Diálogo que contiene la vista de búsqueda */
     private lateinit var dialog: AlertDialog
 
     private val binding: DialogSearchBinding = DialogSearchBinding.inflate(
@@ -29,6 +45,10 @@ class SearchDialog @JvmOverloads constructor(
         true
     )
 
+    /**
+     * Listener que se ejecuta cuando el usuario realiza una búsqueda.
+     * Recibe los parámetros de búsqueda seleccionados.
+     */
     private var onSearchQuerySubmitted: ((SearchParams) -> Unit)? = null
 
     init {
@@ -36,6 +56,13 @@ class SearchDialog @JvmOverloads constructor(
         setUpListeners()
     }
 
+    /**
+     * Configura las vistas del diálogo de búsqueda.
+     *
+     * Inicializa los spinners de criterios de búsqueda y dificultad,
+     * y configura el comportamiento de cambio de visibilidad de los campos
+     * según el criterio seleccionado.
+     */
     private fun setUpViews() {
         binding.searchCriteriaSpinner.adapter = BaseSpinnerAdapter(
             context,
@@ -91,11 +118,20 @@ class SearchDialog @JvmOverloads constructor(
             }
     }
 
+    /**
+     * Configura los listeners de los botones de búsqueda y cancelar.
+     */
     private fun setUpListeners() {
         binding.searchButton.setOnClickListener { onSearch() }
         binding.cancelButton.setOnClickListener { dismiss() }
     }
 
+    /**
+     * Procesa la acción de búsqueda cuando el usuario hace clic en el botón de búsqueda.
+     *
+     * Valida los campos de entrada según el criterio seleccionado y notifica
+     * a través del listener con los parámetros de búsqueda.
+     */
     private fun onSearch() {
         val criterion = FilterCriterion.entries[binding.searchCriteriaSpinner.selectedItemPosition]
         val query = binding.queryEditText.text.toString().trim()
@@ -138,16 +174,30 @@ class SearchDialog @JvmOverloads constructor(
         dismiss()
     }
 
+    /**
+     * Cierra el diálogo y limpia los campos de búsqueda.
+     */
     private fun dismiss() {
         binding.queryEditText.text?.clear()
         binding.rangeEditText.text?.clear()
         dialog.dismiss()
     }
 
+    /**
+     * Establece el listener que se ejecutará cuando el usuario realice una búsqueda.
+     *
+     * @param listener Función que recibe los parámetros de búsqueda seleccionados
+     */
     fun setOnSearchQuerySubmittedListener(listener: (SearchParams) -> Unit) {
         onSearchQuerySubmitted = listener
     }
 
+    /**
+     * Muestra el diálogo de búsqueda.
+     *
+     * Configura y muestra un diálogo de alerta con la vista de búsqueda personalizada.
+     * Si la vista ya está adjunta a un padre, la elimina antes de mostrarla.
+     */
     fun show() {
         parent?.let { (it as ViewGroup).removeView(this) }
         val searchDialogBuilder = AlertDialog.Builder(context)

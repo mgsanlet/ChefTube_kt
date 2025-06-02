@@ -9,7 +9,12 @@ import com.mgsanlet.cheftube.domain.util.error.RecipeError
 import com.mgsanlet.cheftube.domain.util.error.StatsError
 import com.mgsanlet.cheftube.domain.util.error.UserError
 
-
+/**
+ * Extensión para convertir un error de usuario en un mensaje legible para el usuario.
+ *
+ * @param context Contexto de la aplicación para acceder a los recursos de cadena
+ * @return Mensaje de error traducido y formateado
+ */
 fun UserError.asMessage(context: Context): String {
     return when (this) {
         is UserError.UsernameInUse -> context.getString(R.string.username_already)
@@ -28,6 +33,12 @@ fun UserError.asMessage(context: Context): String {
     }
 }
 
+/**
+ * Extensión para convertir un error de receta en un mensaje legible para el usuario.
+ *
+ * @param context Contexto de la aplicación para acceder a los recursos de cadena
+ * @return Mensaje de error traducido y formateado
+ */
 fun RecipeError.asMessage(context: Context): String {
     return when (this) {
         is RecipeError.NoResults -> context.getString(R.string.no_results)
@@ -37,6 +48,12 @@ fun RecipeError.asMessage(context: Context): String {
     }
 }
 
+/**
+ * Extensión para convertir un error de producto en un mensaje legible para el usuario.
+ *
+ * @param context Contexto de la aplicación para acceder a los recursos de cadena
+ * @return Mensaje de error traducido y formateado
+ */
 fun ProductError.asMessage(context: Context): String {
     return when (this) {
         is ProductError.NoInternet -> context.getString(R.string.no_internet)
@@ -47,6 +64,12 @@ fun ProductError.asMessage(context: Context): String {
     }
 }
 
+/**
+ * Extensión para convertir un error de estadísticas en un mensaje legible para el usuario.
+ *
+ * @param context Contexto de la aplicación para acceder a los recursos de cadena
+ * @return Mensaje de error traducido y formateado
+ */
 fun StatsError.asMessage(context: Context): String {
     return when (this) {
         is StatsError.StatsNotFound -> context.getString(R.string.stats_not_found)

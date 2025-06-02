@@ -20,6 +20,9 @@ import javax.inject.Inject
 /**
  * ViewModel para el panel de administración que maneja la lógica de negocio
  * relacionada con las estadísticas y usuarios inactivos.
+ *
+ * @property getStats Caso de uso para obtener estadísticas de la aplicación
+ * @property getInactiveUsers Caso de uso para obtener la lista de usuarios inactivos
  */
 @HiltViewModel
 class AdminViewModel @Inject constructor(
@@ -27,17 +30,29 @@ class AdminViewModel @Inject constructor(
     private val getInactiveUsers: GetInactiveUsersUseCase
 ) : ViewModel() {
 
+    /** Estado interno mutable de la UI */
     private val _uiState = MutableLiveData<AdminState>(AdminState.Loading)
+    
+    /** Estado observable de la UI */
     val uiState: LiveData<AdminState> = _uiState
 
+    /** Estadísticas actuales cargadas */
     private var currentStats: DomainStats? = null
+    
+    /** Tipo de gráfico actualmente seleccionado */
     private var currentChartType: Int = 0
+    
+    /** Rango de tiempo actualmente seleccionado para el gráfico */
     private var currentTimeRange: Int = 0
 
     init {
         loadData()
     }
 
+    /**
+     * Carga los datos iniciales necesarios para el panel de administración.
+     * Incluye la carga de usuarios inactivos y estadísticas de la aplicación.
+     */
     private fun loadData() {
         _uiState.value = AdminState.Loading
 
@@ -76,6 +91,12 @@ class AdminViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Maneja el evento de selección de un tipo de gráfico y rango de tiempo.
+     *
+     * @param chartType Tipo de gráfico seleccionado
+     * @param timeRange Rango de tiempo seleccionado
+     */
     fun onChartTypeSelected(chartType: Int, timeRange: Int) {
         currentChartType = chartType
         currentTimeRange = timeRange
@@ -89,6 +110,14 @@ class AdminViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Genera las entradas para el gráfico de barras según los parámetros proporcionados.
+     *
+     * @param stats Estadísticas a representar
+     * @param chartType Tipo de gráfico (inicios de sesión, interacciones, escaneos)
+     * @param timeRange Rango de tiempo para agrupar los datos
+     * @return Lista de entradas para el gráfico de barras
+     */
     private fun getChartEntries(
         stats: DomainStats,
         chartType: Int,
@@ -195,7 +224,6 @@ class AdminViewModel @Inject constructor(
                 }
             }
         }
-        
         return entries
     }
 
@@ -210,19 +238,33 @@ class AdminViewModel @Inject constructor(
         const val TIME_RANGE_LAST_7_DAYS = 1
         const val TIME_RANGE_LAST_30_DAYS = 2
         const val TIME_RANGE_LAST_12_MONTHS = 3
-
-        private const val HOUR_IN_MILLIS = 60 * 60 * 1000L
-        private const val DAY_IN_MILLIS = 24 * HOUR_IN_MILLIS
     }
 }
 
+/**
+ * Estado de la UI para el panel de administración.
+ */
 sealed class AdminState {
+    /**
+     * Estado de carga, mostrando un indicador de progreso
+     */
     object Loading : AdminState()
+    
+    /**
+     * Estado de error, mostrando un mensaje de error
+     */
+    data class Error(val error: DomainError) : AdminState()
+    
+    /**
+     * Estado de contenido cargado exitosamente.
+     *
+     * @property stats Estadísticas de la aplicación
+     * @property inactiveUsers Lista de usuarios inactivos
+     * @property chartEntries Datos para el gráfico
+     */
     data class Content(
         val stats: DomainStats,
-        val inactiveUsers: List<DomainUser> = emptyList(),
-        val chartEntries: MutableList<BarEntry> = mutableListOf()
+        val inactiveUsers: List<DomainUser>,
+        val chartEntries: List<BarEntry>
     ) : AdminState()
-
-    data class Error(val error: DomainError) : AdminState()
 }

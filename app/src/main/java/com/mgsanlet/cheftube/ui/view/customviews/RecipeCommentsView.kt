@@ -12,6 +12,19 @@ import com.mgsanlet.cheftube.databinding.ViewRecipeCommentsBinding
 import com.mgsanlet.cheftube.domain.model.DomainComment
 import com.mgsanlet.cheftube.ui.adapter.CommentAdapter
 
+/**
+ * Vista personalizada que muestra los comentarios de una receta.
+ *
+ * Proporciona funcionalidad para:
+ * - Mostrar/ocultar la sección de comentarios
+ * - Enviar nuevos comentarios
+ * - Reportar comentarios inapropiados
+ * - Modo administrador para gestionar comentarios
+ *
+ * @property context Contexto de la aplicación
+ * @property attrs Atributos XML personalizados
+ * @property defStyleAttr Estilo por defecto
+ */
 class RecipeCommentsView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -28,6 +41,12 @@ class RecipeCommentsView @JvmOverloads constructor(
         setUpListeners()
     }
 
+    /**
+     * Configura los listeners para los elementos interactivos de la vista.
+     *
+     * Incluye la lógica para expandir/contraer la sección de comentarios
+     * y actualizar el ícono del botón correspondientemente.
+     */
     private fun setUpListeners() {
         binding.expandToggleButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -41,6 +60,16 @@ class RecipeCommentsView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Establece la lista de comentarios a mostrar.
+     *
+     * Configura el adaptador del RecyclerView con los comentarios proporcionados.
+     * Si la lista está vacía, oculta el RecyclerView.
+     *
+     * @param comments Lista de comentarios a mostrar
+     * @param fragmentManager Gestor de fragmentos necesario para mostrar diálogos
+     * @param onCommentReportedListener Callback que se ejecuta cuando se reporta un comentario
+     */
     fun setComments(
         comments: List<DomainComment>,
         fragmentManager: FragmentManager,
@@ -63,6 +92,12 @@ class RecipeCommentsView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Establece el listener para el envío de comentarios.
+     *
+     * @param listener Función que se ejecuta cuando el usuario envía un comentario.
+     *                 Recibe como parámetro el texto del comentario.
+     */
     fun setOnCommentSentListener(listener: (String) -> Unit) {
         binding.sendCommentButton.setOnClickListener {
             val commentText = binding.commentEditText.text.toString()
@@ -71,6 +106,12 @@ class RecipeCommentsView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Establece el listener para el botón de expandir/contraer.
+     *
+     * @param listener Función que se ejecuta cuando se intenta expandir la vista
+     *                 (solo cuando la vista está contraída)
+     */
     fun setOnExpandDownClickListener(listener: () -> Unit) {
         binding.expandToggleButton.setOnClickListener {
             if (binding.commentsBody.isVisible) {
@@ -79,6 +120,12 @@ class RecipeCommentsView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Habilita el modo administrador en el adaptador de comentarios.
+     *
+     * Permite realizar acciones de administración como eliminar comentarios.
+     * Si el adaptador no está configurado, no realiza ninguna acción.
+     */
     fun setAdminMode() {
         try {
             val adapter = binding.commentRecycler.adapter as CommentAdapter

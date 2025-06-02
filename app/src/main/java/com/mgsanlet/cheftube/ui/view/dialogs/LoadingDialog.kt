@@ -16,10 +16,29 @@ import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.ui.util.dpToPx
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
 
+/**
+ * Diálogo de carga que muestra un indicador de progreso circular.
+ *
+ * Este diálogo no es cancelable por el usuario (no responde a toques ni al botón atrás)
+ * y se muestra sin título ni bordes, con un fondo transparente. Es útil para operaciones
+ * asíncronas que requieren que el usuario espere.
+ *
+ * @property context Contexto de la aplicación
+ */
 class LoadingDialog(private val context: Context) : DialogFragment() {
 
+    /** Vista raíz del diálogo */
     private lateinit var dialogView: View
 
+    /**
+     * Crea el diálogo con la configuración personalizada.
+     *
+     * Configura un diálogo no cancelable, sin título, con fondo transparente
+     * y un tamaño fijo para el indicador de progreso.
+     *
+     * @param savedInstanceState Estado guardado de la instancia anterior
+     * @return Diálogo configurado
+     */
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = MaterialAlertDialogBuilder(requireContext())
         dialogView = createDialogView()
@@ -55,6 +74,13 @@ class LoadingDialog(private val context: Context) : DialogFragment() {
         return dialog
     }
 
+    /**
+     * Crea la vista del diálogo de carga.
+     *
+     * Infla el layout del diálogo y configura el estilo del ProgressBar.
+     *
+     * @return Vista raíz del diálogo
+     */
     private fun createDialogView(): View {
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.dialog_loading, null, false)
@@ -64,13 +90,27 @@ class LoadingDialog(private val context: Context) : DialogFragment() {
     }
 
     companion object {
+        /**
+         * Etiqueta para identificar el diálogo en el FragmentManager.
+         */
         const val TAG = "loading_dialog"
 
+        /**
+         * Muestra el diálogo de carga.
+         *
+         * @param context Contexto de la aplicación
+         * @param supportFragmentManager Gestor de fragmentos donde se mostrará el diálogo
+         */
         fun show(context: Context, supportFragmentManager: FragmentManager) {
             val dialog = LoadingDialog(context)
             dialog.show(supportFragmentManager, TAG)
         }
 
+        /**
+         * Cierra el diálogo de carga si está visible.
+         *
+         * @param supportFragmentManager Gestor de fragmentos donde se mostró el diálogo
+         */
         fun dismiss(supportFragmentManager: FragmentManager) {
             try {
                 val dialog = supportFragmentManager.findFragmentByTag(TAG) as? LoadingDialog
@@ -78,7 +118,6 @@ class LoadingDialog(private val context: Context) : DialogFragment() {
                     dialog.dismissAllowingStateLoss()
                 }
             } catch (e: IllegalStateException) {
-                // Capturar y manejar la excepción si el estado del FragmentManager no es válido
                 e.printStackTrace()
             }
         }

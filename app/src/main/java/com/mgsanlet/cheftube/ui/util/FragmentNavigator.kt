@@ -5,21 +5,21 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 
 /**
- * Utility class to manage fragment transactions in an AppCompatActivity.
- * Provides methods for loading fragments into specified containers.
- *
- * @author MarioG
+ * Clase de utilidad para gestionar transacciones de fragmentos en una AppCompatActivity.
+ * Proporciona métodos para cargar fragmentos en contenedores específicos,
+ * manejando tanto fragmentos con argumentos como sin ellos.
  */
 object FragmentNavigator {
     /**
-     * Replaces the current fragment with a new fragment in the specified container.
-     * The new fragment will be added to the back stack.
-     * Should be used when no arguments are needed
+     * Reemplaza el fragmento actual con un nuevo fragmento en el contenedor especificado.
+     * El nuevo fragmento se añadirá a la pila de retroceso.
+     * Debe usarse cuando no se necesitan argumentos para el fragmento.
      *
-     * @param activity    The activity hosting the fragment transaction (can be null).
-     * @param thisFr      The current fragment (can be null).
-     * @param fragment    The fragment to be loaded.
-     * @param containerId The ID of the container in which the fragment will be placed.
+     * @param activity Actividad que aloja la transacción del fragmento (puede ser nulo).
+     * @param thisFr Fragmento actual (puede ser nulo).
+     * @param fragment Fragmento que se cargará.
+     * @param containerId ID del contenedor donde se colocará el fragmento.
+     * @throws IllegalStateException Si no se puede obtener un FragmentManager válido.
      */
     fun loadFragment(
         activity: AppCompatActivity?,
@@ -27,7 +27,7 @@ object FragmentNavigator {
         fragment: Fragment,
         containerId: Int
     ) {
-        // -Getting the FragmentManager for handling fragment transactions-
+        // Tomando el FragmentManager para manejar las transacciones de fragmentos
         val fragmentManager = configFrManager(activity, thisFr)
         check(fragmentManager != null) { "Bad use of FragmentNavigator.loadFragment()" }
 
@@ -39,21 +39,22 @@ object FragmentNavigator {
     }
 
     /**
-     * Replaces the current fragment with a new instance of the specified fragment
-     * in the given container. The fragment is added to the back stack.
-     * Should be used when arguments are needed
+     * Reemplaza el fragmento actual con una nueva instancia del fragmento especificado
+     * en el contenedor dado. El fragmento se añade a la pila de retroceso.
+     * Debe usarse cuando se necesitan argumentos para el fragmento.
      *
-     * @param activity    The activity hosting the fragment transaction (can be null).
-     * @param thisFr      The current fragment (can be null).
-     * @param fragment    The fragment to be loaded.
-     * @param containerId The ID of the container where the new fragment will be placed.
+     * @param activity Actividad que aloja la transacción del fragmento (puede ser nulo).
+     * @param thisFr Fragmento actual (puede ser nulo).
+     * @param fragment Instancia del fragmento que se cargará.
+     * @param containerId ID del contenedor donde se colocará el fragmento.
+     * @throws IllegalStateException Si no se puede obtener un FragmentManager válido.
      */
     fun loadFragmentInstance(
         activity: AppCompatActivity?,
         thisFr: Fragment?,
         fragment: Fragment, containerId: Int
     ) {
-        // -Getting the FragmentManager for handling fragment transactions-
+        // Tomando el FragmentManager para manejar las transacciones de fragmentos
         val fragmentManager = configFrManager(activity, thisFr)
         check(fragmentManager != null) { "Invalid use of FragmentNavigator.loadFragmentInstance()" }
 
@@ -65,12 +66,12 @@ object FragmentNavigator {
     }
 
     /**
-     * Configures and returns a FragmentManager instance based on the provided
-     * activity and current fragment.
+     * Configura y devuelve una instancia de FragmentManager basada en la actividad
+     * y el fragmento actual proporcionados.
      *
-     * @param activity The activity hosting the fragment transaction (can be null).
-     * @param thisFr   The current fragment (can be null).
-     * @return The FragmentManager instance for handling fragment transactions, or null if invalid.
+     * @param activity Actividad que aloja la transacción del fragmento (puede ser nulo).
+     * @param thisFr Fragmento actual (puede ser nulo).
+     * @return Instancia de FragmentManager para manejar transacciones de fragmentos, o null si no es válido.
      */
     private fun configFrManager(
         activity: AppCompatActivity?, thisFr: Fragment?

@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.flexbox.FlexboxLayout
@@ -24,7 +25,6 @@ import com.mgsanlet.cheftube.databinding.DialogReportBinding
 import com.mgsanlet.cheftube.databinding.FragmentRecipeDetailBinding
 import com.mgsanlet.cheftube.domain.model.DomainComment
 import com.mgsanlet.cheftube.ui.util.Constants.ARG_RECIPE
-import com.mgsanlet.cheftube.ui.util.Constants.URI_MAIL_TO_SCHEME
 import com.mgsanlet.cheftube.ui.util.FragmentNavigator
 import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.loadUrlToCircle
@@ -40,35 +40,75 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
-import androidx.core.net.toUri
 
 /**
- * Un fragmento que muestra los detalles de una receta, incluyendo su título, ingredientes,
- * pasos de preparación y un video incrustado (si está disponible). También incluye un temporizador de cuenta regresiva
- * para el tiempo de cocción o preparación.
+ * Fragmento que muestra los detalles completos de una receta.
+ *
+ * Este fragmento es responsable de:
+ * - Mostrar la información detallada de una receta (título, descripción, ingredientes, pasos)
+ * - Reproducir el video de la receta (si está disponible)
+ * - Gestionar un temporizador para el tiempo de cocción
+ * - Permitir la interacción con la receta (comentarios, favoritos, compartir)
+ * - Mostrar opciones adicionales para el autor o administradores (editar, eliminar)
+ *
+ * @constructor Crea una nueva instancia del fragmento de detalle de receta
  */
 @AndroidEntryPoint
 class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDetailBinding>() {
 
+    /** ViewModel que maneja la lógica de negocio del detalle de la receta. */
     private val viewModel: RecipeDetailViewModel by viewModels()
+    
+    /** Bandera para controlar la inicialización del toggle de favoritos. */
     private var isToggleInitialization: Boolean = true
+    
+    /** Trabajo en segundo plano para verificar el progreso de carga del video. */
     private var progressCheckJob: Job? = null
 
+    /**
+     * Se llama cuando el fragmento es visible para el usuario y está en primer plano.
+     * Reinicia la bandera de inicialización del toggle de favoritos.
+     */
     override fun onResume() {
         super.onResume()
         isToggleInitialization = true
     }
 
+    /**
+     * Infla y devuelve el binding para el layout del fragmento.
+     *
+     * @param inflater El LayoutInflater usado para inflar la vista
+     * @param container El ViewGroup padre al que se adjuntará la vista
+     * @return Instancia del binding inflado
+     */
     override fun inflateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
     ): FragmentRecipeDetailBinding = FragmentRecipeDetailBinding.inflate(inflater, container, false)
 
+    /**
+     * Se llama después de que la vista ha sido creada.
+     *
+     * Inicializa la vista y carga la receta utilizando el ID proporcionado en los argumentos.
+     *
+     * @param view La vista devuelta por onCreateView
+     * @param savedInstanceState Estado previamente guardado de la instancia
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Cargar la receta después de que el fragment esté creado
         viewModel.loadRecipe(arguments?.getString(ARG_RECIPE) ?: "")
     }
 
+    /**
+     * Configura los observadores para los estados del ViewModel.
+     *
+     * Maneja los diferentes estados de la UI:
+     * - Loading: Muestra un indicador de carga
+     * - Success: Muestra los detalles de la receta y configura la interfaz
+     * - Error: Muestra mensajes de error
+     * - DeleteSuccess: Maneja la eliminación exitosa de la receta
+     * - TimerState: Actualiza la interfaz según el estado del temporizador
+     */
     override fun setUpObservers() {
         viewModel.recipeState.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -149,6 +189,18 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
     }
 
+    /**
+     * Configura los listeners para los elementos de la interfaz de usuario.
+     * 
+     * Este método asigna los listeners a los siguientes elementos:
+     * - Botón de inicio/pausa del temporizador
+     * - Texto del temporizador para mostrar el diálogo de configuración
+     * - Toggle de favoritos
+     * - Botón de edición (solo visible para el autor)
+     * - Botón de compartir receta
+     * - Botón de reportar contenido inapropiado
+     * - Componente de comentarios
+     */
     override fun setUpListeners() {
         binding.startPauseButton.setOnClickListener {
             when (viewModel.timerState.value) {
@@ -223,11 +275,23 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
     }
 
+    /**
+     * Desplaza la vista hasta la sección de comentarios.
+     * 
+     * Este método es compatible con Android Q (API 29) y versiones posteriores.
+     * Utiliza el método `scrollToDescendant` para navegar hasta la vista de comentarios.
+     */
     @RequiresApi(Build.VERSION_CODES.Q)
     fun scrollToCommentsView() {
         binding.scrollView.scrollToDescendant(binding.commentsView)
     }
 
+    /**
+     * Configura el listener para el tag del autor.
+     * 
+     * @param authorId ID del autor de la receta. Si está vacío, no se configurará el listener.
+     * Al hacer clic en el tag del autor, se navegará al perfil correspondiente.
+     */
     fun setAuthorTagListener(authorId: String) {
         binding.authorTag.setOnClickListener {
             if (authorId.isBlank()) return@setOnClickListener
@@ -242,6 +306,13 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
     }
 
+    /**
+     * Oculta el indicador de progreso cuando el video ha terminado de cargarse.
+     * 
+     * Este método inicia una corrutina que verifica periódicamente el progreso de carga
+     * del video. Cuando el progreso alcanza el 100%, oculta el indicador de carga.
+     * La verificación se realiza cada 200ms.
+     */
     private fun hideProgressWhenVideoLoaded() {
         // Cancel any existing progress check
         progressCheckJob?.cancel()
@@ -258,6 +329,11 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
     }
 
     @SuppressLint("SetJavaScriptEnabled")
+    /**
+     * Establece los detalles de la receta en la interfaz de usuario.
+     *
+     * @param recipe Objeto Recipe con la información a mostrar
+     */
     private fun setRecipeDetails(recipe: Recipe) {
         if (recipe.author == null) {
             binding.authorTag.visibility = View.GONE
@@ -291,6 +367,14 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         fillComments(recipe)
     }
 
+    /**
+     * Rellena el contenedor de categorías con las etiquetas correspondientes.
+     * 
+     * Crea dinámicamente TextViews para cada categoría de la receta y los añade
+     * al contenedor FlexboxLayout con el formato adecuado.
+     * 
+     * @param recipe Objeto Recipe que contiene las categorías a mostrar
+     */
     @SuppressLint("SetTextI18n") // No es necesario traducir #
     private fun fillCategories(recipe: Recipe) {
         binding.categoryContainer.removeAllViews()
@@ -321,6 +405,14 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
     }
 
+    /**
+     * Rellena el contenedor de ingredientes con la lista de ingredientes de la receta.
+     * 
+     * Crea dinámicamente TextViews para cada ingrediente y los añade al LinearLayout.
+     * Asegura que no haya duplicados limpiando las vistas existentes antes de añadir las nuevas.
+     * 
+     * @param recipe Objeto Recipe que contiene los ingredientes a mostrar
+     */
     private fun fillIngredients(recipe: Recipe) {
         binding.ingredientsLinearLayout.removeAllViews()
         for (ingredient in recipe.ingredients) {
@@ -338,6 +430,14 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
     }
 
+    /**
+     * Rellena el contenedor de pasos con las instrucciones de la receta.
+     * 
+     * Crea dinámicamente TextViews numerados para cada paso de la receta
+     * y los añade al LinearLayout correspondiente.
+     * 
+     * @param recipe Objeto Recipe que contiene los pasos a mostrar
+     */
     private fun fillSteps(recipe: Recipe) {
         var index = 1
         binding.stepsLinearLayout.removeAllViews()
@@ -357,6 +457,14 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
     }
 
+    /**
+     * Configura y muestra los comentarios de la receta.
+     * 
+     * Utiliza el componente CommentsView para mostrar los comentarios existentes
+     * y configurar el listener para reportar comentarios inapropiados.
+     * 
+     * @param recipe Objeto Recipe que contiene los comentarios a mostrar
+     */
     private fun fillComments(recipe: Recipe) {
         binding.commentsView.setComments(
             recipe.comments,
@@ -367,6 +475,14 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         )
     }
 
+    /**
+     * Prepara y comparte la receta a través de una aplicación externa.
+     * 
+     * Crea un texto formateado con todos los detalles de la receta y lo comparte
+     * a través del selector de aplicaciones de Android.
+     * 
+     * @param recipe Objeto Recipe que contiene la información a compartir
+     */
     private fun shareRecipe(recipe: Recipe) {
         val shareText = buildString {
             // Título y encabezado
@@ -420,6 +536,12 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         startActivity(Intent.createChooser(shareIntent, getString(R.string.share_recipe_using)))
     }
 
+    /**
+     * Formatea la duración de la receta en un String legible.
+     * 
+     * @param recipe Objeto Recipe que contiene la duración a formatear
+     * @return String formateado que representa la duración (ej: "2h 30min", "45min")
+     */
     private fun getFormattedRecipeDuration(recipe: Recipe): String {
         val currentHours = recipe.durationMinutes / 60
         val currentMinutes = recipe.durationMinutes % 60
@@ -434,6 +556,12 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
     }
 
+    /**
+     * Extrae el ID de un video de YouTube a partir de una URL de incrustación.
+     * 
+     * @param url URL de incrustación del video de YouTube
+     * @return ID del video de YouTube o null si no se puede extraer
+     */
     private fun extractYouTubeIdFromEmbed(url: String): String? {
         return url.substringAfter("embed/").substringBefore("?")
     }
@@ -487,6 +615,11 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
     }
 
+    /**
+     * Muestra u oculta el indicador de carga.
+     *
+     * @param show true para mostrar el indicador de carga, false para ocultarlo
+     */
     private fun showLoading(show: Boolean) {
         if (show) {
             binding.recipeContent.visibility = View.GONE
@@ -497,6 +630,12 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
     }
 
+    /**
+     * Muestra un diálogo para reportar contenido inapropiado.
+     * 
+     * @param reportedEntity Entidad a reportar (puede ser una Recipe o un DomainComment).
+     *                      Si no es de un tipo soportado, el diálogo no se mostrará.
+     */
     private fun showReportDialog(reportedEntity: Any) {
         if (reportedEntity !is Recipe && reportedEntity !is DomainComment) return
 
@@ -556,6 +695,12 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         dialog.show()
     }
 
+    /**
+     * Prepara y envía un correo electrónico de reporte.
+     * 
+     * @param reportedEntity Entidad reportada (Recipe o DomainComment)
+     * @param reason Razón del reporte seleccionada por el usuario
+     */
     private fun sendReportEmail(reportedEntity: Any, reason: String) {
         var email = ""
         var subject = ""
@@ -599,6 +744,13 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
         }
     }
 
+    /**
+     * Se llama cuando la vista del fragmento está a punto de ser destruida.
+     * 
+     * Realiza la limpieza de recursos como:
+     * - Cancela el trabajo en segundo plano de verificación de progreso
+     * - Cierra el diálogo de carga si está visible
+     */
     override fun onDestroyView() {
         progressCheckJob?.cancel()
         progressCheckJob = null
@@ -608,6 +760,12 @@ class RecipeDetailFragment @Inject constructor() : BaseFragment<FragmentRecipeDe
 
     companion object {
 
+        /**
+         * Crea una nueva instancia del fragmento con el ID de la receta como argumento.
+         * 
+         * @param recipeId ID de la receta a mostrar
+         * @return Nueva instancia de RecipeDetailFragment configurada con el ID proporcionado
+         */
         fun newInstance(recipeId: String): RecipeDetailFragment {
             val fragment = RecipeDetailFragment()
             val args = Bundle()

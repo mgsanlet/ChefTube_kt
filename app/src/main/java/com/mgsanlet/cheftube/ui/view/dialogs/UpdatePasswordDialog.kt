@@ -14,23 +14,61 @@ import com.mgsanlet.cheftube.ui.view.home.EditProfileFragment
 import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileState
 import com.mgsanlet.cheftube.ui.viewmodel.home.ProfileViewModel
 
+/**
+ * Tipo de alias para la función de callback que se ejecuta cuando la contraseña se actualiza exitosamente.
+ */
 typealias OnPasswordUpdatedListener = () -> Unit
 
+/**
+ * Diálogo para actualizar la contraseña del usuario actual.
+ *
+ * Permite al usuario cambiar su contraseña actual por una nueva, validando que:
+ * - La contraseña actual sea correcta
+ * - La nueva contraseña cumpla con los requisitos de seguridad
+ * - La confirmación de la nueva contraseña coincida
+ *
+ * Se comunica con [ProfileViewModel] para realizar la operación y notifica a través
+ * de un callback cuando se completa exitosamente.
+ *
+ * @property fragment Fragmento padre que contiene este diálogo
+ */
 class UpdatePasswordDialog(val fragment: EditProfileFragment) : BaseAccountDialog() {
 
+    /** ViewModel que maneja la lógica de perfil del usuario */
     private val viewModel: ProfileViewModel by activityViewModels()
+    
+    /** Listener que se ejecuta cuando la contraseña se actualiza exitosamente */
     private var onPasswordUpdatedListener: OnPasswordUpdatedListener? = null
 
+    /** Campo para la contraseña actual */
     private lateinit var currentPasswordEditText: EditText
+    
+    /** Campo para la nueva contraseña */
     private lateinit var newPasswordEditText: EditText
+    
+    /** Campo para confirmar la nueva contraseña */
     private lateinit var confirmPasswordEditText: EditText
+    
+    /** Botón para guardar los cambios */
     private lateinit var saveButton: Button
+    
+    /** Botón para cancelar la operación */
     private lateinit var cancelButton: Button
 
+    /**
+     * Establece el listener que se ejecutará cuando la contraseña se actualice exitosamente.
+     *
+     * @param listener Función sin parámetros que se ejecutará al actualizar la contraseña
+     */
     fun setOnPasswordUpdatedListener(listener: OnPasswordUpdatedListener) {
         onPasswordUpdatedListener = listener
     }
 
+    /**
+     * Crea y configura la vista del diálogo de actualización de contraseña.
+     *
+     * @return Vista raíz del diálogo
+     */
     @SuppressLint("InflateParams")
     override fun createDialogView(): View {
         val inflater = LayoutInflater.from(fragment.requireContext())
@@ -45,6 +83,10 @@ class UpdatePasswordDialog(val fragment: EditProfileFragment) : BaseAccountDialo
         return view
     }
 
+    /**
+     * Configura los listeners para los elementos interactivos del diálogo.
+     * Incluye la validación de campos y el manejo de la lógica de actualización.
+     */
     override fun setupListeners() {
 
         saveButton.setOnClickListener {
@@ -90,6 +132,12 @@ class UpdatePasswordDialog(val fragment: EditProfileFragment) : BaseAccountDialo
         cancelButton.setOnClickListener { dismiss() }
     }
 
+    /**
+     * Inicia el proceso de actualización de contraseña.
+     *
+     * @param currentPassword Contraseña actual del usuario
+     * @param newPassword Nueva contraseña a establecer
+     */
     private fun updatePassword(currentPassword: String, newPassword: String) {
 
         viewModel.updateUserPassword(
@@ -132,6 +180,11 @@ class UpdatePasswordDialog(val fragment: EditProfileFragment) : BaseAccountDialo
         }
     }
 
+    /**
+     * Muestra u oculta el indicador de carga y actualiza el estado de los botones.
+     *
+     * @param show true para mostrar el indicador de carga, false para ocultarlo
+     */
     override fun showLoading(show: Boolean) {
         super.showLoading(show)
         saveButton.isEnabled = !show
@@ -139,6 +192,9 @@ class UpdatePasswordDialog(val fragment: EditProfileFragment) : BaseAccountDialo
     }
 
     companion object {
+        /**
+         * Etiqueta para identificar el diálogo en los logs y transacciones de fragmentos.
+         */
         const val TAG = "UpdatePasswordDialog"
     }
 }

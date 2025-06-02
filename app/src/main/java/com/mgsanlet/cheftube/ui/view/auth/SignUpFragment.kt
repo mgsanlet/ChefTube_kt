@@ -1,7 +1,6 @@
 package com.mgsanlet.cheftube.ui.view.auth
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
@@ -13,7 +12,6 @@ import com.mgsanlet.cheftube.ui.util.afterTextChanged
 import com.mgsanlet.cheftube.ui.util.asMessage
 import com.mgsanlet.cheftube.ui.util.hideKeyboard
 import com.mgsanlet.cheftube.ui.util.matches
-import com.mgsanlet.cheftube.ui.util.setCustomStyle
 import com.mgsanlet.cheftube.ui.util.showWithCustomStyle
 import com.mgsanlet.cheftube.ui.view.base.BaseFormFragment
 import com.mgsanlet.cheftube.ui.view.dialogs.LoadingDialog
@@ -23,19 +21,38 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 /**
- * Un fragmento responsable de manejar el proceso de registro de usuario.
- * Este fragmento permite al usuario registrarse proporcionando un nombre,
- * correo electrónico y contraseña.
+ * Fragmento que maneja el proceso de registro de nuevos usuarios en la aplicación.
+ * Permite a los usuarios crear una cuenta proporcionando nombre, correo electrónico
+ * y contraseña, con validaciones en tiempo real.
+ *
+ * Este fragmento implementa [BaseFormFragment] para el manejo de formularios y utiliza
+ * [SignUpViewModel] para la lógica de negocio relacionada con el registro.
  */
 @AndroidEntryPoint
 class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBinding>() {
 
+    /** ViewModel que maneja la lógica de registro de usuarios. */
     private val viewModel: SignUpViewModel by viewModels()
 
+    /**
+     * Infla el binding del layout del fragmento de registro.
+     *
+     * @param inflater LayoutInflater usado para inflar la vista
+     * @param container Contenedor padre de la vista
+     * @return Instancia del binding inflado
+     */
     override fun inflateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
     ): FragmentSignUpBinding = FragmentSignUpBinding.inflate(inflater, container, false)
 
+    /**
+     * Configura los observadores para los cambios de estado de la UI.
+     * Maneja los diferentes estados del proceso de registro:
+     * - Initial: Estado inicial del formulario
+     * - Loading: Muestra indicador de carga
+     * - Success: Muestra mensaje de éxito
+     * - Error: Muestra mensajes de error específicos para cada campo
+     */
     override fun setUpObservers() {
         viewModel.uiState.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -87,6 +104,10 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
         }
     }
 
+    /**
+     * Muestra un Snackbar de éxito cuando el registro es exitoso.
+     * Incluye un botón para iniciar sesión.
+     */
     private fun showSuccessSnackBar() {
         val snackbar = Snackbar.make(
             binding.root, getString(R.string.account_created), Snackbar.LENGTH_INDEFINITE
@@ -97,6 +118,12 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
         snackbar.showWithCustomStyle(requireContext())
     }
 
+    /**
+     * Configura los listeners de los elementos de la interfaz de usuario.
+     * - Botón de guardar: Valida y envía los datos del formulario
+     * - Campos de texto: Limpian los errores al editar
+     * - Botón de volver: Navega a la pantalla anterior
+     */
     override fun setUpListeners() {
         binding.saveButton.setOnClickListener {
             view?.hideKeyboard()
@@ -118,6 +145,12 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
         }
     }
 
+    /**
+     * Valida que los campos obligatorios del formulario no estén vacíos
+     * y que las contraseñas coincidan.
+     *
+     * @return true si la validación es exitosa, false en caso contrario
+     */
     override fun isValidViewInput(): Boolean {
         val requiredFields = listOf(
             binding.nameEditText,
@@ -129,7 +162,10 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
     }
 
     /**
-     * Verifica que las contraseñas coincidan
+     * Verifica que las contraseñas ingresadas coincidan.
+     * Muestra un mensaje de error si no coinciden.
+     *
+     * @return true si las contraseñas coinciden, false en caso contrario
      */
     private fun passwordsMatch(): Boolean {
         val isMatch = binding.password1EditText.matches(binding.password2EditText)
@@ -137,6 +173,10 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
         return isMatch
     }
 
+    /**
+     * Limpia todos los campos del formulario.
+     * Se utiliza al reiniciar el formulario o después de un registro exitoso.
+     */
     private fun clearFields() {
         binding.nameEditText.text.clear()
         binding.emailEditText.text.clear()
@@ -144,6 +184,10 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
         binding.password2EditText.text.clear()
     }
 
+    /**
+     * Limpia los mensajes de error de todos los campos del formulario.
+     * Se llama al editar cualquier campo o al reiniciar el formulario.
+     */
     private fun cleanErrors() {
         binding.nameEditText.error = null
         binding.emailEditText.error = null
@@ -151,6 +195,11 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
         binding.password2EditText.error = null
     }
 
+    /**
+     * Muestra u oculta el diálogo de carga durante el proceso de registro.
+     *
+     * @param show true para mostrar el diálogo de carga, false para ocultarlo
+     */
     fun showLoading(show: Boolean) {
         if (show) {
             LoadingDialog.show(requireContext(), parentFragmentManager)
@@ -159,6 +208,10 @@ class SignUpFragment @Inject constructor() : BaseFormFragment<FragmentSignUpBind
         }
     }
 
+    /**
+     * Se llama cuando la vista del fragmento está a punto de ser destruida.
+     * Asegura que el diálogo de carga se cierre para evitar memory leaks.
+     */
     override fun onDestroyView() {
         LoadingDialog.dismiss(parentFragmentManager)
         super.onDestroyView()

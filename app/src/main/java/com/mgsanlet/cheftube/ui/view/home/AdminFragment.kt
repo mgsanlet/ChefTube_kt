@@ -8,15 +8,20 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.mikephil.charting.animation.Easing
+import com.github.mikephil.charting.components.Legend.LegendHorizontalAlignment
+import com.github.mikephil.charting.components.Legend.LegendOrientation
+import com.github.mikephil.charting.components.Legend.LegendVerticalAlignment
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
+import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.data.BarEntry
 import com.google.android.material.snackbar.Snackbar
 import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.FragmentAdminBinding
@@ -34,33 +39,56 @@ import com.mgsanlet.cheftube.ui.viewmodel.home.AdminViewModel
 import com.mgsanlet.cheftube.ui.viewmodel.home.AdminViewModel.Companion.CHART_TYPE_INTERACTIONS
 import com.mgsanlet.cheftube.ui.viewmodel.home.AdminViewModel.Companion.CHART_TYPE_LOGINS
 import com.mgsanlet.cheftube.ui.viewmodel.home.AdminViewModel.Companion.CHART_TYPE_SCANS
-import com.mgsanlet.cheftube.ui.viewmodel.home.AdminViewModel.Companion.TIME_RANGE_LAST_24H
-import com.mgsanlet.cheftube.ui.viewmodel.home.AdminViewModel.Companion.TIME_RANGE_LAST_7_DAYS
-import com.mgsanlet.cheftube.ui.viewmodel.home.AdminViewModel.Companion.TIME_RANGE_LAST_30_DAYS
 import com.mgsanlet.cheftube.ui.viewmodel.home.AdminViewModel.Companion.TIME_RANGE_LAST_12_MONTHS
+import com.mgsanlet.cheftube.ui.viewmodel.home.AdminViewModel.Companion.TIME_RANGE_LAST_24H
+import com.mgsanlet.cheftube.ui.viewmodel.home.AdminViewModel.Companion.TIME_RANGE_LAST_30_DAYS
+import com.mgsanlet.cheftube.ui.viewmodel.home.AdminViewModel.Companion.TIME_RANGE_LAST_7_DAYS
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
-import androidx.core.graphics.toColorInt
-import com.github.mikephil.charting.animation.Easing
-import com.github.mikephil.charting.components.Legend.LegendHorizontalAlignment
-import com.github.mikephil.charting.components.Legend.LegendOrientation
-import com.github.mikephil.charting.components.Legend.LegendVerticalAlignment
 
+/**
+ * Fragmento que muestra el panel de administración para usuarios con rol de administrador.
+ *
+ * Este fragmento es responsable de:
+ * - Mostrar estadísticas de uso de la aplicación (inicios de sesión, interacciones, escaneos)
+ * - Gestionar usuarios inactivos (aprobar/rechazar cuentas)
+ * - Visualizar datos en gráficos interactivos
+ *
+ * @constructor Crea una nueva instancia del fragmento de administración
+ */
 @AndroidEntryPoint
 class AdminFragment : BaseFragment<FragmentAdminBinding>() {
 
     private val viewModel: AdminViewModel by viewModels()
 
     private lateinit var inactiveUsersAdapter: InactiveUsersAdapter
-    
+
     private var currentChartType = CHART_TYPE_LOGINS
     private var currentTimeRange = TIME_RANGE_LAST_24H
 
+    /**
+     * Infla y devuelve el binding para el layout del fragmento.
+     *
+     * @param inflater El LayoutInflater usado para inflar la vista
+     * @param container El ViewGroup padre al que se adjuntará la vista
+     * @return Instancia del binding inflado
+     */
     override fun inflateViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
     ): FragmentAdminBinding = FragmentAdminBinding.inflate(inflater, container, false)
 
+    /**
+     * Se llama después de que la vista ha sido creada.
+     * 
+     * Inicializa los componentes de la interfaz de usuario:
+     * - Configura los spinners para selección de gráfico y rango de tiempo
+     * - Prepara el gráfico de estadísticas
+     * - Configura la lista de usuarios inactivos
+     * 
+     * @param view La vista raíz del fragmento
+     * @param savedInstanceState Estado previamente guardado de la instancia
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpSpinners()
@@ -68,6 +96,12 @@ class AdminFragment : BaseFragment<FragmentAdminBinding>() {
         setUpInactiveUsersList()
     }
     
+    /**
+     * Configura los spinners para la selección de tipo de gráfico y rango de tiempo.
+     * 
+     * Inicializa los adaptadores y establece los listeners para detectar cambios
+     * en la selección del usuario.
+     */
     private fun setUpSpinners() {
 
         binding.spinnerChartType.adapter = BaseSpinnerAdapter(
@@ -109,6 +143,15 @@ class AdminFragment : BaseFragment<FragmentAdminBinding>() {
         }
     }
     
+    /**
+     * Configura el gráfico de estadísticas con las propiedades básicas.
+     * 
+     * Establece la apariencia del gráfico, incluyendo:
+     * - Ejes X e Y
+     * - Leyenda
+     * - Descripción
+     * - Comportamiento de zoom y desplazamiento
+     */
     private fun setUpChart() {
         with(binding.chart) {
             description.isEnabled = false
@@ -129,7 +172,7 @@ class AdminFragment : BaseFragment<FragmentAdminBinding>() {
                 textColor = Color.WHITE
                 textSize = 10f
                 axisLineColor = Color.WHITE
-                gridColor = "#4DFFFFFF".toColorInt() // 30% white for grid
+                gridColor = "#4DFFFFFF".toColorInt()
                 
                 // Configurar valores redondos en el eje Y
                 setLabelCount(6, true) // Mostrar 6 etiquetas
@@ -198,6 +241,12 @@ class AdminFragment : BaseFragment<FragmentAdminBinding>() {
         }
     }
     
+    /**
+     * Configura la lista de usuarios inactivos.
+     * 
+     * Inicializa el adaptador, configura el RecyclerView y carga la lista
+     * de usuarios pendientes de aprobación.
+     */
     private fun setUpInactiveUsersList() {
         binding.recyclerInactiveUsers.apply {
             inactiveUsersAdapter = InactiveUsersAdapter()
@@ -208,7 +257,16 @@ class AdminFragment : BaseFragment<FragmentAdminBinding>() {
             minimumHeight = 0
         }
     }
+
     
+    /**
+     * Configura los observadores del ViewModel para reaccionar a los cambios de estado.
+     * 
+     * Los estados manejados son:
+     * - Loading: Muestra el indicador de carga
+     * - Content: Actualiza la interfaz con los datos recibidos
+     * - Error: Muestra un mensaje de error al usuario
+     */
     override fun setUpObservers() {
         viewModel.uiState.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -236,10 +294,23 @@ class AdminFragment : BaseFragment<FragmentAdminBinding>() {
     }
 
     
+    /**
+     * Notifica al ViewModel sobre el cambio en el tipo de gráfico o rango de tiempo seleccionado.
+     * 
+     * Esta función se llama cada vez que el usuario selecciona un nuevo tipo de gráfico
+     * o un nuevo rango de tiempo en los spinners correspondientes.
+     */
     private fun updateChartType() {
         viewModel.onChartTypeSelected(currentChartType, currentTimeRange)
     }
 
+    /**
+     * Calcula los valores óptimos para el eje Y del gráfico.
+     * 
+     * @param maxValue El valor máximo que debe mostrarse en el eje Y
+     * @return Un par de valores donde el primer elemento es el tamaño del paso (granularidad)
+     *         y el segundo es el valor máximo redondeado al siguiente múltiplo del paso.
+     */
     private fun calculateYAxisValues(maxValue: Float): Pair<Float, Float> {
         val step = when {
             maxValue <= 10 -> 1f
@@ -262,6 +333,13 @@ class AdminFragment : BaseFragment<FragmentAdminBinding>() {
         return step to maxOf(roundedMax, step)  // Asegurar al menos un paso
     }
 
+    /**
+     * Actualiza el contenido del gráfico con nuevos datos.
+     * 
+     * @param entries Lista de entradas de datos para el gráfico. Cada entrada contiene
+     *                el valor en el eje X, el valor en el eje Y y los datos asociados.
+     *                Si la lista está vacía, se limpiará el gráfico actual.
+     */
     private fun updateChartContent(entries: List<BarEntry>) {
         if (entries.isEmpty()) {
             binding.chart.clear()
@@ -401,6 +479,12 @@ class AdminFragment : BaseFragment<FragmentAdminBinding>() {
         }
     }
     
+    /**
+     * Actualiza las estadísticas mostradas en la interfaz de usuario.
+     * 
+     * @param stats Objeto que contiene las estadísticas de la aplicación
+     * @param inactiveUsers Número de usuarios inactivos que requieren aprobación
+     */
     private fun updateStats(stats: DomainStats, inactiveUsers: Int) {
         // Actualizar estadísticas generales
         binding.apply {
@@ -413,6 +497,12 @@ class AdminFragment : BaseFragment<FragmentAdminBinding>() {
         }
     }
     
+    /**
+     * Actualiza la lista de usuarios inactivos en la interfaz de usuario.
+     * 
+     * @param users Lista de usuarios inactivos. Si la lista está vacía,
+     *              se ocultará la sección de usuarios inactivos.
+     */
     private fun updateInactiveUsers(users: List<DomainUser>) {
         val isVisible = users.isNotEmpty()
         binding.apply {
@@ -426,6 +516,12 @@ class AdminFragment : BaseFragment<FragmentAdminBinding>() {
         }
     }
 
+    /**
+     * Ajusta dinámicamente la altura del RecyclerView según el número de elementos.
+     * 
+     * @param itemCount Número de elementos en la lista. Si es 0, la altura se establecerá a 0.
+     *                 Si hay elementos, se mostrarán hasta 3 elementos con desplazamiento.
+     */
     private fun updateRecyclerViewHeight(itemCount: Int) {
         if (itemCount == 0) {
             binding.recyclerInactiveUsers.layoutParams.height = 0
@@ -446,6 +542,11 @@ class AdminFragment : BaseFragment<FragmentAdminBinding>() {
         binding.recyclerInactiveUsers.requestLayout()
     }
     
+    /**
+     * Muestra u oculta el diálogo de carga.
+     * 
+     * @param show `true` para mostrar el diálogo de carga, `false` para ocultarlo.
+     */
     private fun showLoading(show: Boolean) {
         if (show) {
             LoadingDialog.show(requireContext(), parentFragmentManager)
@@ -454,10 +555,20 @@ class AdminFragment : BaseFragment<FragmentAdminBinding>() {
         }
     }
     
+    /**
+     * Muestra un mensaje de error al usuario.
+     * 
+     * @param message El mensaje de error a mostrar.
+     */
     private fun showError(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
     }
     
+    /**
+     * Se llama cuando la vista del fragmento está a punto de ser destruida.
+     * 
+     * Aquí se realizan tareas de limpieza como cerrar diálogos abiertos.
+     */
     override fun onDestroyView() {
         LoadingDialog.dismiss(parentFragmentManager)
         super.onDestroyView()

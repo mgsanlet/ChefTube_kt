@@ -23,6 +23,21 @@ import kotlinx.coroutines.yield
 import javax.inject.Inject
 import com.mgsanlet.cheftube.domain.model.DomainRecipe as Recipe
 
+/**
+ * ViewModel para la pantalla de detalle de receta.
+ *
+ * Maneja la lógica relacionada con la visualización y gestión de recetas,
+ * incluyendo la carga de datos, gestión de favoritos, comentarios,
+ * temporizador de cocina y operaciones CRUD sobre la receta.
+ *
+ * @property getRecipeById Caso de uso para obtener una receta por su ID
+ * @property getCurrentUserData Caso de uso para obtener datos del usuario actual
+ * @property alternateFavouriteRecipe Caso de uso para alternar favorito
+ * @property postComment Caso de uso para publicar un comentario
+ * @property isCurrentUserAdminUseCase Caso de uso para verificar rol de administrador
+ * @property deleteRecipeUseCase Caso de uso para eliminar una receta
+ * @property deleteCommentUseCase Caso de uso para eliminar un comentario
+ */
 @HiltViewModel
 class RecipeDetailViewModel @Inject constructor(
     private val getRecipeById: GetRecipeByIdUseCase,
@@ -34,27 +49,43 @@ class RecipeDetailViewModel @Inject constructor(
     private val deleteCommentUseCase: DeleteCommentUseCase
 ) : ViewModel() {
 
+    /** Estado interno mutable de la receta */
     private val _recipeState = MutableLiveData<RecipeState>()
+    
+    /** Estado observable de la receta */
     val recipeState: LiveData<RecipeState> = _recipeState
 
+    /** ID del autor de la receta */
     var authorId: String? = null
 
+    /** Indica si la receta está marcada como favorita */
     var isFavourite: Boolean = false
+    
+    /** Indica si el usuario actual es el autor de la receta */
     var isRecipeByAuthor: Boolean = false
 
-
-    // Estado del cronómetro
+    /** Temporizador para el modo de cocina */
     private var _timer: CountDownTimer? = null
 
+    /** Tiempo restante en milisegundos */
     var timeLeftInMillis: Long = 0
 
+    /** Estado interno del rol de administrador */
     private val _isUserAdmin = MutableLiveData<Boolean>()
+    
+    /** Estado observable que indica si el usuario es administrador */
     val isUserAdmin: LiveData<Boolean> = _isUserAdmin
 
+    /** Estado interno del temporizador */
     private val _timerState = MutableLiveData<TimerState>()
+    
+    /** Estado observable del temporizador */
     val timerState: LiveData<TimerState> = _timerState
 
+    /** Tiempo restante formateado */
     private val _timeLeft = MutableLiveData<String>()
+    
+    /** Tiempo restante formateado como String */
     val timeLeft: LiveData<String> = _timeLeft
 
     init {
@@ -62,6 +93,12 @@ class RecipeDetailViewModel @Inject constructor(
         isCurrentUserAdmin()
     }
 
+    /**
+     * Carga los datos de una receta por su ID.
+     * Actualiza el estado de la UI según el resultado.
+     *
+     * @param recipeId ID de la receta a cargar
+     */
     fun loadRecipe(recipeId: String) {
         viewModelScope.launch {
             try {
@@ -97,13 +134,23 @@ class RecipeDetailViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Establece el tiempo inicial del temporizador.
+     *
+     * @param timeInMillis Tiempo en milisegundos
+     */
     fun setTime(timeInMillis: Long) {
         timeLeftInMillis = timeInMillis
         _timeLeft.value = formatTime(timeInMillis)
         _timerState.value = TimerState.Initial
     }
 
-    // Métodos públicos para controlar el cronómetro
+    /**
+     * Inicia el temporizador con el tiempo especificado.
+     * Si ya hay un temporizador en ejecución, lo cancela primero.
+     *
+     * @param timeInMillis Tiempo en milisegundos para el temporizador
+     */
     fun startTimer(timeInMillis: Long) {
         if (timeLeftInMillis < 1000) return
 
@@ -124,6 +171,10 @@ class RecipeDetailViewModel @Inject constructor(
         _timerState.value = TimerState.Running
     }
 
+    /**
+     * Pausa el temporizador actual.
+     * Mantiene el tiempo restante para poder reanudar más tarde.
+     */
     fun pauseTimer() {
         _timer?.cancel()
         _timer = null
@@ -131,6 +182,12 @@ class RecipeDetailViewModel @Inject constructor(
         _timerState.value = TimerState.Paused
     }
 
+    /**
+     * Formatea el tiempo en milisegundos a un string legible (MM:SS).
+     *
+     * @param millis Tiempo en milisegundos
+     * @return String formateado como MM:SS
+     */
     @SuppressLint("DefaultLocale")
     private fun formatTime(millis: Long): String {
         val minutes = (millis / 1000).toInt() / 60
@@ -138,6 +195,11 @@ class RecipeDetailViewModel @Inject constructor(
         return String.format("%02d:%02d", minutes, seconds)
     }
 
+    /**
+     * Alterna el estado de favorito de la receta actual.
+     *
+     * @param favourite true para marcar como favorito, false para quitar de favoritos
+     */
     fun alternateFavourite(favourite: Boolean) {
         if (_recipeState.value is RecipeState.Success) {
             val recipe = (_recipeState.value as RecipeState.Success).recipe
@@ -160,6 +222,10 @@ class RecipeDetailViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Verifica si el usuario actual tiene rol de administrador.
+     * Actualiza el estado [isUserAdmin] con el resultado.
+     */
     fun isCurrentUserAdmin() {
         viewModelScope.launch {
             isCurrentUserAdminUseCase().fold(
@@ -169,6 +235,12 @@ class RecipeDetailViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Verifica si la receta está marcada como favorita por el usuario actual.
+     *
+     * @param recipeId ID de la receta a verificar
+     * @return true si la receta es favorita, false en caso contrario
+     */
     internal suspend fun isRecipeFavourite(recipeId: String): Boolean {
         return getCurrentUserData().fold(
             onSuccess = { user -> user.favouriteRecipes.contains(recipeId) },
@@ -179,6 +251,12 @@ class RecipeDetailViewModel @Inject constructor(
         )
     }
 
+    /**
+     * Verifica si el usuario actual es el autor de la receta.
+     *
+     * @param recipeId ID de la receta a verificar
+     * @return true si el usuario es el autor, false en caso contrario
+     */
     internal suspend fun isRecipeByAuthor(recipeId: String): Boolean {
         return getCurrentUserData().fold(
             onSuccess = { user -> user.createdRecipes.contains(recipeId) },
@@ -189,6 +267,11 @@ class RecipeDetailViewModel @Inject constructor(
         )
     }
 
+    /**
+     * Publica un nuevo comentario en la receta actual.
+     *
+     * @param comment Contenido del comentario a publicar
+     */
     fun postComment(comment: String) {
         if (_recipeState.value is RecipeState.Success) {
             viewModelScope.launch {
@@ -217,6 +300,12 @@ class RecipeDetailViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Elimina la receta actual.
+     * Actualiza el estado a [RecipeState.DeleteSuccess] si tiene éxito.
+     *
+     * @param recipe Receta a eliminar
+     */
     fun deleteRecipe(recipe: Recipe) {
         viewModelScope.launch {
             deleteRecipeUseCase(recipe.id).fold(
@@ -228,6 +317,12 @@ class RecipeDetailViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Elimina un comentario de la receta actual.
+     * Actualiza el estado con la receta actualizada si tiene éxito.
+     *
+     * @param comment Comentario a eliminar
+     */
     fun deleteComment(comment: DomainComment) {
         if (_recipeState.value !is RecipeState.Success) return
         
@@ -255,16 +350,36 @@ class RecipeDetailViewModel @Inject constructor(
         }
     }
 }
+    /**
+     * Estados posibles del temporizador de cocina.
+     */
     sealed class TimerState {
+        /** Temporizador en ejecución */
         data object Running : TimerState()
+        
+        /** Temporizador en pausa */
         data object Paused : TimerState()
+        
+        /** Temporizador finalizado */
         data object Finished : TimerState()
+        
+        /** Estado inicial del temporizador */
         data object Initial : TimerState()
     }
 
+    /**
+     * Estados posibles de la UI para la pantalla de detalle de receta.
+     */
     sealed class RecipeState {
+        /** Cargando datos de la receta */
         data object Loading : RecipeState()
+        
+        /** Receta cargada exitosamente */
         data class Success(val recipe: Recipe) : RecipeState()
+        
+        /** Error al cargar o modificar la receta */
         data class Error(val error: RecipeError) : RecipeState()
+        
+        /** Receta eliminada exitosamente */
         data object DeleteSuccess : RecipeState()
     }

@@ -8,6 +8,14 @@ import android.widget.ArrayAdapter
 import com.mgsanlet.cheftube.databinding.SpinnerHeaderBinding
 import com.mgsanlet.cheftube.databinding.SpinnerItemBinding
 
+/**
+ * Adaptador base para spinners personalizados.
+ * Proporciona una implementación genérica para mostrar elementos en un Spinner
+ * con diseños personalizados para la vista cerrada y desplegada.
+ *
+ * @property context Contexto de la aplicación
+ * @property items Lista de cadenas que se mostrarán en el Spinner
+ */
 class BaseSpinnerAdapter(
     context: Context,
     private val items: List<String>
@@ -15,6 +23,14 @@ class BaseSpinnerAdapter(
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
+    /**
+     * Obtiene la vista que se muestra cuando el Spinner está cerrado.
+     *
+     * @param position Posición del elemento en el adaptador
+     * @param convertView Vista reciclada, si está disponible
+     * @param parent Vista padre a la que se adjuntará la vista
+     * @return Vista que representa el elemento en la posición dada
+     */
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val binding: SpinnerHeaderBinding
         val view: View
@@ -32,6 +48,14 @@ class BaseSpinnerAdapter(
         return view
     }
 
+    /**
+     * Obtiene la vista desplegable que se muestra cuando el Spinner está abierto.
+     *
+     * @param position Posición del elemento en el adaptador
+     * @param convertView Vista reciclada, si está disponible
+     * @param parent Vista padre a la que se adjuntará la vista
+     * @return Vista que representa el elemento en la posición dada en la lista desplegable
+     */
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
         val binding: SpinnerItemBinding
         val view: View

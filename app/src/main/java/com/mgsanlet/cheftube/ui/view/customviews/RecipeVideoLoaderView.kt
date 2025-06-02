@@ -13,7 +13,19 @@ import com.mgsanlet.cheftube.R
 import com.mgsanlet.cheftube.databinding.ViewRecipeVideoLoaderBinding
 import com.mgsanlet.cheftube.ui.util.Constants.YOUTUBE_ID_REGEX
 import com.mgsanlet.cheftube.ui.util.setCustomStyle
+import com.mgsanlet.cheftube.ui.view.customviews.VideoUrlState.INITIAL
+import com.mgsanlet.cheftube.ui.view.customviews.VideoUrlState.INVALID
+import com.mgsanlet.cheftube.ui.view.customviews.VideoUrlState.LOADING
+import com.mgsanlet.cheftube.ui.view.customviews.VideoUrlState.VALID
 
+/**
+ * Estados posibles para el cargador de videos.
+ *
+ * @property INITIAL Estado inicial, sin URL cargada
+ * @property VALID URL de video válida cargada
+ * @property INVALID URL de video inválida
+ * @property LOADING Cargando o validando la URL
+ */
 enum class VideoUrlState {
     INITIAL,
     VALID,
@@ -21,6 +33,16 @@ enum class VideoUrlState {
     LOADING
 }
 
+/**
+ * Vista personalizada para cargar y previsualizar videos de YouTube.
+ *
+ * Permite ingresar una URL de YouTube y muestra una previsualización del video.
+ * Soporta diferentes formatos de URL de YouTube y valida que la URL sea correcta.
+ *
+ * @property context Contexto de la aplicación
+ * @property attrs Atributos XML personalizados
+ * @property defStyleAttr Estilo por defecto
+ */
 class RecipeVideoLoaderView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -35,7 +57,14 @@ class RecipeVideoLoaderView @JvmOverloads constructor(
         true
     )
 
+    /** Estado actual del cargador de videos */
     private var _state: VideoUrlState = VideoUrlState.INITIAL
+    
+    /**
+     * Obtiene el estado actual del cargador de videos.
+     *
+     * @return Estado actual del cargador
+     */
     val state: VideoUrlState
         get() = _state
 
@@ -46,6 +75,10 @@ class RecipeVideoLoaderView @JvmOverloads constructor(
     }
 
     @SuppressLint("SetJavaScriptEnabled")
+    /**
+     * Configura el WebView para mostrar la previsualización del video.
+     * Habilita JavaScript y establece un WebViewClient personalizado.
+     */
     private fun setupWebView() {
         binding.videoWebView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
@@ -58,6 +91,12 @@ class RecipeVideoLoaderView @JvmOverloads constructor(
         binding.videoWebView.settings.javaScriptEnabled = true
     }
 
+    /**
+     * Configura los listeners para los elementos de la interfaz de usuario.
+     *
+     * Establece un TextWatcher en el campo de texto para validar la URL
+     * en tiempo real mientras el usuario escribe.
+     */
     private fun setupListeners() {
         binding.videoUrlEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(
@@ -90,6 +129,11 @@ class RecipeVideoLoaderView @JvmOverloads constructor(
         })
     }
 
+    /**
+     * Carga y valida una URL de video de YouTube.
+     *
+     * @param url URL del video de YouTube a cargar
+     */
     fun loadVideoUrl(url: String) {
         binding.videoUrlEditText.error = null
         val embedUrl = formatEmbedVideoUrl(url)
@@ -100,6 +144,11 @@ class RecipeVideoLoaderView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Actualiza el estado del cargador de videos y la interfaz de usuario.
+     *
+     * @param newState Nuevo estado a establecer
+     */
     private fun setState(newState: VideoUrlState) {
         _state = newState
         when (newState) {
@@ -136,6 +185,12 @@ class RecipeVideoLoaderView @JvmOverloads constructor(
     }
 
 
+    /**
+     * Convierte una URL de YouTube a formato de URL de incrustación (embed).
+     *
+     * @param url URL del video de YouTube en cualquier formato
+     * @return URL de incrustación si la URL es válida, null en caso contrario
+     */
     fun formatEmbedVideoUrl(url: String): String? {
         val youtubeId: String? = when {
             url.contains("watch?v=") -> {
@@ -166,6 +221,11 @@ class RecipeVideoLoaderView @JvmOverloads constructor(
         } ?: return null
     }
 
+    /**
+     * Establece el texto en el campo de URL y carga el video si el texto no está vacío.
+     *
+     * @param text Texto a establecer en el campo de URL
+     */
     fun setText(text: String) {
         binding.videoUrlEditText.setText(text)
         if (text.isNotBlank()) {
@@ -175,12 +235,27 @@ class RecipeVideoLoaderView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Obtiene el texto actual del campo de URL.
+     *
+     * @return Texto actual del campo de URL
+     */
     fun getText(): String {
         return binding.videoUrlEditText.text.toString()
     }
 
+    /**
+     * Obtiene la URL de incrustación del video actual.
+     *
+     * @return URL de incrustación del video o null si no hay una URL válida
+     */
     fun getEmbedVideoUrl(): String? = embedVideoUrl
 
+    /**
+     * Muestra un mensaje de error en el campo de URL.
+     *
+     * @param error Mensaje de error a mostrar (opcional)
+     */
     fun setError(error: String = "") {
         binding.videoUrlEditText.error = error
     }

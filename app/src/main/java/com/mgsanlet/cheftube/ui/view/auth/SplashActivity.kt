@@ -12,19 +12,25 @@ import com.mgsanlet.cheftube.databinding.ActivitySplashBinding
 import com.mgsanlet.cheftube.ui.util.hideSystemBars
 
 /**
- * SplashActivity es la pantalla introductoria que aparece cuando la aplicación se inicia.
- * Muestra una pantalla de presentación con un logo animado y un título. Las animaciones se aplican
- * a las imágenes del logo y del título utilizando la clase `ViewPropertyAnimator`, y después de que
- * las animaciones finalizan, la actividad transiciona a la siguiente pantalla, `AuthActivity`.
- * @author MarioG
+ * Actividad de presentación que se muestra al iniciar la aplicación.
+ * 
+ * Muestra una pantalla con el logo y el título de la aplicación con animaciones.
+ * Utiliza animaciones personalizadas en lugar de la SplashScreenAPI de Android (API 31+)
+ * para mantener la compatibilidad con versiones anteriores (hasta API 26).
  */
-@SuppressLint("CustomSplashScreen")/* No se usará la SplashScreenAPI de Android disponible desde API 31 ya que se necesita asegurar
-la compatibilidad con versiones desde la API 26 y se prefiere centralizar la logica de la
-pantalla de presentación en esta clase para que sea más mantenible*/
+@SuppressLint("CustomSplashScreen")
+// Se usa implementación personalizada para mayor control y compatibilidad
 class SplashActivity : AppCompatActivity() {
 
+    /** Binding para las vistas de la actividad. */
     private lateinit var binding: ActivitySplashBinding
 
+    /**
+     * Se llama cuando se crea la actividad.
+     * Configura la interfaz de usuario, inicia las animaciones y programa la transición.
+     *
+     * @param savedInstanceState Estado anterior de la actividad, si existe
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
@@ -59,6 +65,10 @@ class SplashActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * Se llama cuando la actividad está a punto de ser destruida.
+     * Cancela las animaciones en curso para prevenir fugas de memoria.
+     */
     override fun onDestroy() {
         super.onDestroy()
         // Cancela las animaciones en curso para prevenir fugas de memoria
@@ -67,6 +77,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     companion object {
+        /** Duración en milisegundos para las animaciones de la pantalla de presentación. */
         private const val ANIMATION_DURATION = 1000L
     }
 }
