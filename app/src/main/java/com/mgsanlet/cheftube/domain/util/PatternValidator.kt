@@ -18,11 +18,11 @@ interface PatternValidator {
      * Valida si una contraseña cumple con los requisitos mínimos.
      *
      * @param password Contraseña a validar
-     * @param minLongitud Longitud mínima requerida para la contraseña
+     * @param minLength Longitud mínima requerida para la contraseña
      * @param regex Expresión regular que debe cumplir la contraseña
      * @return [DomainResult] con Unit si la contraseña es válida, o un error [UserError] si no lo es
      */
-    fun isValidPasswordPattern(password: String, minLongitud: Int, regex: Regex): DomainResult<Unit, UserError>
+    fun isValidPasswordPattern(password: String, minLength: Int, regex: Regex): DomainResult<Unit, UserError>
     /**
      * Valida si un nombre de usuario cumple con los requisitos de formato.
      *

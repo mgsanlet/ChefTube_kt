@@ -77,73 +77,69 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
-    kapt("com.google.dagger:hilt-android-compiler:2.56.1")
+    implementation(libs.androidx.hilt.navigation.compose)
+    kapt(libs.hilt.android.compiler)
     kapt(libs.hilt.compiler)
-    implementation("androidx.hilt:hilt-work:1.1.0")
+    implementation(libs.androidx.hilt.work)
 
     // Android core
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("com.google.android.material:material:1.11.0")
-    implementation("androidx.activity:activity-ktx:1.8.2")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.annotation:annotation:1.7.0")
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.activity.ktx)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.annotation)
+    implementation(libs.androidx.work.runtime.ktx)
 
     // Architecture Components
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
-    implementation("androidx.activity:activity-ktx:1.8.2")
-    implementation("androidx.fragment:fragment-ktx:1.6.2")
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.activity.ktx)
+    implementation(libs.androidx.fragment.ktx)
 
-    // Database
-    implementation("androidx.room:room-ktx:2.6.1")
-
-    // Network
+    // Red
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
     implementation(libs.volley)
     implementation(libs.gson)
 
-    // Image Loading
+    // Carga de imágenes
     implementation(libs.glide)
-    implementation("com.github.yalantis:ucrop:2.2.8")
+    implementation(libs.ucrop)
 
     // Data Binding
-    implementation("androidx.databinding:databinding-runtime:8.2.2")
+    implementation(libs.androidx.databinding.runtime)
 
     // Media
-    implementation("androidx.media3:media3-common-ktx:1.6.0")
+    implementation(libs.androidx.media3.common.ktx)
 
-    // Barcode Scanner
+    // Escáner código de barras
     implementation(libs.zxing.android.embedded)
 
-    // Language
+    // Internacionalización
     implementation(libs.lingver)
 
     // Testing
     testImplementation(libs.junit)
-    testImplementation("io.mockk:mockk:1.14.2")
-    testImplementation("io.mockk:mockk-agent-jvm:1.13.3")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    testImplementation("app.cash.turbine:turbine:1.0.0")
-    testImplementation("com.google.truth:truth:1.1.5")
-    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.agent.jvm)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.truth)
+    testImplementation(libs.androidx.core.testing)
 
-    //Firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
-    implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.firebase:firebase-storage-ktx")
-    implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0")
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.storage.ktx)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.kotlinx.coroutines.play.services)
 
-    //Views
-    implementation("com.google.android.flexbox:flexbox:3.0.0")
+    // Vistas
+    implementation(libs.flexbox)
 
-    //Stat charts
-    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    // Gráficos de estadísticas
+    implementation (libs.mpandroidchart)
 
 }
 
